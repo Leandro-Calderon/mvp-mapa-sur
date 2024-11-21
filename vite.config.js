@@ -69,8 +69,8 @@ export default defineConfig({
       ],
 
       workbox: {
-        sourcemap: true,
         globDirectory: "dist",
+        sourcemap: true,
         globPatterns: ["**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg,map}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         skipWaiting: true,
