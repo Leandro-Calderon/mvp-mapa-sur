@@ -3,16 +3,16 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  base: "/mapa-sur-DPVYU/",
+  base: "/mvp-mapa-sur/",
   plugins: [
     react(),
     VitePWA({
       registerType: "autoUpdate",
       injectRegister: "auto", // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
       manifest: {
-        name: "mapa-sur-DPVYU",
+        name: "mvp-mapa-sur",
         short_name: "mapa",
-        start_url: "/mapa-sur-DPVYU",
+        start_url: "/mvp-mapa-sur",
         scope: "/",
         id: "/",
         lang: "es",
