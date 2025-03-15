@@ -7,13 +7,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       injectRegister: "auto", // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
       manifest: {
         name: "mvp-mapa-sur",
         short_name: "mapa",
         start_url: "/mvp-mapa-sur",
-        scope: "/",
+        scope: "/mvp-mapa-sur",
         id: "/",
         lang: "es",
         description:
@@ -65,17 +65,18 @@ export default defineConfig({
         "favicon.ico",
         "robots.txt",
         "apple-touch-icon.png",
-         "manifest.webmanifest"
+        "manifest.webmanifest"
       ],
 
       workbox: {
         globDirectory: "dist",
         sourcemap: true,
-        globPatterns: ["**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg,map}"],
+        globPatterns:  ["**/*.{js,css,html}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         skipWaiting: true,
         cleanupOutdatedCaches: true,
         clientsClaim: true,
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
         navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"
         runtimeCaching: [
@@ -85,8 +86,8 @@ export default defineConfig({
             options: {
               cacheName: "osm-tiles",
               expiration: {
-                maxEntries: 500,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+                maxEntries: 200,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 30 días
                 purgeOnQuotaError: true, // Borrar si se excede el almacenamiento
               },
               cacheableResponse: {
@@ -97,8 +98,6 @@ export default defineConfig({
               },
             },
           },
-
-          // ... tus otras configuraciones de runtimeCaching ...
         ],
       },
 
@@ -106,7 +105,7 @@ export default defineConfig({
         enabled: true,
         navigateFallback: "index.html",
         type: "module",
-        suppressWarnings: false,
+        suppressWarnings: true,
       },
     }),
   ],

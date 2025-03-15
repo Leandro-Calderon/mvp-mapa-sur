@@ -7,9 +7,6 @@ export const customIcon = L.icon({
   shadowUrl: shadow,
 });
 
-export const locationIcon = L.icon({
-  iconUrl: 'path/to/location-icon.png', // Add your location icon
-  iconSize: [32, 32],
-  iconAnchor: [16, 16],
-  popupAnchor: [0, -16],
+export const locationIcon = new L.Icon.Default({
+  imagePath: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/"
 });

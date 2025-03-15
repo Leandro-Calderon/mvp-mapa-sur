@@ -2,19 +2,21 @@ import { useState, useEffect, useCallback } from "react";
 
 const GEOLOCATION_OPTIONS = {
   enableHighAccuracy: true,
-  maximumAge: 10000,
-  timeout: 5000,
+  maximumAge: 1000,
+  timeout: 10000,
 };
 
 export const useGeolocation = () => {
   const [position, setPosition] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
   const [error, setError] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [watchId, setWatchId] = useState(null);
 
   const handleSuccess = useCallback((pos) => {
-    const { latitude, longitude } = pos.coords;
+    const { latitude, longitude, accuracy } = pos.coords;
     setPosition([latitude, longitude]);
+    setAccuracy(accuracy);
     setError(null);
   }, []);
 
@@ -58,6 +60,7 @@ export const useGeolocation = () => {
 
   return {
     position,
+    accuracy,
     error,
     isActive,
     startTracking,
