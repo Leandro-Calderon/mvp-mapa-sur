@@ -14,7 +14,7 @@ export const LiveLocationToggle = () => {
 
   useEffect(() => {
     if (position) {
-      map.flyTo(position, map.getZoom());
+      map.flyTo(position,18);
     }
   }, [position, map]);
 

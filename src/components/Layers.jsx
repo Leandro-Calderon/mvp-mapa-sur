@@ -17,7 +17,7 @@ export const Layers = () => {
   return (
     <>
       <LayersControl position="topright">
-        <LayersControl.Overlay checked id="Mostrar Todos" name="Mostrar Todos">
+        <LayersControl.Overlay id="Mostrar Todos" name="Mostrar Todos">
           <MarkersList features={filteredData} />
         </LayersControl.Overlay>
       </LayersControl>
