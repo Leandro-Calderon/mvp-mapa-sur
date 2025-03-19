@@ -28,7 +28,7 @@ export const LiveLocationToggle = () => {
 
   if (error) {
     console.error("Geolocation error:", error);
-    // You might want to show this error to the user in a more user-friendly way
+    
     return (
       <div style={{ 
         position: 'absolute', 
