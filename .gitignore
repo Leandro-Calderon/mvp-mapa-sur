@@ -24,3 +24,13 @@ dev-dist
 *.sln
 *.sw?
 *.txt
+*.md
+*.json
+*.yaml
+*.yml
+*.lock
+*.lockb
+*.lock
+*.cursor
+*.github/workflows/*
+
