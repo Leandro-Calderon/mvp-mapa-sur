@@ -1,17 +1,22 @@
 import L from "leaflet";
-import icono from "../assets/marker-icon.png";
-import shadow from "../assets/marker-shadow.png";
+import markerIcon from "/assets/marker-icon.png";
+import markerShadow from "/assets/marker-shadow.png";
+import gpsIcon from "/assets/gps.png";
 
+// Icono para puntos de interés (del GeoJSON)
 export const customIcon = L.icon({
-  iconUrl: icono,
-  shadowUrl: shadow,
-});
-
-export const locationIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
+});
+
+// Icono para tu ubicación en tiempo real
+export const locationIcon = L.icon({
+  iconUrl: gpsIcon,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+  popupAnchor: [0, -16]
 });

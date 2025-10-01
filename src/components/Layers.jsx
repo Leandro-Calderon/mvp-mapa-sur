@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LayersControl } from "react-leaflet";
 import { FilterForm } from "./FilterForm";
 import { MarkersList } from "./MarkersList";
 import { useFilteredData } from "../hooks/useFilteredData";
-import geojsonData from "../assets/fonavi.json";
 
 export const Layers = () => {
   const [filters, setFilters] = useState({
@@ -11,8 +10,40 @@ export const Layers = () => {
     vivienda: "",
     plan: "",
   });
+  
+  const [geojsonData, setGeojsonData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const filteredData = useFilteredData(geojsonData.features, filters);
+  // Cargar el GeoJSON desde public
+  useEffect(() => {
+    // Use Vite's base URL to handle both dev and production environments
+    const baseUrl = import.meta.env.BASE_URL;
+    const geojsonUrl = `${baseUrl}assets/fonavi.geojson`;
+    
+    fetch(geojsonUrl)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log('GeoJSON cargado exitosamente:', data.features?.length, 'features');
+        setGeojsonData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error cargando GeoJSON:', error);
+        console.error('URL intentada:', geojsonUrl);
+        setLoading(false);
+      });
+  }, []);
+
+  const filteredData = useFilteredData(geojsonData?.features || [], filters);
+
+  if (loading) {
+    return <div>Cargando datos...</div>;
+  }
 
   return (
     <>
