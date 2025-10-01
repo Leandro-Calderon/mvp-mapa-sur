@@ -12,7 +12,7 @@ export const customIcon = L.icon({
   shadowSize: [41, 41]
 });
 
-// Icono para tu ubicación en tiempo real (CSS-based, no image loading required)
+// Icono CSS para ubicación en tiempo real
 export const locationIcon = L.divIcon({
   className: "custom-location-icon",
   html: `

@@ -4,7 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { registerSW } from "virtual:pwa-register";
 
-// Esto ya maneja el registro del SW, no necesitas registrar el SW manualmente
+// Esto ya maneja el registro del SW, no se necesita registrar el SW manualmente
 registerSW({ immediate: true });
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
