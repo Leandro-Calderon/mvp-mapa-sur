@@ -1,49 +1,59 @@
 <!doctype html>
 <html lang="es">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0" />
-    <meta name="description"
-      content="Mapa para marcar la geolocalización de edificios o viviendas para llegar más rápido" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0" />
+  <meta name="description"
+    content="Mapa para marcar la geolocalización de edificios o viviendas para llegar más rápido" />
 
-    <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy"
+  <!-- Security Headers -->
+  <!-- <meta http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org blob:; connect-src 'self' https://*.tile.openstreetmap.org;">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff"> -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+  script-src 'self' 'unsafe-inline'; 
+  style-src 'self' 'unsafe-inline'; 
+  img-src 'self' data: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com blob:; 
+  connect-src 'self' https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="geolocation=(self), camera=(), microphone=()">
+  <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+
+  <!-- <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="geolocation=(self), camera=(), microphone=()">
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-    
-    <!-- PWA Optimization - Complementando el manifest de vite.config.js -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-title" content="mvp-mapa-sur">
-    <meta name="application-name" content="mvp-mapa-sur">
+     -->
+  <!-- PWA Optimization - Complementando el manifest de vite.config.js -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-title" content="mvp-mapa-sur">
+  <meta name="application-name" content="mvp-mapa-sur">
 
-    <!-- Performance Optimization -->
-    <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
-    <link rel="dns-prefetch" href="https://tile.openstreetmap.org">
+  <!-- Performance Optimization -->
+  <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+  <link rel="dns-prefetch" href="https://tile.openstreetmap.org">
 
-    <!-- Favicons -->
-    <link rel="icon" href="/favicon.ico" sizes="48x48">
-    <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png">
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" sizes="any" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png">
 
-    <title>mvp-mapa-sur</title>
-  </head>
+  <title>mvp-mapa-sur</title>
+</head>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-    <noscript>
-      <div style="padding: 20px; text-align: center;">
-        <p>Esta aplicación requiere JavaScript para funcionar correctamente.</p>
-        <p>Por favor, activa JavaScript en tu navegador para continuar.</p>
-      </div>
-    </noscript>
-  </body>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <noscript>
+    <div style="padding: 20px; text-align: center;">
+      <p>Esta aplicación requiere JavaScript para funcionar correctamente.</p>
+      <p>Por favor, activa JavaScript en tu navegador para continuar.</p>
+    </div>
+  </noscript>
+</body>
 
 </html>

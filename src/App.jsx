@@ -58,9 +58,8 @@ function HashManager() {
 
 // Create a map configuration object that can be extended without modifying the App component
 const defaultMapConfig = {
-  tileLayer: {
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  tileLayer: { url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   },
   options: {
     zoomControl: false,
