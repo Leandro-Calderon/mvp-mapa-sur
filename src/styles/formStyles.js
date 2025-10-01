@@ -6,7 +6,7 @@ export const styles = {
     width: "40%",
   },
   input: {
-    width: "60%",
+    width: "80%",
     padding: "5px",
     margin: "0",
     borderRadius: "3px",
