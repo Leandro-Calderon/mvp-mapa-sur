@@ -36,3 +36,16 @@ body {
   background: transparent !important;
   border: none !important;
 }
+
+/* Optimize map tile rendering for crisp display on all devices */
+.leaflet-tile-container img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Prevent tile blurriness on high-DPI displays */
+.leaflet-tile {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
