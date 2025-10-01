@@ -17,7 +17,7 @@ function useMapHash() {
   };
   
   const getInitialMapState = () => {
-    const defaultState = { zoom: 13, center: [-32.939, -60.59372] };
+    const defaultState = { zoom: 12, center: [-32.939680, -60.669040] };
     
     if (!window.location.hash) return defaultState;
     

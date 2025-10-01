@@ -16,7 +16,7 @@ export const FilterForm = ({ filters, onFilterChange }) => {
         type="text"
         name="edificio"
         id="edificio"
-        placeholder="Filtrar edificio (nombre)"
+        placeholder="Filtrar edificio"
         autoComplete="off"
         value={filters.edificio}
         onChange={handleFilterChange("edificio")}
@@ -26,7 +26,7 @@ export const FilterForm = ({ filters, onFilterChange }) => {
         type="text"
         name="vivienda"
         id="vivienda"
-        placeholder="Filtrar vivienda (nombre)"
+        placeholder="Filtrar vivienda"
         autoComplete="off"
         value={filters.vivienda}
         onChange={handleFilterChange("vivienda")}
