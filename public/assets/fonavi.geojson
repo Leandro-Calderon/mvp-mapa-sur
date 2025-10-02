@@ -6,12 +6,11 @@
       "properties": {
         "tipo": "tira",
         "nombre": 56,
-        "plan": "077",
-        "id": 0
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727577, -32.9398]
+        "coordinates": [-60.727577, -32.939855]
       }
     },
     {
@@ -19,8 +18,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 55,
-        "plan": "077",
-        "id": 1
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -32,8 +30,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 48,
-        "plan": "077",
-        "id": 2
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -45,8 +42,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 54,
-        "plan": "077",
-        "id": 3
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -58,8 +54,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 53,
-        "plan": "077",
-        "id": 4
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -71,8 +66,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 52,
-        "plan": "077",
-        "id": 5
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -84,8 +78,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 49,
-        "plan": "077",
-        "id": 6
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -97,8 +90,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 51,
-        "plan": "077",
-        "id": 7
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -110,8 +102,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 50,
-        "plan": "077",
-        "id": 8
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
@@ -123,8 +114,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 47,
-        "plan": "077",
-        "id": 9
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -136,8 +126,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 46,
-        "plan": "077",
-        "id": 10
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -149,8 +138,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 45,
-        "plan": "077",
-        "id": 11
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -162,8 +150,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 44,
-        "plan": "077",
-        "id": 12
+        "plan": "077"         
       },
       "geometry": {
         "type": "Point",
@@ -175,8 +162,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 43,
-        "plan": "077",
-        "id": 13
+        "plan": "077" 
       },
       "geometry": {
         "type": "Point",
@@ -188,8 +174,7 @@
       "properties": {
         "tipo": "tira",
         "nombre": 42,
-        "plan": "077",
-        "id": 14
+        "plan": "077"                
       },
       "geometry": {
         "type": "Point",

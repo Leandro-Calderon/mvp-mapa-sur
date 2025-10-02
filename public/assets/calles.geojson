@@ -1,0 +1,34 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "nombre": "Av. San Martín",
+          "tipo": "avenida"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [-60.727577, -32.939855],
+            [-60.727411, -32.939611],
+            [-60.727287, -32.939368]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "nombre": "Calle Belgrano",
+          "tipo": "calle"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [-60.728404, -32.939404],
+            [-60.728183, -32.939417]
+          ]
+        }
+      }
+    ]
+  }
