@@ -65,7 +65,7 @@ export const FilterForm = ({
         type="text"
         name="streetName"
         id="streetName"
-        placeholder="Nombre de Calle"
+        placeholder="Calle"
         autoComplete="off"
         value={streetFilters.streetName}
         onChange={handleStreetNameChange}
@@ -81,7 +81,7 @@ export const FilterForm = ({
           style={styles.checkbox}
         />
         <label htmlFor="showStreets" style={styles.checkboxLabel}>
-          Mostrar Calles
+          Ver Calles
         </label>
       </div>
       <div style={styles.checkboxContainer}>
@@ -94,7 +94,7 @@ export const FilterForm = ({
           style={styles.checkbox}
         />
         <label htmlFor="showAll" style={styles.checkboxLabel}>
-          Mostrar Todos
+          Ver Todo
         </label>
       </div>
     </form>
