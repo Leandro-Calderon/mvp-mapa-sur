@@ -12,4 +12,20 @@ export const styles = {
     borderRadius: "3px",
     border: "1px solid #ccc",
   },
+  checkboxContainer: {
+    display: "flex",
+    alignItems: "center",
+    padding: "5px 0",
+    marginTop: "5px",
+  },
+  checkbox: {
+    width: "auto",
+    margin: "0 8px 0 0",
+    cursor: "pointer",
+  },
+  checkboxLabel: {
+    fontSize: "14px",
+    cursor: "pointer",
+    userSelect: "none",
+  },
 };
