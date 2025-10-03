@@ -1,0 +1,34 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "nombre": "Av. San Martín",
+          "tipo": "avenida"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [-60.727577, -32.939855],
+            [-60.727411, -32.939611],
+            [-60.727287, -32.939368]
+          ]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "nombre": "Pellegrini",
+          "tipo": "calle"
+        },
+        "geometry": {
+          "type": "LineString",
+          "coordinates": [
+            [-60.637629, -32.957819],
+            [-60.655789, -32.954718]
+          ]
+        }
+      }
+    ]
+  }
