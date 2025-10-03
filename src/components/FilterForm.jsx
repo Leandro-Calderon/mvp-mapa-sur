@@ -1,6 +1,13 @@
 import { styles } from "../styles/formStyles";
 
-export const FilterForm = ({ filters, onFilterChange, streetFilters, onStreetFilterChange }) => {
+export const FilterForm = ({ 
+  filters, 
+  onFilterChange, 
+  streetFilters, 
+  onStreetFilterChange,
+  showAll,
+  onShowAllChange 
+}) => {
   const handleFilterChange = (field) => (e) => {
     onFilterChange({ ...filters, [field]: e.target.value });
   };
@@ -11,6 +18,10 @@ export const FilterForm = ({ filters, onFilterChange, streetFilters, onStreetFil
 
   const handleShowStreetsChange = (e) => {
     onStreetFilterChange({ ...streetFilters, showStreets: e.target.checked });
+  };
+
+  const handleShowAllChange = (e) => {
+    onShowAllChange(e.target.checked);
   };
 
   return (
@@ -71,6 +82,19 @@ export const FilterForm = ({ filters, onFilterChange, streetFilters, onStreetFil
         />
         <label htmlFor="showStreets" style={styles.checkboxLabel}>
           Mostrar Calles
+        </label>
+      </div>
+      <div style={styles.checkboxContainer}>
+        <input
+          type="checkbox"
+          name="showAll"
+          id="showAll"
+          checked={showAll}
+          onChange={handleShowAllChange}
+          style={styles.checkbox}
+        />
+        <label htmlFor="showAll" style={styles.checkboxLabel}>
+          Mostrar Todos
         </label>
       </div>
     </form>
