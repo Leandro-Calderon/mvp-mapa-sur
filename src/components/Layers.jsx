@@ -70,18 +70,18 @@ export const Layers = () => {
   const filteredData = useFilteredData(geojsonData?.features || [], filters);
   const filteredStreets = useFilteredStreets(streetsData?.features || [], streetFilters);
 
-  // Debug logging for streets
-  useEffect(() => {
-    console.log('=== STREETS DEBUG ===');
-    console.log('streetsData:', streetsData);
-    console.log('streetsData?.features:', streetsData?.features);
-    console.log('streetFilters:', streetFilters);
-    console.log('filteredStreets:', filteredStreets);
-    console.log('filteredStreets.length:', filteredStreets.length);
-    console.log('showStreets checked?', streetFilters.showStreets);
-    console.log('Will render streets?', streetFilters.showStreets && filteredStreets.length > 0);
-    console.log('====================');
-  }, [streetsData, streetFilters, filteredStreets]);
+  // // Debug logging for streets
+  // useEffect(() => {
+  //   console.log('=== STREETS DEBUG ===');
+  //   console.log('streetsData:', streetsData);
+  //   console.log('streetsData?.features:', streetsData?.features);
+  //   console.log('streetFilters:', streetFilters);
+  //   console.log('filteredStreets:', filteredStreets);
+  //   console.log('filteredStreets.length:', filteredStreets.length);
+  //   console.log('showStreets checked?', streetFilters.showStreets);
+  //   console.log('Will render streets?', streetFilters.showStreets && filteredStreets.length > 0);
+  //   console.log('====================');
+  // }, [streetsData, streetFilters, filteredStreets]);
 
   // Check if any filter is active
   const hasActiveFilters = filters.edificio || filters.vivienda || filters.plan;
