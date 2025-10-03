@@ -19,14 +19,14 @@
       {
         "type": "Feature",
         "properties": {
-          "nombre": "Calle Belgrano",
+          "nombre": "Pellegrini",
           "tipo": "calle"
         },
         "geometry": {
           "type": "LineString",
           "coordinates": [
-            [-60.728404, -32.939404],
-            [-60.728183, -32.939417]
+            [-60.637629, -32.957819],
+            [-60.655789, -32.954718]
           ]
         }
       }

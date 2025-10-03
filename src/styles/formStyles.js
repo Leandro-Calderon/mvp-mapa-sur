@@ -27,5 +27,6 @@ export const styles = {
     fontSize: "14px",
     cursor: "pointer",
     userSelect: "none",
+    color: "#073b91",
   },
 };
