@@ -10,5 +10,6 @@ Esta PWA fue desarrollada utilizando tecnologías de código abierto:
 - **Typescript-React**
 - **Leaflet**
 - **OpenStreetMap**
+- **QGIS**
 - **Git**
 - **GNU/Linux**
