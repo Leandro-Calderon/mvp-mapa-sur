@@ -7,30 +7,45 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Custom
+study
+
+# Dependencies
 node_modules
+
+# Build outputs
 dist
 dist-ssr
 dev-dist
+
+# Environment variables
 *.local
+.env
+.env.local
+.env*.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-*.txt
-*.md
-*.json
-*.yaml
-*.yml
-*.lock
-*.lockb
-*.lock
-*.cursor
-*.github/workflows/*
+.cursor
+.windsurf
+.github
 
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Exclude sensitive text files (si es necesario)
+# secrets.txt
+# credentials.txt
