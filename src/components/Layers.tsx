@@ -1,20 +1,21 @@
 import { useMemo, useState } from "react";
-import { FilterForm } from "./FilterForm.jsx";
-import { useBuildingsData } from "../hooks/useBuildingsData.js";
-import { useStreetsData } from "../hooks/useStreetsData.js";
+import { FilterForm } from "./FilterForm";
+import { useBuildingsData } from "../hooks/useBuildingsData";
+import { useStreetsData } from "../hooks/useStreetsData";
 import { useFilteredData } from "../hooks/useFilteredData";
 import { useFilteredStreets } from "../hooks/useFilteredStreets";
-import { BuildingLayer } from "./layers/BuildingLayer.jsx";
-import { StreetLayer } from "./layers/StreetLayer.jsx";
+import { BuildingLayer } from "./layers/BuildingLayer";
+import { StreetLayer } from "./layers/StreetLayer";
+import type { BuildingFilters, StreetFilters } from "../types/filters";
 
 export const Layers = () => {
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<BuildingFilters>({
         edificio: "",
         vivienda: "",
         plan: "",
     });
 
-    const [streetFilters, setStreetFilters] = useState({
+    const [streetFilters, setStreetFilters] = useState<StreetFilters>({
         streetName: "",
         showStreets: false,
     });

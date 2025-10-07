@@ -1,8 +1,8 @@
 import "./App.css";
 import "leaflet/dist/leaflet.css";
-import { MapProvider } from "./context/MapContext.tsx";
-import { MapView } from "./components/map/MapView.tsx";
-import { useMapHash } from "./hooks/useMapHash.js";
+import { MapProvider } from "./context/MapContext";
+import { MapView } from "./components/map/MapView";
+import { useMapHash } from "./hooks/useMapHash";
 
 function App(): JSX.Element {
   const { getInitialMapState } = useMapHash();

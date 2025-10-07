@@ -9,12 +9,12 @@ function PWABadge() {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegisteredSW(swUrl, r) {
+    onRegisteredSW(swUrl: string, r: ServiceWorkerRegistration) {
       if (period > 0 && r?.active?.state === "activated") {
         registerPeriodicSync(period, swUrl, r);
       } else if (r?.installing) {
-        r.installing.addEventListener("statechange", (e) => {
-          const sw = e.target;
+        r.installing.addEventListener("statechange", (e: Event) => {
+          const sw = e.target as ServiceWorker;
           if (sw.state === "activated") registerPeriodicSync(period, swUrl, r);
         });
       }
@@ -68,7 +68,7 @@ function PWABadge() {
 
 export default PWABadge;
 
-function registerPeriodicSync(period, swUrl, r) {
+function registerPeriodicSync(period: number, swUrl: string, r: ServiceWorkerRegistration) {
   if (period <= 0) return;
 
   setInterval(async () => {

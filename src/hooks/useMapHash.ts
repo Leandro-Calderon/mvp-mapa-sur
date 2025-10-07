@@ -1,9 +1,12 @@
-const DEFAULT_CENTER = [-32.93968, -60.66904];
+import type { MapState, LatLngArray, MapInstance } from "../types/map";
+
+const DEFAULT_CENTER: LatLngArray = [-32.93968, -60.66904];
 const DEFAULT_ZOOM = 12;
 
-const buildHash = (zoom, latitude, longitude) => `#map=${zoom}/${latitude.toFixed(5)}/${longitude.toFixed(5)}`;
+const buildHash = (zoom: number, latitude: number, longitude: number): string =>
+  `#map=${zoom}/${latitude.toFixed(5)}/${longitude.toFixed(5)}`;
 
-const parseHash = (hashValue) => {
+const parseHash = (hashValue: string): MapState | null => {
     if (!hashValue.startsWith("#map=")) {
         return null;
     }
@@ -25,7 +28,7 @@ const parseHash = (hashValue) => {
 };
 
 export const useMapHash = () => {
-    const updateMapHash = (mapInstance) => {
+    const updateMapHash = (mapInstance: MapInstance) => {
         const zoom = mapInstance.getZoom();
         const center = mapInstance.getCenter();
         const { lat, lng } = center;
@@ -33,7 +36,7 @@ export const useMapHash = () => {
         window.location.hash = buildHash(zoom, lat, lng);
     };
 
-    const getInitialMapState = () => {
+    const getInitialMapState = (): MapState => {
         if (!window.location.hash) {
             return {
                 zoom: DEFAULT_ZOOM,

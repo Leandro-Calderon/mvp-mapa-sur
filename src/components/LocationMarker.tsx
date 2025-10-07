@@ -1,7 +1,12 @@
 import { Marker, Popup } from "react-leaflet";
 import { locationIcon } from "../constants/mapIcons";
+import type { LatLngArray } from "../types/map";
 
-export const LocationMarker = ({ position }) => {
+interface LocationMarkerProps {
+  position: LatLngArray;
+}
+
+export const LocationMarker = ({ position }: LocationMarkerProps) => {
   if (!position) return null;
 
   return (

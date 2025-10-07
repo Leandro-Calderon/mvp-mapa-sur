@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useMap } from "react-leaflet";
-import { useMapHash } from "../../hooks/useMapHash.js";
+import { useMapHash } from "../../hooks/useMapHash";
 
 export const MapHashSync = () => {
     const map = useMap();

@@ -1,4 +1,4 @@
-// LiveLocationToggle.jsx
+// LiveLocationToggle.tsx
 import { useMap } from "react-leaflet";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { LocationMarker } from "./LocationMarker";
@@ -28,17 +28,17 @@ export const LiveLocationToggle = () => {
 
   if (error) {
     console.error("Geolocation error:", error);
-    
+
     return (
-      <div style={{ 
-        position: 'absolute', 
-        bottom: '60px', 
-        right: '10px', 
-        backgroundColor: 'white', 
-        padding: '10px', 
+      <div style={{
+        position: 'absolute',
+        bottom: '60px',
+        right: '10px',
+        backgroundColor: 'white',
+        padding: '10px',
         borderRadius: '4px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-        zIndex: 1000 
+        zIndex: 1000
       }}>
         Location error: {error}
       </div>

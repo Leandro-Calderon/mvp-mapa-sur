@@ -1,13 +1,28 @@
 import { FeatureGroup, Marker, Popup } from "react-leaflet";
 import { customIcon } from "../constants/mapIcons";
 
-export const MarkersList = ({ features }) => {
+interface Feature {
+  geometry: {
+    coordinates: [number, number];
+  };
+  properties: {
+    tipo: string;
+    nombre: string;
+    plan: string;
+  };
+}
+
+interface MarkersListProps {
+  features: Feature[];
+}
+
+export const MarkersList = ({ features }: MarkersListProps) => {
   return (
     <FeatureGroup>
       {features.map((feature, index) => {
         // Create immutable reversed coordinates [lat, lng] for Leaflet
         const [lng, lat] = feature.geometry.coordinates;
-        
+
         return (
           <Marker
             icon={customIcon}

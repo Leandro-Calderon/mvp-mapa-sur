@@ -1,13 +1,18 @@
-import { styles } from "../styles/locationStyles"
+import { styles } from "../styles/locationStyles";
 
-export const ToggleButton = ({ isActive, onClick }) => (
+interface ToggleButtonProps {
+  isActive: boolean;
+  onClick: () => void;
+}
+
+export const ToggleButton = ({ isActive, onClick }: ToggleButtonProps) => (
   <button
     onClick={onClick}
     style={{
       ...styles.toggleButton,
       backgroundColor: isActive ? "rgba(59, 130, 246, 0.15)" : "rgba(255, 255, 255, 0.95)",
       backdropFilter: "blur(10px)",
-      boxShadow: isActive 
+      boxShadow: isActive
         ? "0 4px 12px rgba(59, 130, 246, 0.4), 0 0 0 2px rgba(59, 130, 246, 0.3)"
         : "0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.08)",
     }}
@@ -37,4 +42,4 @@ export const ToggleButton = ({ isActive, onClick }) => (
       </svg>
     </div>
   </button>
-)
+);

@@ -1,21 +1,21 @@
 import { MapContainer, TileLayer } from "react-leaflet";
-import PWABadge from "../../PWABadge.jsx";
-import { Layers } from "../Layers.jsx";
-import LiveLocationToggle from "../LiveLocationToggle.jsx";
-import { MapHashSync } from "./MapHashSync.jsx";
-import { useMapContext } from "../../context/MapContext.jsx";
+import PWABadge from "../../PWABadge";
+import { Layers } from "../Layers";
+import LiveLocationToggle from "../LiveLocationToggle";
+import { MapHashSync } from "./MapHashSync";
+import { useMapContext } from "../../context/MapContext";
 
 const MAP_STYLE = {
     height: "100vh",
     width: "100vw",
-};
+} as const;
 
 const TILE_LAYER_CONFIG = {
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
     maxZoom: 19,
     maxNativeZoom: 19,
-};
+} as const;
 
 export const MapView = () => {
     const { mapState } = useMapContext();

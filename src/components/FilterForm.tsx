@@ -1,26 +1,36 @@
 import { styles } from "../styles/formStyles";
+import type { BuildingFilters, StreetFilters } from "../types/filters";
 
-export const FilterForm = ({ 
-  filters, 
-  onFilterChange, 
-  streetFilters, 
+interface FilterFormProps {
+  filters: BuildingFilters;
+  onFilterChange: (filters: BuildingFilters) => void;
+  streetFilters: StreetFilters;
+  onStreetFilterChange: (filters: StreetFilters) => void;
+  showAll: boolean;
+  onShowAllChange: (showAll: boolean) => void;
+}
+
+export const FilterForm = ({
+  filters,
+  onFilterChange,
+  streetFilters,
   onStreetFilterChange,
   showAll,
-  onShowAllChange 
-}) => {
-  const handleFilterChange = (field) => (e) => {
+  onShowAllChange
+}: FilterFormProps) => {
+  const handleFilterChange = (field: keyof BuildingFilters) => (e: React.ChangeEvent<HTMLInputElement>) => {
     onFilterChange({ ...filters, [field]: e.target.value });
   };
 
-  const handleStreetNameChange = (e) => {
+  const handleStreetNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onStreetFilterChange({ ...streetFilters, streetName: e.target.value });
   };
 
-  const handleShowStreetsChange = (e) => {
+  const handleShowStreetsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onStreetFilterChange({ ...streetFilters, showStreets: e.target.checked });
   };
 
-  const handleShowAllChange = (e) => {
+  const handleShowAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onShowAllChange(e.target.checked);
   };
 
@@ -80,7 +90,7 @@ export const FilterForm = ({
           onChange={handleShowStreetsChange}
           style={styles.checkbox}
         />
-        <label htmlFor="showStreets" style={styles.checkboxLabel}>
+        <label htmlFor="showStreets" style={styles.checkboxLabel as React.CSSProperties}>
           Ver Calles
         </label>
       </div>
@@ -93,7 +103,7 @@ export const FilterForm = ({
           onChange={handleShowAllChange}
           style={styles.checkbox}
         />
-        <label htmlFor="showAll" style={styles.checkboxLabel}>
+        <label htmlFor="showAll" style={styles.checkboxLabel as React.CSSProperties}>
           Ver Todo
         </label>
       </div>

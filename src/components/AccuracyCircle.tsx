@@ -1,6 +1,12 @@
 import { Circle } from "react-leaflet";
+import type { LatLngArray } from "../types/map";
 
-export const AccuracyCircle = ({ center, radius }) => (
+interface AccuracyCircleProps {
+  center: LatLngArray;
+  radius: number;
+}
+
+export const AccuracyCircle = ({ center, radius }: AccuracyCircleProps) => (
   <Circle
     center={center}
     radius={radius}
