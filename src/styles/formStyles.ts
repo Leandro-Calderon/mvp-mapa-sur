@@ -1,3 +1,6 @@
+import type { CSSProperties } from 'react';
+
+// Type definitions for form styles
 export const styles = {
   searchForm: {
     padding: "5px",
@@ -29,4 +32,4 @@ export const styles = {
     userSelect: "none",
     color: "#073b91",
   },
-};
+} as const satisfies Record<string, CSSProperties>;

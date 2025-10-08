@@ -12,12 +12,15 @@ const parseHash = (hashValue: string): MapState | null => {
     }
 
     try {
-        const [zoom, latitude, longitude] = hashValue.replace("#map=", "").split("/").map(Number);
+        const parts = hashValue.replace("#map=", "").split("/");
+        const zoom = Number(parts[0]);
+        const latitude = Number(parts[1]);
+        const longitude = Number(parts[2]);
 
         if (Number.isFinite(zoom) && Number.isFinite(latitude) && Number.isFinite(longitude)) {
             return {
-                zoom,
-                center: [latitude, longitude],
+                zoom: zoom as number,
+                center: [latitude as number, longitude as number],
             };
         }
     } catch (error) {
