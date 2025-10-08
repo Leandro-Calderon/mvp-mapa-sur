@@ -4,8 +4,10 @@ import type { StreetFeature } from "../types/geojson";
 const STREETS_PATH = "assets/calles.geojson";
 
 const buildResourceUrl = (assetPath: string): string => {
-  const trimmedPath = assetPath.startsWith("/") ? assetPath.slice(1) : assetPath;
-  return `${import.meta.env.BASE_URL}${trimmedPath}`;
+  // In development, assets are served from root
+  // In production, assets are served from base path
+  const baseUrl = import.meta.env.DEV ? '' : import.meta.env.BASE_URL;
+  return `${baseUrl}${assetPath}`;
 };
 
 interface StreetsDataResult {

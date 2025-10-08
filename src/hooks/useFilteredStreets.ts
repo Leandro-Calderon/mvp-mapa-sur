@@ -1,15 +1,5 @@
 import { useMemo, useCallback } from "react";
-
-type StreetFeature = {
-  properties: {
-    nombre: string,
-    tipo: string,
-  },
-  geometry: {
-    type: string,
-    coordinates: number[][],
-  },
-};
+import type { StreetFeature } from "../types/geojson";
 
 type StreetFilters = {
   streetName: string,

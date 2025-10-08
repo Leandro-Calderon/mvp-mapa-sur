@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
-import type { MapContextValue, MapState, MapInstance } from "../types/map";
+import type { MapContextValue, MapState, MapInstance, LatLng, LatLngArray } from "../types/map";
 
 const MapContext = createContext<MapContextValue | null>(null);
 
@@ -18,7 +18,9 @@ export const MapProvider = ({ children, initialState }: MapProviderProps): JSX.E
 
   const value = useMemo((): MapContextValue => ({
     mapState,
-    setMapState,
+    setMapState: (state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
+      setMapState(prevState => ({ ...prevState, ...state }));
+    },
     mapRef,
     setMapReference,
   }), [mapState, setMapReference]);
