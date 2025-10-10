@@ -18,9 +18,9 @@ export const MapProvider = ({ children, initialState }: MapProviderProps): JSX.E
 
   const value = useMemo((): MapContextValue => ({
     mapState,
-    setMapState: (state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
+    setMapState: useCallback((state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
       setMapState(prevState => ({ ...prevState, ...state }));
-    },
+    }, []),
     mapRef,
     setMapReference,
   }), [mapState, setMapReference]);

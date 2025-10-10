@@ -3,6 +3,7 @@ import { useBuildingsData } from './useBuildingsData';
 import { useStreetsData } from './useStreetsData';
 import { useFilteredData } from './useFilteredData';
 import { useFilteredStreets } from './useFilteredStreets';
+import { useGeolocation } from './useGeolocation';
 import { sanitizeSearchQuery } from '../utils/sanitization';
 import type { SearchType } from '../components/SearchPanel';
 
@@ -16,6 +17,15 @@ export const useSearchLogic = () => {
   const [showStreets, setShowStreets] = useState(false);
   const [appliedRevision, setAppliedRevision] = useState(0);
   const [locationActive, setLocationActive] = useState(false);
+
+  const {
+    position: userPosition,
+    accuracy: locationAccuracy,
+    error: locationError,
+    isActive: isLocationTracking,
+    startTracking,
+    stopTracking
+  } = useGeolocation();
 
   const { data: buildingFeatures, loading: buildingsLoading, error: buildingsError } = useBuildingsData();
   const { data: streetFeatures, loading: streetsLoading, error: streetsError } = useStreetsData();
@@ -99,8 +109,17 @@ export const useSearchLogic = () => {
   }, [buildingResults, streetResults]);
 
   const handleLocationToggle = useCallback((active: boolean) => {
+    console.log('useSearchLogic: handleLocationToggle called with active:', active);
     setLocationActive(active);
-  }, []);
+    
+    if (active) {
+      console.log('Starting location tracking');
+      startTracking();
+    } else {
+      console.log('Stopping location tracking');
+      stopTracking();
+    }
+  }, [startTracking, stopTracking]);
 
   const handlePanelToggle = useCallback((collapsed: boolean) => {
     setPanelCollapsed(collapsed);
@@ -134,7 +153,11 @@ export const useSearchLogic = () => {
     showBuildings,
     showStreets,
     locationActive,
-    
+    userPosition,
+    locationAccuracy,
+    locationError,
+    isLocationTracking,
+
     // Data
     buildingFeatures,
     streetFeatures,
@@ -145,13 +168,13 @@ export const useSearchLogic = () => {
     totalResults,
     shouldShowBuildings,
     shouldShowStreets,
-    
+
     // Loading states
     buildingsLoading,
     streetsLoading,
     buildingsError,
     streetsError,
-    
+
     // Handlers
     handleQueryChange,
     handleTypeChange,
@@ -159,6 +182,6 @@ export const useSearchLogic = () => {
     handleClear,
     handleLayerToggle,
     handleLocationToggle,
-    handlePanelToggle
+    handlePanelToggle,
   };
 };

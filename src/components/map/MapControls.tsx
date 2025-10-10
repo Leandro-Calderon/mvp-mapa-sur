@@ -21,6 +21,8 @@ interface MapControlsProps {
   onToggleCollapse: (collapsed: boolean) => void;
   locationActive: boolean;
   onLocationToggle: (active: boolean) => void;
+  isLocationTracking: boolean;
+  locationError: string | null;
 }
 
 export const MapControls = ({
@@ -41,7 +43,9 @@ export const MapControls = ({
   panelCollapsed,
   onToggleCollapse,
   locationActive,
-  onLocationToggle
+  onLocationToggle,
+  isLocationTracking,
+  locationError
 }: MapControlsProps) => {
   return (
     <>
@@ -66,6 +70,8 @@ export const MapControls = ({
       <LocationButton
         onToggle={onLocationToggle}
         isActive={locationActive}
+        isTracking={isLocationTracking}
+        hasError={!!locationError}
       />
     </>
   );

@@ -15,6 +15,10 @@ export const MapView = () => {
         showBuildings,
         showStreets,
         locationActive,
+        userPosition,
+        locationAccuracy,
+        locationError,
+        isLocationTracking,
 
         // Data
         filteredBuildings,
@@ -38,7 +42,7 @@ export const MapView = () => {
         handleClear,
         handleLayerToggle,
         handleLocationToggle,
-        handlePanelToggle
+        handlePanelToggle,
     } = useSearchLogic();
 
     const dataError = buildingsError || streetsError;
@@ -51,6 +55,10 @@ export const MapView = () => {
                 filteredStreets={filteredStreets}
                 shouldShowBuildings={shouldShowBuildings}
                 shouldShowStreets={shouldShowStreets}
+                userPosition={userPosition}
+                locationAccuracy={locationAccuracy}
+                locationError={locationError}
+                isLocationTracking={isLocationTracking}
             />
 
             <MapNotifications
@@ -77,6 +85,8 @@ export const MapView = () => {
                 onToggleCollapse={handlePanelToggle}
                 locationActive={locationActive}
                 onLocationToggle={handleLocationToggle}
+                isLocationTracking={isLocationTracking}
+                locationError={locationError}
             />
         </div>
     );
