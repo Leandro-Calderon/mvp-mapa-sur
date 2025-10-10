@@ -1,7 +1,9 @@
 import { StreetsList } from "../StreetsList";
 
+import type { StreetFeature } from "../../types/geojson";
+
 interface StreetLayerProps {
-    features: any[];
+    features: StreetFeature[];
     isVisible: boolean;
 }
 

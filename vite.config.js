@@ -94,7 +94,9 @@ export default defineConfig({
                 statuses: [0, 200],
               },
               fetchOptions: {
-                credentials: "include", // Asegúrate de incluir credenciales si es necesario
+                credentials: "omit", // Don't send credentials to tile servers
+                mode: "cors",
+                cache: "default"
               },
             },
           },

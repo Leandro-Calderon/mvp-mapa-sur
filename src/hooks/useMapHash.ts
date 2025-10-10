@@ -13,18 +13,26 @@ const parseHash = (hashValue: string): MapState | null => {
 
     try {
         const parts = hashValue.replace("#map=", "").split("/");
+        if (parts.length !== 3) return null;
+        
         const zoom = Number(parts[0]);
         const latitude = Number(parts[1]);
         const longitude = Number(parts[2]);
 
-        if (Number.isFinite(zoom) && Number.isFinite(latitude) && Number.isFinite(longitude)) {
-            return {
-                zoom: zoom as number,
-                center: [latitude as number, longitude as number],
-            };
-        }
+        // Validate ranges to prevent injection attacks
+        if (!Number.isFinite(zoom) || zoom < 1 || zoom > 20) return null;
+        if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) return null;
+        if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) return null;
+
+        return {
+            zoom: zoom as number,
+            center: [latitude as number, longitude as number],
+        };
     } catch (error) {
-        console.error("Failed to parse hash:", error);
+        // Log error in development only
+        if (import.meta.env.DEV) {
+            console.error("Failed to parse hash:", error);
+        }
     }
 
     return null;

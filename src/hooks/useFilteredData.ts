@@ -1,17 +1,6 @@
 import { useMemo, useCallback } from "react";
 
-// Type definitions for better type safety and documentation
-type Feature = {
-  properties: {
-    tipo: string,
-    nombre: number,
-    plan: string,
-    id: number,
-  },
-  geometry: {
-    coordinates: [number, number],
-  },
-};
+import type { BuildingFeature } from "../types/geojson";
 
 type Filters = {
   edificio: string,
@@ -21,22 +10,22 @@ type Filters = {
 
 // Separate filter predicates for better maintainability and testing
 const createFilterPredicates = (filters: Filters) => ({
-  edificioFilter: (item: Feature) =>
+  edificioFilter: (item: BuildingFeature) =>
     !filters.edificio ||
     item.properties.nombre.toString().includes(filters.edificio.trim()),
 
-  viviendaFilter: (item: Feature) =>
+  viviendaFilter: (item: BuildingFeature) =>
     !filters.vivienda ||
     item.properties.nombre.toString().includes(filters.vivienda.trim()),
 
-  planFilter: (item: Feature) =>
+  planFilter: (item: BuildingFeature) =>
     !filters.plan || item.properties.plan.includes(filters.plan.trim()),
 });
 
-export const useFilteredData = (data: Feature[], filters: Filters) => {
+export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
   // Memoize the filter function to prevent unnecessary recreations
   const filterItem = useCallback(
-    (item: Feature) => {
+    (item: BuildingFeature) => {
       // Early return if no filters are active
       if (!filters.edificio && !filters.vivienda && !filters.plan) {
         return true;
@@ -58,13 +47,11 @@ export const useFilteredData = (data: Feature[], filters: Filters) => {
     try {
       // Input validation
       if (!Array.isArray(data)) {
-        console.error("Invalid data format: expected array");
         return [];
       }
 
       return data.filter(filterItem);
     } catch (error) {
-      console.error("Error filtering data:", error);
       return [];
     }
   }, [data, filterItem]);

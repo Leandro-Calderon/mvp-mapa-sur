@@ -1,19 +1,9 @@
 import { FeatureGroup, Marker, Popup } from "react-leaflet";
 import { customIcon } from "../constants/mapIcons";
-
-interface Feature {
-  geometry: {
-    coordinates: [number, number];
-  };
-  properties: {
-    tipo: string;
-    nombre: string;
-    plan: string;
-  };
-}
+import type { BuildingFeature } from "../types/geojson";
 
 interface MarkersListProps {
-  features: Feature[];
+  features: BuildingFeature[];
 }
 
 export const MarkersList = ({ features }: MarkersListProps) => {

@@ -10,8 +10,6 @@ interface streetsListProps {
  * @param features - Array of GeoJSON features with LineString geometry
  */
 export const StreetsList = ({ features }: streetsListProps) => {
-  console.log('=== STREETSLIST RENDER ===');
-  console.log('Features to render:', features.length);
 
   return (
     <FeatureGroup>
@@ -53,7 +51,6 @@ export const StreetsList = ({ features }: streetsListProps) => {
         }
 
         if (!lineStrings) {
-          console.warn("Invalid nested coordinates structure for feature:", feature);
           return null;
         }
 

@@ -1,0 +1,39 @@
+/* MapView component styles */
+.mapContainer {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
+}
+
+.mapContainerInner {
+  height: 100%;
+  width: 100%;
+}
+
+.loadingIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  font-size: 13px;
+  color: #1f2933;
+  z-index: 1200;
+}
+
+.errorIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: rgba(254, 226, 226, 0.95);
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  font-size: 13px;
+  color: #991b1b;
+  z-index: 1300;
+  max-width: 220px;
+}

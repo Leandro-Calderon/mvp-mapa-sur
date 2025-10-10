@@ -1,10 +1,10 @@
 // GeoJSON feature types for map data
-export interface GeoJsonFeature {
+export interface GeoJsonFeature<T = Record<string, unknown>> {
   type: 'Feature';
-  properties: Record<string, any>;
+  properties: T;
   geometry: {
     type: string;
-    coordinates: any;
+    coordinates: unknown;
   };
 }
 

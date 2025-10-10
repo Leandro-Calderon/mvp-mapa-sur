@@ -1,7 +1,9 @@
 import { MarkersList } from "../MarkersList";
 
+import type { BuildingFeature } from "../../types/geojson";
+
 interface BuildingLayerProps {
-    features: any[];
+    features: BuildingFeature[];
     isVisible: boolean;
 }
 

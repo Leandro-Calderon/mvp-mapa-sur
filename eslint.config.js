@@ -1,6 +1,8 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -8,6 +10,9 @@ export default [
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     languageOptions: { globals: globals.browser },
+    plugins: {
+      react: pluginReact,
+    },
     ...pluginJs.configs.recommended,
     ...pluginReact.configs.flat.recommended,
   },
@@ -16,7 +21,7 @@ export default [
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       globals: globals.browser,
-      parser: "@typescript-eslint/parser",
+      parser: tsParser,
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
@@ -26,7 +31,8 @@ export default [
       },
     },
     plugins: {
-      "@typescript-eslint": "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint": tseslint,
+      react: pluginReact,
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
@@ -36,7 +42,6 @@ export default [
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/prefer-const": "error",
       "@typescript-eslint/no-var-requires": "off",
     },
   },

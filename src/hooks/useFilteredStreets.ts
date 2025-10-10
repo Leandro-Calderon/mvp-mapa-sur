@@ -33,13 +33,11 @@ export const useFilteredStreets = (
   return useMemo(() => {
     try {
       if (!Array.isArray(data)) {
-        console.error("Invalid street data format: expected array");
         return [];
       }
 
       return data.filter(filterStreet);
     } catch (error) {
-      console.error("Error filtering streets:", error);
       return [];
     }
   }, [data, filterStreet]);
