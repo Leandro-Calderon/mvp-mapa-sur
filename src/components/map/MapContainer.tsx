@@ -1,8 +1,7 @@
 import { MapContainer as LeafletMapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
-import { BuildingLayer } from "../layers/BuildingLayer";
-import { StreetLayer } from "../layers/StreetLayer";
+import { UnifiedLayer } from "../layers/UnifiedLayer";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LatLngArray } from "../../types/map";
 import L from "leaflet";
@@ -18,8 +17,7 @@ const TILE_LAYER_CONFIG = {
 interface MapContainerProps {
   filteredBuildings: BuildingFeature[];
   filteredStreets: StreetFeature[];
-  shouldShowBuildings: boolean;
-  shouldShowStreets: boolean;
+  showAllLayers: boolean;
   userPosition: LatLngArray | null;
   locationAccuracy: number | null;
   locationError: string | null;
@@ -138,8 +136,7 @@ const LocationFlyTo = ({
 export const MapContainer = ({
   filteredBuildings,
   filteredStreets,
-  shouldShowBuildings,
-  shouldShowStreets,
+  showAllLayers,
   userPosition,
   locationAccuracy,
   locationError,
@@ -169,13 +166,10 @@ export const MapContainer = ({
         maxNativeZoom={TILE_LAYER_CONFIG.maxNativeZoom}
       />
       <MapHashSync />
-      <BuildingLayer
-        features={filteredBuildings}
-        isVisible={shouldShowBuildings}
-      />
-      <StreetLayer
-        features={filteredStreets}
-        isVisible={shouldShowStreets}
+      <UnifiedLayer
+        buildingFeatures={filteredBuildings}
+        streetFeatures={filteredStreets}
+        showAllLayers={showAllLayers}
       />
 
       {/* Component to handle flyTo functionality */}

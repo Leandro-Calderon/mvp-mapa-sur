@@ -11,9 +11,8 @@ interface SearchPanelProps {
   onTypeChange: (type: SearchType) => void;
   onSubmit: () => void;
   onClear: () => void;
-  onLayerToggle: (layer: "calles" | "todo") => void;
-  showBuildings: boolean;
-  showStreets: boolean;
+  onShowAllToggle: () => void;
+  showAllLayers: boolean;
   buildingResults: number;
   streetResults: number;
   searchResults: number;
@@ -30,9 +29,8 @@ export const SearchPanel = ({
   onTypeChange,
   onSubmit,
   onClear,
-  onLayerToggle,
-  showBuildings,
-  showStreets,
+  onShowAllToggle,
+  showAllLayers,
   buildingResults,
   streetResults,
   searchResults,
@@ -64,9 +62,6 @@ export const SearchPanel = ({
 
   const isIdle = !trimmedQuery && !trimmedAppliedQuery;
 
-  const disableBuildingsButton = !trimmedAppliedQuery || buildingResults === 0;
-  const disableStreetsButton = !trimmedAppliedQuery || streetResults === 0;
-
   const handleTypeSelect = (type: SearchType) => {
     if (type !== searchType) {
       onTypeChange(type);
@@ -90,22 +85,6 @@ export const SearchPanel = ({
 
   const togglePanel = () => {
     onToggleCollapse(!collapsed);
-  };
-
-  const handleLayerClick = (layer: "calles" | "todo") => {
-    if (layer === "calles") {
-      if (disableStreetsButton) {
-        return;
-      }
-      onLayerToggle("calles");
-      return;
-    }
-
-    if (disableBuildingsButton) {
-      return;
-    }
-
-    onLayerToggle("todo");
   };
 
   const panelClassName = [
@@ -143,74 +122,67 @@ export const SearchPanel = ({
           </div>
         )}
 
-        {trimmedAppliedQuery && searchResults > 0 && !showBuildings && !showStreets && (
+        {trimmedAppliedQuery && searchResults > 0 && !showAllLayers && (
           <div className="search-feedback hint">
-            Selecciona una capa para visualizar los resultados sobre el mapa.
+            Presiona "Ver Todo" para visualizar los resultados sobre el mapa.
           </div>
         )}
 
-        {/* Search type selector */}
-        <div className="search-type-selector">
+        {/* Search type selector - Row 2: Edificio | Departamento */}
+        <div className="search-type-row">
           <button
-            className={`type-btn ${searchType === "edificio" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${searchType === "edificio" ? "active" : ""}`}
             onClick={() => handleTypeSelect("edificio")}
           >
             🏢 Edificio
           </button>
           <button
-            className={`type-btn ${searchType === "departamento" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${searchType === "departamento" ? "active" : ""}`}
             onClick={() => handleTypeSelect("departamento")}
           >
             🚪 Departamento
           </button>
+        </div>
+
+        {/* Search type selector - Row 3: Calle | Plan */}
+        <div className="search-type-row">
           <button
-            className={`type-btn ${searchType === "calle" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${searchType === "calle" ? "active" : ""}`}
             onClick={() => handleTypeSelect("calle")}
           >
             🛣️ Calle
           </button>
           <button
-            className={`type-btn ${searchType === "plan" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${searchType === "plan" ? "active" : ""}`}
             onClick={() => handleTypeSelect("plan")}
           >
             📋 Plan
           </button>
         </div>
 
-        {/* Search input */}
-        <div className="search-input-group">
-          <input
-            type="text"
-            className="search-input"
-            placeholder={placeholders[searchType]}
-            value={searchQuery}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-          />
-          {(searchQuery || trimmedAppliedQuery) && (
-            <button className="clear-btn" onClick={clearSearch}>
-              ×
-            </button>
-          )}
-        </div>
-
-        {/* Layer toggle */}
-        <div className="layer-toggle">
+        {/* Row 4: Input | Ver Todo */}
+        <div className="search-input-row">
+          <div className="search-input-group">
+            <input
+              type="text"
+              className="search-input"
+              placeholder={placeholders[searchType]}
+              value={searchQuery}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+            />
+            {(searchQuery || trimmedAppliedQuery) && (
+              <button className="clear-btn" onClick={clearSearch}>
+                ×
+              </button>
+            )}
+          </div>
           <button
-            className={`layer-btn ${showStreets ? "active" : ""} ${disableStreetsButton ? "disabled" : ""}`}
-            disabled={disableStreetsButton}
-            onClick={() => handleLayerClick("calles")}
+            className={`layer-btn layer-btn-row ${showAllLayers ? "active" : ""}`}
+            onClick={onShowAllToggle}
           >
-            <span className="layer-icon">🛣️</span>
-            <span>Ver Calles</span>
-          </button>
-          <button
-            className={`layer-btn ${showBuildings ? "active" : ""} ${disableBuildingsButton ? "disabled" : ""}`}
-            disabled={disableBuildingsButton}
-            onClick={() => handleLayerClick("todo")}
-          >
-            <span className="layer-icon">📍</span>
-            <span>Ver Construcciones</span>
+            <span className="layer-icon">👁️</span>
+            <span>Ver Todo</span>
           </button>
         </div>
       </div>

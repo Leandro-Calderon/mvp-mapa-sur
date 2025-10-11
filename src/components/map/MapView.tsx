@@ -14,6 +14,7 @@ export const MapView = () => {
         panelCollapsed,
         showBuildings,
         showStreets,
+        showAllLayers,
         locationActive,
         userPosition,
         locationAccuracy,
@@ -40,7 +41,7 @@ export const MapView = () => {
         handleTypeChange,
         handleSubmit,
         handleClear,
-        handleLayerToggle,
+        handleShowAllToggle,
         handleLocationToggle,
         handlePanelToggle,
     } = useSearchLogic();
@@ -53,8 +54,7 @@ export const MapView = () => {
             <MapContainer
                 filteredBuildings={filteredBuildings}
                 filteredStreets={filteredStreets}
-                shouldShowBuildings={shouldShowBuildings}
-                shouldShowStreets={shouldShowStreets}
+                showAllLayers={showAllLayers}
                 userPosition={userPosition}
                 locationAccuracy={locationAccuracy}
                 locationError={locationError}
@@ -75,9 +75,8 @@ export const MapView = () => {
                 onTypeChange={handleTypeChange}
                 onSubmit={handleSubmit}
                 onClear={handleClear}
-                onLayerToggle={handleLayerToggle}
-                showBuildings={showBuildings}
-                showStreets={showStreets}
+                onShowAllToggle={handleShowAllToggle}
+                showAllLayers={showAllLayers}
                 buildingResults={buildingResults}
                 streetResults={streetResults}
                 searchResults={totalResults}

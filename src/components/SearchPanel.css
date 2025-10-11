@@ -81,19 +81,11 @@
   padding: 0 16px;
 }
 
-/* Search type selector */
-.search-type-selector {
+/* Search type selector rows */
+.search-type-row {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.search-type-selector::-webkit-scrollbar {
-  display: none;
+  margin-bottom: 8px;
 }
 
 .type-btn {
@@ -112,6 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
 }
 
 .type-btn.active {
@@ -124,10 +117,26 @@
   transform: scale(0.96);
 }
 
-/* Search input */
+/* Search input row */
+.search-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
 .search-input-group {
+  flex: 1;
   position: relative;
-  margin-bottom: 16px;
+}
+
+.layer-btn-row {
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+/* Legacy search input group for non-mobile */
+.search-type-selector {
+  display: none;
 }
 
 .search-input {
@@ -171,9 +180,9 @@
   background: #d1d5db;
 }
 
-/* Layer toggle */
+/* Layer toggle - Legacy for desktop */
 .layer-toggle {
-  display: flex;
+  display: none;
   gap: 8px;
   background: #f3f4f6;
   padding: 4px;
@@ -295,8 +304,45 @@
   border: 1px solid rgba(96, 165, 250, 0.4);
 }
 
+/* Desktop layout - show original layout on larger screens */
+@media (min-width: 769px) {
+  .search-type-row {
+    display: none;
+  }
+  
+  .search-input-row {
+    display: block;
+  }
+  
+  .search-input-group {
+    margin-bottom: 16px;
+  }
+  
+  .layer-btn-row {
+    display: none;
+  }
+  
+  .search-type-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .layer-toggle {
+    display: flex;
+  }
+  
+  .type-btn {
+    flex: initial;
+  }
+}
+
 /* Mobile optimizations */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .search-panel {
     width: calc(100vw - 16px);
     border-radius: 14px;
@@ -310,10 +356,9 @@
     padding: 0 12px 12px;
   }
 
-  .type-btn {
+  .type-btn-row {
     padding: 8px 14px;
     font-size: 13px;
-    flex: 1 1 calc(50% - 8px);
   }
 
   .search-input {
@@ -327,8 +372,14 @@
     border-radius: 12px;
   }
 
-  .type-btn {
-    flex: 1 1 100%;
+  .type-btn-row {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .layer-btn-row {
+    min-width: 80px;
+    font-size: 12px;
   }
 
   .search-input {

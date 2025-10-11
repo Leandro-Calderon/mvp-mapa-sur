@@ -15,6 +15,7 @@ export const useSearchLogic = () => {
   const [panelCollapsed, setPanelCollapsed] = useState(true);
   const [showBuildings, setShowBuildings] = useState(false);
   const [showStreets, setShowStreets] = useState(false);
+  const [showAllLayers, setShowAllLayers] = useState(false);
   const [appliedRevision, setAppliedRevision] = useState(0);
   const [locationActive, setLocationActive] = useState(false);
 
@@ -46,13 +47,19 @@ export const useSearchLogic = () => {
   const filteredBuildingsRaw = useFilteredData(buildingFeatures, buildingFilters);
   const filteredStreetsRaw = useFilteredStreets(streetFeatures, streetFilters);
 
-  const filteredBuildings = normalizedAppliedQuery && appliedType !== "calle"
-    ? filteredBuildingsRaw
-    : [];
+  // When showAllLayers is true, show all data regardless of filters
+  // Otherwise, only show filtered data based on applied query
+  const filteredBuildings = showAllLayers
+    ? buildingFeatures
+    : (normalizedAppliedQuery && appliedType !== "calle"
+      ? filteredBuildingsRaw
+      : []);
 
-  const filteredStreets = normalizedAppliedQuery && appliedType === "calle"
-    ? filteredStreetsRaw
-    : [];
+  const filteredStreets = showAllLayers
+    ? streetFeatures
+    : (normalizedAppliedQuery && appliedType === "calle"
+      ? filteredStreetsRaw
+      : []);
 
   const buildingResults = filteredBuildings.length;
   const streetResults = filteredStreets.length;
@@ -108,10 +115,14 @@ export const useSearchLogic = () => {
     setShowBuildings((prev) => !prev);
   }, [buildingResults, streetResults]);
 
+  const handleShowAllToggle = useCallback(() => {
+    setShowAllLayers((prev) => !prev);
+  }, []);
+
   const handleLocationToggle = useCallback((active: boolean) => {
     console.log('useSearchLogic: handleLocationToggle called with active:', active);
     setLocationActive(active);
-    
+
     if (active) {
       console.log('Starting location tracking');
       startTracking();
@@ -152,6 +163,7 @@ export const useSearchLogic = () => {
     panelCollapsed,
     showBuildings,
     showStreets,
+    showAllLayers,
     locationActive,
     userPosition,
     locationAccuracy,
@@ -181,6 +193,7 @@ export const useSearchLogic = () => {
     handleSubmit,
     handleClear,
     handleLayerToggle,
+    handleShowAllToggle,
     handleLocationToggle,
     handlePanelToggle,
   };

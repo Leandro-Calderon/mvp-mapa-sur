@@ -11,9 +11,8 @@ interface MapControlsProps {
   onTypeChange: (type: SearchType) => void;
   onSubmit: () => void;
   onClear: () => void;
-  onLayerToggle: (layer: "calles" | "todo") => void;
-  showBuildings: boolean;
-  showStreets: boolean;
+  onShowAllToggle: () => void;
+  showAllLayers: boolean;
   buildingResults: number;
   streetResults: number;
   searchResults: number;
@@ -34,9 +33,8 @@ export const MapControls = ({
   onTypeChange,
   onSubmit,
   onClear,
-  onLayerToggle,
-  showBuildings,
-  showStreets,
+  onShowAllToggle,
+  showAllLayers,
   buildingResults,
   streetResults,
   searchResults,
@@ -58,9 +56,8 @@ export const MapControls = ({
         onTypeChange={onTypeChange}
         onSubmit={onSubmit}
         onClear={onClear}
-        onLayerToggle={onLayerToggle}
-        showBuildings={showBuildings}
-        showStreets={showStreets}
+        onShowAllToggle={onShowAllToggle}
+        showAllLayers={showAllLayers}
         buildingResults={buildingResults}
         streetResults={streetResults}
         searchResults={searchResults}
