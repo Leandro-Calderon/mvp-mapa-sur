@@ -20,7 +20,7 @@ export const LocationButton = ({
 
   const handleClick = () => {
     console.log('Location button clicked, current state:', active);
-    
+
     // If there's an error and we're trying to activate, try to prompt for GPS
     if (hasError && !active && errorMessage) {
       console.log('GPS error detected, attempting to prompt user');
@@ -35,12 +35,20 @@ export const LocationButton = ({
           },
           (error) => {
             console.error('Still getting error after prompt:', error);
+            // Log notification method being used
+            console.log('NOTIFICATION DEBUG: Using browser alert() instead of native OS notification');
+            console.log('NOTIFICATION DEBUG: Notification API available:', 'Notification' in window);
+            console.log('NOTIFICATION DEBUG: Notification permission:', 'Notification' in window ? Notification.permission : 'N/A');
+
             // Show user-friendly message based on error
             if (error.code === error.PERMISSION_DENIED) {
+              console.log('NOTIFICATION DEBUG: Showing GPS permission denied alert');
               alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
             } else if (error.code === error.POSITION_UNAVAILABLE) {
+              console.log('NOTIFICATION DEBUG: Showing GPS unavailable alert');
               alert('El GPS está desactivado. Por favor, activa el GPS en tu dispositivo.');
             } else {
+              console.log('NOTIFICATION DEBUG: Showing generic GPS error alert');
               alert('No se pudo acceder a tu ubicación. Por favor, verifica la configuración de GPS.');
             }
           },
@@ -49,7 +57,7 @@ export const LocationButton = ({
       }
       return;
     }
-    
+
     const newActive = !active;
     console.log('Location button new state:', newActive);
     setActive(newActive);
