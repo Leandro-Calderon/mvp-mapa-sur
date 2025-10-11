@@ -72,6 +72,7 @@ export const MapControls = ({
         isActive={locationActive}
         isTracking={isLocationTracking}
         hasError={!!locationError}
+        errorMessage={locationError}
       />
     </>
   );
