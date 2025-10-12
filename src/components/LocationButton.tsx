@@ -26,48 +26,15 @@ export const LocationButton = ({
   const handleClick = () => {
     console.log('Location button clicked, current state:', active);
 
-    // When trying to activate location, always trigger the OS permission prompt
+    // When trying to activate location, check GPS status first
     if (!active) {
-      console.log('Attempting to activate location - triggering OS permission prompt');
+      console.log('Attempting to activate location - checking GPS status first');
 
       if (navigator.geolocation) {
-        console.log('Geolocation API available, requesting position now to keep it inside the user gesture...');
+        console.log('Geolocation API available, checking GPS status...');
 
-        // IMPORTANT: calling getCurrentPosition/watchPosition must happen synchronously
-        // inside the user gesture (click) in many browsers to show the OS permission prompt.
-        // So request position immediately and perform the Permissions API check asynchronously
-        // for UX/logging only.
-        requestPosition();
-
-        // First check permission status if available (do NOT await before requesting position)
-        if ('permissions' in navigator) {
-          navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
-            console.log('Current permission status:', permissionStatus.state);
-
-            if (permissionStatus.state === 'denied') {
-              console.log('Permission previously denied, showing user instructions');
-              // For mobile devices, try to open location settings
-              if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                const isAndroid = /Android/i.test(navigator.userAgent);
-                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-                if (isAndroid) {
-                  console.log('Android device detected, attempting to open location settings');
-                  // For Android, try to open location settings
-                  window.open('intent://settings#Intent;scheme=android.settings;action=android.settings.LOCATION_SOURCE_SETTINGS;end', '_blank');
-                } else if (isIOS) {
-                  console.log('iOS device detected, showing instructions for settings');
-                  // For iOS, we can't programmatically open settings, so show instructions
-                  alert('Para activar el GPS, ve a Configuración > Privacidad > Ubicación y activa la ubicación para esta aplicación.');
-                }
-              } else {
-                alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
-              }
-            }
-          }).catch(error => {
-            console.error('Error checking permission status:', error);
-          });
-        }
+        // Check if GPS is enabled before requesting position
+        checkGpsStatusAndRequest();
       } else {
         console.error('Geolocation not supported');
         alert('La geolocalización no es compatible con tu navegador.');
@@ -80,6 +47,89 @@ export const LocationButton = ({
     console.log('Location button new state:', newActive);
     setActive(newActive);
     onToggle(newActive);
+  };
+
+  const checkGpsStatusAndRequest = () => {
+    console.log('Checking GPS status before requesting position...');
+
+    // First check permission status if available
+    if ('permissions' in navigator) {
+      navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
+        console.log('Current permission status:', permissionStatus.state);
+
+        if (permissionStatus.state === 'denied') {
+          console.log('Permission previously denied, showing user instructions');
+          showGpsDisabledMessage();
+          return;
+        }
+
+        // Permission is granted or prompt, now check if GPS is actually enabled
+        // We'll use a quick getCurrentPosition call with very short timeout to check GPS status
+        navigator.geolocation.getCurrentPosition(
+          // Success callback - GPS is working
+          () => {
+            console.log('GPS is enabled, proceeding with full position request');
+            requestPosition();
+          },
+          // Error callback - check if it's because GPS is disabled
+          (error) => {
+            console.error('GPS status check error:', error);
+
+            if (error.code === error.POSITION_UNAVAILABLE) {
+              console.log('GPS is turned off, showing user invitation to enable it');
+              showGpsDisabledMessage();
+            } else {
+              // For other errors (permission denied, timeout), proceed with normal flow
+              console.log('GPS check failed with other error, proceeding with normal request');
+              requestPosition();
+            }
+          },
+          {
+            timeout: 2000, // Very short timeout just to check if GPS responds
+            enableHighAccuracy: false, // Don't need high accuracy for this check
+            maximumAge: 0
+          }
+        );
+      }).catch(error => {
+        console.error('Error checking permission status:', error);
+        // If we can't check permissions, just try to get position
+        requestPosition();
+      });
+    } else {
+      // Permissions API not available, try to get position directly
+      requestPosition();
+    }
+  };
+
+  const showGpsDisabledMessage = () => {
+    console.log('Showing GPS disabled popup message');
+
+    // For mobile devices, provide specific instructions
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (isAndroid) {
+        const shouldOpenSettings = window.confirm(
+          'El GPS está desactivado. ¿Deseas activar el GPS para obtener tu ubicación actual?'
+        );
+
+        if (shouldOpenSettings) {
+          console.log('Android device detected, attempting to open location settings');
+          window.open('intent://settings#Intent;scheme=android.settings;action=android.settings.LOCATION_SOURCE_SETTINGS;end', '_blank');
+        }
+      } else if (isIOS) {
+        alert('Para activar el GPS, ve a Configuración > Privacidad > Ubicación y activa la ubicación para esta aplicación.');
+      }
+    } else {
+      const shouldEnableGps = window.confirm(
+        'El GPS está desactivado. ¿Deseas habilitar el GPS en tu navegador para obtener tu ubicación?'
+      );
+
+      if (shouldEnableGps) {
+        alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
+      }
+    }
   };
 
   const requestPosition = () => {
@@ -114,8 +164,8 @@ export const LocationButton = ({
             alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
           }
         } else if (error.code === error.POSITION_UNAVAILABLE) {
-          console.log('GPS position unavailable (possibly turned off)');
-          alert('El GPS está desactivado. Por favor, activa el GPS en tu dispositivo.');
+          console.log('GPS position unavailable (this shouldn\'t happen after our check)');
+          alert('No se pudo obtener tu ubicación. Asegúrate de que el GPS esté activado y tienes buena señal.');
         } else if (error.code === error.TIMEOUT) {
           console.log('GPS request timed out');
           alert('No se pudo obtener tu ubicación. Intenta de nuevo.');
