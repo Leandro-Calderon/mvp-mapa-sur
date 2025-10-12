@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LocationButton.css";
 
 interface LocationButtonProps {
@@ -18,6 +18,11 @@ export const LocationButton = ({
 }: LocationButtonProps) => {
   const [active, setActive] = useState(_isActive);
 
+  // Keep internal active state in sync with prop changes from parent
+  useEffect(() => {
+    setActive(_isActive);
+  }, [_isActive]);
+
   const handleClick = () => {
     console.log('Location button clicked, current state:', active);
 
@@ -26,9 +31,15 @@ export const LocationButton = ({
       console.log('Attempting to activate location - triggering OS permission prompt');
 
       if (navigator.geolocation) {
-        console.log('Geolocation API available, requesting position...');
+        console.log('Geolocation API available, requesting position now to keep it inside the user gesture...');
 
-        // First check permission status if available
+        // IMPORTANT: calling getCurrentPosition/watchPosition must happen synchronously
+        // inside the user gesture (click) in many browsers to show the OS permission prompt.
+        // So request position immediately and perform the Permissions API check asynchronously
+        // for UX/logging only.
+        requestPosition();
+
+        // First check permission status if available (do NOT await before requesting position)
         if ('permissions' in navigator) {
           navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
             console.log('Current permission status:', permissionStatus.state);
@@ -37,7 +48,6 @@ export const LocationButton = ({
               console.log('Permission previously denied, showing user instructions');
               // For mobile devices, try to open location settings
               if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                // Try to open location settings for mobile devices
                 const isAndroid = /Android/i.test(navigator.userAgent);
                 const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -53,17 +63,10 @@ export const LocationButton = ({
               } else {
                 alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
               }
-            } else {
-              // Permission not denied, try to get position
-              requestPosition();
             }
           }).catch(error => {
             console.error('Error checking permission status:', error);
-            requestPosition();
           });
-        } else {
-          // Permissions API not available, directly request position
-          requestPosition();
         }
       } else {
         console.error('Geolocation not supported');
@@ -85,9 +88,9 @@ export const LocationButton = ({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log('Successfully got position after OS prompt:', position);
-        const newActive = !active;
-        setActive(newActive);
-        onToggle(newActive);
+        // Explicitly mark active = true (don't toggle) to avoid races with parent state
+        setActive(true);
+        onToggle(true);
       },
       (error) => {
         console.error('Error after OS permission prompt:', error);
@@ -118,10 +121,9 @@ export const LocationButton = ({
           alert('No se pudo obtener tu ubicación. Intenta de nuevo.');
         }
 
-        // Still toggle the button state to let the parent handle the error
-        const newActive = !active;
-        setActive(newActive);
-        onToggle(newActive);
+        // Do not activate the button on error; ensure it's false so UI reflects failure
+        setActive(false);
+        onToggle(false);
       },
       {
         timeout: 10000,
