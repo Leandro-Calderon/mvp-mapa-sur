@@ -14,7 +14,7 @@ export default defineConfig({
         short_name: "mapa",
         start_url: "/mvp-mapa-sur",
         scope: "/mvp-mapa-sur",
-        id: "/",
+        id: "/mvp-mapa-sur/",
         lang: "es",
         description:
           "mapa para marcar la geolocalizacion de edificios o viviendas para llegar más rapido",
@@ -82,12 +82,12 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/\w+\.tile\.openstreetmap\.org\/.*/i,
-            handler: "NetworkFirst",
+            handler: "CacheFirst",
             options: {
               cacheName: "osm-tiles",
               expiration: {
                 maxEntries: 200,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 30 días
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
                 purgeOnQuotaError: true, // Borrar si se excede el almacenamiento
               },
               cacheableResponse: {
