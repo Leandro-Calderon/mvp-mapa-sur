@@ -21,43 +21,47 @@ export const LocationButton = ({
   const handleClick = () => {
     console.log('Location button clicked, current state:', active);
 
-    // If there's an error and we're trying to activate, try to prompt for GPS
-    if (hasError && !active && errorMessage) {
-      console.log('GPS error detected, attempting to prompt user');
-      // Try to request location permission directly
+    // When trying to activate location, always trigger the OS permission prompt
+    if (!active) {
+      console.log('Attempting to activate location - triggering OS permission prompt');
+
       if (navigator.geolocation) {
+        // Use getCurrentPosition to trigger the OS-level permission prompt
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log('Successfully got position after prompt:', position);
+            console.log('Successfully got position after OS prompt:', position);
             const newActive = !active;
             setActive(newActive);
             onToggle(newActive);
           },
           (error) => {
-            console.error('Still getting error after prompt:', error);
-            // Log notification method being used
-            console.log('NOTIFICATION DEBUG: Using browser alert() instead of native OS notification');
-            console.log('NOTIFICATION DEBUG: Notification API available:', 'Notification' in window);
-            console.log('NOTIFICATION DEBUG: Notification permission:', 'Notification' in window ? Notification.permission : 'N/A');
+            console.error('Error after OS permission prompt:', error);
+            console.log('OS permission prompt was shown but user denied or GPS is disabled');
 
-            // Show user-friendly message based on error
-            if (error.code === error.PERMISSION_DENIED) {
-              console.log('NOTIFICATION DEBUG: Showing GPS permission denied alert');
-              alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
-            } else if (error.code === error.POSITION_UNAVAILABLE) {
-              console.log('NOTIFICATION DEBUG: Showing GPS unavailable alert');
-              alert('El GPS está desactivado. Por favor, activa el GPS en tu dispositivo.');
-            } else {
-              console.log('NOTIFICATION DEBUG: Showing generic GPS error alert');
-              alert('No se pudo acceder a tu ubicación. Por favor, verifica la configuración de GPS.');
-            }
+            // Don't show browser alerts - let the OS handle the notification
+            // The OS has already shown its native permission/GPS dialog
+            console.log('OS notification shown to user - no browser alert needed');
+
+            // Still toggle the button state to let the parent handle the error
+            const newActive = !active;
+            setActive(newActive);
+            onToggle(newActive);
           },
-          { timeout: 10000, enableHighAccuracy: true }
+          {
+            timeout: 10000,
+            enableHighAccuracy: true,
+            // Add maximumAge to ensure fresh location request
+            maximumAge: 0
+          }
         );
+      } else {
+        console.error('Geolocation not supported');
+        alert('La geolocalización no es compatible con tu navegador.');
       }
       return;
     }
 
+    // Normal toggle for deactivating
     const newActive = !active;
     console.log('Location button new state:', newActive);
     setActive(newActive);
