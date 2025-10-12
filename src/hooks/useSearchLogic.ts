@@ -73,18 +73,38 @@ export const useSearchLogic = () => {
   }, []);
 
   const handleTypeChange = useCallback((type: SearchType) => {
+    console.log('useSearchLogic: Type changed from', searchType, 'to', type);
+    console.log('useSearchLogic: Current appliedQuery:', appliedQuery, 'appliedType:', appliedType);
+
+    // If there's an applied query and the type is changing, clear the results
+    if (appliedQuery && type !== searchType) {
+      console.log('useSearchLogic: Clearing applied query due to type change');
+      setAppliedQuery("");
+      setAppliedType(null);
+      setAppliedRevision((prev) => prev + 1);
+    }
+
+    // Also clear the input text when switching types
+    if (type !== searchType) {
+      console.log('useSearchLogic: Clearing search query input due to type change');
+      setSearchQuery("");
+    }
+
     setSearchType(type);
-  }, []);
+  }, [searchType, appliedQuery, appliedType]);
 
   const handleSubmit = useCallback(() => {
     const trimmed = normalizedSearchQuery;
+    console.log('useSearchLogic: handleSubmit called with query:', trimmed, 'type:', searchType);
 
     if (!trimmed) {
+      console.log('useSearchLogic: Empty query, clearing filters');
       setAppliedQuery("");
       setAppliedType(null);
       return;
     }
 
+    console.log('useSearchLogic: Applying filters - query:', trimmed, 'type:', searchType);
     setAppliedQuery(trimmed);
     setAppliedType(searchType);
     setAppliedRevision((prev) => prev + 1);
@@ -116,8 +136,9 @@ export const useSearchLogic = () => {
   }, [buildingResults, streetResults]);
 
   const handleShowAllToggle = useCallback(() => {
+    console.log('useSearchLogic: handleShowAllToggle called, current value:', showAllLayers);
     setShowAllLayers((prev) => !prev);
-  }, []);
+  }, [showAllLayers]);
 
   const handleLocationToggle = useCallback((active: boolean) => {
     console.log('useSearchLogic: handleLocationToggle called with active:', active);
@@ -138,18 +159,28 @@ export const useSearchLogic = () => {
 
   // Auto-show layers based on search results
   useEffect(() => {
+    console.log('useSearchLogic: Auto-show layers effect triggered', {
+      normalizedAppliedQuery,
+      appliedType,
+      buildingResults,
+      streetResults
+    });
+
     if (!normalizedAppliedQuery || !appliedType) {
+      console.log('useSearchLogic: No applied query or type, hiding layers');
       setShowBuildings(false);
       setShowStreets(false);
       return;
     }
 
     if (appliedType === "calle") {
+      console.log('useSearchLogic: Street search, showing streets if results > 0:', streetResults > 0);
       setShowBuildings(false);
       setShowStreets(streetResults > 0);
       return;
     }
 
+    console.log('useSearchLogic: Building search, showing buildings if results > 0:', buildingResults > 0);
     setShowStreets(false);
     setShowBuildings(buildingResults > 0);
   }, [appliedRevision, normalizedAppliedQuery, appliedType, buildingResults, streetResults]);

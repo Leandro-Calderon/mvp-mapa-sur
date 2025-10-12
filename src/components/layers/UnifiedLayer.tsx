@@ -14,9 +14,20 @@ export const UnifiedLayer = ({
   streetFeatures,
   showAllLayers
 }: UnifiedLayerProps) => {
-  // Only show layers when "See all" is enabled
-  const shouldShowBuildings = showAllLayers;
-  const shouldShowStreets = showAllLayers;
+  console.log('UnifiedLayer: Rendering with', {
+    buildingFeaturesCount: buildingFeatures.length,
+    streetFeaturesCount: streetFeatures.length,
+    showAllLayers
+  });
+
+  // Show layers when "See all" is enabled OR when there are filtered results
+  const shouldShowBuildings = showAllLayers || buildingFeatures.length > 0;
+  const shouldShowStreets = showAllLayers || streetFeatures.length > 0;
+
+  console.log('UnifiedLayer: Display decisions', {
+    shouldShowBuildings,
+    shouldShowStreets
+  });
 
   // Type guard functions for street coordinates validation
   const isLngLatPair = (value: unknown): value is [number, number] => {

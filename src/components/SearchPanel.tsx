@@ -39,10 +39,10 @@ export const SearchPanel = ({
   onToggleCollapse,
 }: SearchPanelProps) => {
   const placeholders = {
-    edificio: "Ej: Torre A, 25B, Edificio 10...",
-    departamento: "Ej: 3B, 204, Depto 15...",
+    edificio: "Ej: 86, D, 22 ",
+    departamento: "Ej: 543, 204, 15...",
     calle: "Ej: Publica P, Pasaje 2...",
-    plan: "Ej: 2021, 1234..."
+    plan: "Ej: 077, 123..."
   };
 
   const previewTexts = {
@@ -65,6 +65,8 @@ export const SearchPanel = ({
 
   const handleTypeSelect = (type: SearchType) => {
     if (type !== _type) {
+      console.log('SearchPanel: Type changed from', _type, 'to', type);
+      console.log('SearchPanel: Current appliedQuery:', appliedQuery, 'appliedType:', appliedType);
       onTypeChange(type);
     }
   };
@@ -76,6 +78,7 @@ export const SearchPanel = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      console.log('SearchPanel: Enter key pressed, calling onSubmit');
       onSubmit();
     }
   };
@@ -120,12 +123,6 @@ export const SearchPanel = ({
         {trimmedAppliedQuery && searchResults === 0 && (
           <div className="search-feedback warning">
             No encontramos coincidencias para tu búsqueda. Revisa los datos ingresados.
-          </div>
-        )}
-
-        {trimmedAppliedQuery && searchResults > 0 && !showAllLayers && (
-          <div className="search-feedback hint">
-            Presiona &quot;Ver Todo&quot; para visualizar los resultados sobre el mapa.
           </div>
         )}
 
