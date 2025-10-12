@@ -16,14 +16,16 @@ export const MapProvider = ({ children, initialState }: MapProviderProps): React
     mapRef.current = map;
   }, []);
 
+  const setMapStateCallback = useCallback((state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
+    setMapState(prevState => ({ ...prevState, ...state }));
+  }, []);
+
   const value = useMemo((): MapContextValue => ({
     mapState,
-    setMapState: useCallback((state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
-      setMapState(prevState => ({ ...prevState, ...state }));
-    }, []),
+    setMapState: setMapStateCallback,
     mapRef,
     setMapReference,
-  }), [mapState, setMapReference]);
+  }), [mapState, setMapReference, setMapStateCallback]);
 
   return (
     <MapContext.Provider value={value}>

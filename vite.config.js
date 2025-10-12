@@ -86,8 +86,8 @@ export default defineConfig({
             options: {
               cacheName: "osm-tiles",
               expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+                maxEntries: 800,
+                maxAgeSeconds: 365 * 24 * 60 * 60,
                 purgeOnQuotaError: true, // Borrar si se excede el almacenamiento
               },
               cacheableResponse: {
