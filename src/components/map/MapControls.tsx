@@ -1,3 +1,4 @@
+import React from "react";
 import { SearchPanel } from "../SearchPanel";
 import { LocationButton } from "../LocationButton";
 import type { SearchType } from "../SearchPanel";
@@ -25,8 +26,8 @@ interface MapControlsProps {
 }
 
 export const MapControls = ({
-  searchQuery,
-  searchType,
+  searchQuery: _query,
+  searchType: _type,
   appliedQuery,
   appliedType,
   onQueryChange,
@@ -38,9 +39,9 @@ export const MapControls = ({
   buildingResults,
   streetResults,
   searchResults,
-  panelCollapsed,
+  panelCollapsed: _collapsed,
   onToggleCollapse,
-  locationActive,
+  locationActive: _active,
   onLocationToggle,
   isLocationTracking,
   locationError
@@ -48,8 +49,8 @@ export const MapControls = ({
   return (
     <>
       <SearchPanel
-        searchQuery={searchQuery}
-        searchType={searchType}
+        searchQuery={_query}
+        searchType={_type}
         appliedQuery={appliedQuery}
         appliedType={appliedType}
         onQueryChange={onQueryChange}
@@ -61,12 +62,12 @@ export const MapControls = ({
         buildingResults={buildingResults}
         streetResults={streetResults}
         searchResults={searchResults}
-        collapsed={panelCollapsed}
+        collapsed={_collapsed}
         onToggleCollapse={onToggleCollapse}
       />
       <LocationButton
         onToggle={onLocationToggle}
-        isActive={locationActive}
+        isActive={_active}
         isTracking={isLocationTracking}
         hasError={!!locationError}
         errorMessage={locationError}

@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import type { LatLngArray } from "../types/map";
 
+interface PositionOptions {
+  enableHighAccuracy?: boolean;
+  maximumAge?: number;
+  timeout?: number;
+}
+
 const GEOLOCATION_OPTIONS: PositionOptions = {
   enableHighAccuracy: true,
   maximumAge: 1000,

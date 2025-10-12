@@ -44,16 +44,12 @@ export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
 
   // Memoize the filtered results
   return useMemo(() => {
-    try {
-      // Input validation
-      if (!Array.isArray(data)) {
-        return [];
-      }
-
-      return data.filter(filterItem);
-    } catch (error) {
+    // Input validation
+    if (!Array.isArray(data)) {
       return [];
     }
+
+    return data.filter(filterItem);
   }, [data, filterItem]);
 };
 

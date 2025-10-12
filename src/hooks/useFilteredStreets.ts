@@ -31,14 +31,10 @@ export const useFilteredStreets = (
   );
 
   return useMemo(() => {
-    try {
-      if (!Array.isArray(data)) {
-        return [];
-      }
-
-      return data.filter(filterStreet);
-    } catch (error) {
+    if (!Array.isArray(data)) {
       return [];
     }
+
+    return data.filter(filterStreet);
   }, [data, filterStreet]);
 };

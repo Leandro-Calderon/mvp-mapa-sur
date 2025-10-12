@@ -1,3 +1,4 @@
+import React from "react";
 import { MapContainer } from "./MapContainer";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
@@ -12,8 +13,6 @@ export const MapView = () => {
         appliedQuery,
         appliedType,
         panelCollapsed,
-        showBuildings,
-        showStreets,
         showAllLayers,
         locationActive,
         userPosition,
@@ -27,8 +26,6 @@ export const MapView = () => {
         buildingResults,
         streetResults,
         totalResults,
-        shouldShowBuildings,
-        shouldShowStreets,
 
         // Loading states
         buildingsLoading,

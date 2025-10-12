@@ -1,3 +1,4 @@
+import React, { useEffect, useRef } from "react";
 import { MapContainer as LeafletMapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
@@ -5,7 +6,6 @@ import { UnifiedLayer } from "../layers/UnifiedLayer";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LatLngArray } from "../../types/map";
 import L from "leaflet";
-import { useEffect, useRef } from "react";
 
 const TILE_LAYER_CONFIG = {
   url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -142,7 +142,7 @@ export const MapContainer = ({
   locationError,
   isLocationTracking
 }: MapContainerProps) => {
-  const { mapState, setMapState } = useMapContext();
+  const { mapState } = useMapContext();
   const locationIconRef = useRef<L.DivIcon | null>(null);
 
   // Initialize the location icon

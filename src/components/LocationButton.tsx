@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./LocationButton.css";
 
 interface LocationButtonProps {
@@ -11,12 +11,12 @@ interface LocationButtonProps {
 
 export const LocationButton = ({
   onToggle,
-  isActive = false,
-  isTracking = false,
+  isActive: _isActive = false,
+  isTracking: _isTracking = false,
   hasError = false,
   errorMessage = null
 }: LocationButtonProps) => {
-  const [active, setActive] = useState(isActive);
+  const [active, setActive] = useState(_isActive);
 
   const handleClick = () => {
     console.log('Location button clicked, current state:', active);

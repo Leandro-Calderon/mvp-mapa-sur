@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import type { MapContextValue, MapState, MapInstance, LatLng, LatLngArray } from "../types/map";
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -8,7 +8,7 @@ interface MapProviderProps {
   initialState: MapState;
 }
 
-export const MapProvider = ({ children, initialState }: MapProviderProps): JSX.Element => {
+export const MapProvider = ({ children, initialState }: MapProviderProps): React.JSX.Element => {
   const [mapState, setMapState] = useState<MapState>(initialState);
   const mapRef = useRef<MapInstance | null>(null);
 

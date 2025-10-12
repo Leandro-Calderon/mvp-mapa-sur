@@ -13,7 +13,7 @@ export const sanitizeInput = (input: string, maxLength: number = 100): string =>
   
   return input
     .trim()
-    .replace(/[<>\"'&]/g, '') // Remove potentially dangerous characters
+    .replace(/[<>"'&]/g, '') // Remove potentially dangerous characters
     .slice(0, maxLength); // Limit length
 };
 

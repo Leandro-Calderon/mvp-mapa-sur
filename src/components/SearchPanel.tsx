@@ -1,3 +1,4 @@
+import React from "react";
 import "./SearchPanel.css";
 
 export type SearchType = "edificio" | "departamento" | "calle" | "plan";
@@ -21,8 +22,8 @@ interface SearchPanelProps {
 }
 
 export const SearchPanel = ({
-  searchQuery,
-  searchType,
+  searchQuery: _query,
+  searchType: _type,
   appliedQuery,
   appliedType,
   onQueryChange,
@@ -31,10 +32,10 @@ export const SearchPanel = ({
   onClear,
   onShowAllToggle,
   showAllLayers,
-  buildingResults,
-  streetResults,
+  buildingResults: _buildingResults,
+  streetResults: _streetResults,
   searchResults,
-  collapsed,
+  collapsed: _collapsed,
   onToggleCollapse,
 }: SearchPanelProps) => {
   const placeholders = {
@@ -51,19 +52,19 @@ export const SearchPanel = ({
     plan: "Buscar plan..."
   };
 
-  const trimmedQuery = searchQuery.trim();
+  const trimmedQuery = _query.trim();
   const trimmedAppliedQuery = appliedQuery.trim();
 
   const previewText = trimmedAppliedQuery
-    ? `Buscando ${appliedType ?? searchType}: ${trimmedAppliedQuery}`
+    ? `Buscando ${appliedType ?? _type}: ${trimmedAppliedQuery}`
     : trimmedQuery
-      ? `Preparar ${searchType}: ${searchQuery}`
-      : previewTexts[searchType];
+      ? `Preparar ${_type}: ${_query}`
+      : previewTexts[_type];
 
   const isIdle = !trimmedQuery && !trimmedAppliedQuery;
 
   const handleTypeSelect = (type: SearchType) => {
-    if (type !== searchType) {
+    if (type !== _type) {
       onTypeChange(type);
     }
   };
@@ -84,12 +85,12 @@ export const SearchPanel = ({
   };
 
   const togglePanel = () => {
-    onToggleCollapse(!collapsed);
+    onToggleCollapse(!_collapsed);
   };
 
   const panelClassName = [
     "search-panel",
-    collapsed ? "collapsed" : "",
+    _collapsed ? "collapsed" : "",
     isIdle ? "idle" : "",
   ].filter(Boolean).join(" ");
 
@@ -124,20 +125,20 @@ export const SearchPanel = ({
 
         {trimmedAppliedQuery && searchResults > 0 && !showAllLayers && (
           <div className="search-feedback hint">
-            Presiona "Ver Todo" para visualizar los resultados sobre el mapa.
+            Presiona &quot;Ver Todo&quot; para visualizar los resultados sobre el mapa.
           </div>
         )}
 
         {/* Search type selector - Row 2: Edificio | Departamento */}
         <div className="search-type-row">
           <button
-            className={`type-btn type-btn-row ${searchType === "edificio" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${_type === "edificio" ? "active" : ""}`}
             onClick={() => handleTypeSelect("edificio")}
           >
             🏢 Edificio
           </button>
           <button
-            className={`type-btn type-btn-row ${searchType === "departamento" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${_type === "departamento" ? "active" : ""}`}
             onClick={() => handleTypeSelect("departamento")}
           >
             🚪 Departamento
@@ -147,13 +148,13 @@ export const SearchPanel = ({
         {/* Search type selector - Row 3: Calle | Plan */}
         <div className="search-type-row">
           <button
-            className={`type-btn type-btn-row ${searchType === "calle" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${_type === "calle" ? "active" : ""}`}
             onClick={() => handleTypeSelect("calle")}
           >
             🛣️ Calle
           </button>
           <button
-            className={`type-btn type-btn-row ${searchType === "plan" ? "active" : ""}`}
+            className={`type-btn type-btn-row ${_type === "plan" ? "active" : ""}`}
             onClick={() => handleTypeSelect("plan")}
           >
             📋 Plan
@@ -166,12 +167,12 @@ export const SearchPanel = ({
             <input
               type="text"
               className="search-input"
-              placeholder={placeholders[searchType]}
-              value={searchQuery}
+              placeholder={placeholders[_type]}
+              value={_query}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
             />
-            {(searchQuery || trimmedAppliedQuery) && (
+            {(_query || trimmedAppliedQuery) && (
               <button className="clear-btn" onClick={clearSearch}>
                 ×
               </button>
