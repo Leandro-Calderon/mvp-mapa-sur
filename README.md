@@ -1,8 +1,8 @@
-# Mapa Sur
+# Mapa DPVyU Sur
 
 ## Descripción
 
-Mapa Sur es una Aplicación Web Progresiva (PWA) diseñada para funcionar sin conexión en diversas ciudades del sur de la provincia de Santa Fe, Argentina. Su objetivo principal es optimizar la localización de torres y departamentos en grandes complejos habitacionales, abordando el desafío que representa la falta de señalización clara en estas áreas.
+Esta es una Aplicación Web Progresiva (PWA) diseñada para funcionar sin conexión en diversas ciudades del sur de la provincia de Santa Fe, Argentina. Su objetivo principal es optimizar la localización de torres y departamentos en grandes complejos habitacionales, abordando el desafío que representa la falta de señalización clara en estas áreas.
 
 ## Características (Features)
 
@@ -32,7 +32,7 @@ Para clonar y ejecutar este proyecto localmente, sigue estos pasos:
 1. **Clona el repositorio:**
 
     ```bash
-    git clone https://github.com/tu-usuario/mvp-mapa-sur.git
+    git clone https://github.com/Leandro-Calderon/mvp-mapa-sur.git
     cd mvp-mapa-sur
     ```
 
