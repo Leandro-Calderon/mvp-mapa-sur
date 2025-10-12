@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./LocationButton.css";
+import { GpsDisabledModal } from "./GpsDisabledModal";
 
 interface LocationButtonProps {
   onToggle: (active: boolean) => void;
@@ -17,6 +18,7 @@ export const LocationButton = ({
   errorMessage = null
 }: LocationButtonProps) => {
   const [active, setActive] = useState(_isActive);
+  const [showGpsModal, setShowGpsModal] = useState(false);
 
   // Keep internal active state in sync with prop changes from parent
   useEffect(() => {
@@ -102,34 +104,12 @@ export const LocationButton = ({
   };
 
   const showGpsDisabledMessage = () => {
-    console.log('Showing GPS disabled popup message');
+    console.log('Showing GPS disabled modal');
+    setShowGpsModal(true);
+  };
 
-    // For mobile devices, provide specific instructions
-    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      const isAndroid = /Android/i.test(navigator.userAgent);
-      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-      if (isAndroid) {
-        const shouldOpenSettings = window.confirm(
-          'El GPS está desactivado. ¿Deseas activar el GPS para obtener tu ubicación actual?'
-        );
-
-        if (shouldOpenSettings) {
-          console.log('Android device detected, attempting to open location settings');
-          window.open('intent://settings#Intent;scheme=android.settings;action=android.settings.LOCATION_SOURCE_SETTINGS;end', '_blank');
-        }
-      } else if (isIOS) {
-        alert('Para activar el GPS, ve a Configuración > Privacidad > Ubicación y activa la ubicación para esta aplicación.');
-      }
-    } else {
-      const shouldEnableGps = window.confirm(
-        'El GPS está desactivado. ¿Deseas habilitar el GPS en tu navegador para obtener tu ubicación?'
-      );
-
-      if (shouldEnableGps) {
-        alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
-      }
-    }
+  const closeGpsModal = () => {
+    setShowGpsModal(false);
   };
 
   const requestPosition = () => {
@@ -191,25 +171,32 @@ export const LocationButton = ({
   ].join(" ");
 
   return (
-    <button
-      className={buttonClassName}
-      onClick={handleClick}
-      aria-label={
-        hasError
-          ? errorMessage || "Error de ubicación"
-          : active
-            ? "Desactivar ubicación"
-            : "Activar ubicación"
-      }
-      title={
-        hasError
-          ? errorMessage || "Error al obtener la ubicación. Haz clic para intentar habilitar GPS"
-          : active
-            ? "Desactivar seguimiento de ubicación"
-            : "Activar seguimiento de ubicación"
-      }
-    >
-      <div className="location-icon">📍</div>
-    </button>
+    <>
+      <button
+        className={buttonClassName}
+        onClick={handleClick}
+        aria-label={
+          hasError
+            ? errorMessage || "Error de ubicación"
+            : active
+              ? "Desactivar ubicación"
+              : "Activar ubicación"
+        }
+        title={
+          hasError
+            ? errorMessage || "Error al obtener la ubicación. Haz clic para intentar habilitar GPS"
+            : active
+              ? "Desactivar seguimiento de ubicación"
+              : "Activar seguimiento de ubicación"
+        }
+      >
+        <div className="location-icon">📍</div>
+      </button>
+
+      <GpsDisabledModal
+        isOpen={showGpsModal}
+        onClose={closeGpsModal}
+      />
+    </>
   );
 };
