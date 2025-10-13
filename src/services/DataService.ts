@@ -1,6 +1,3 @@
-/**
- * Abstract data service interface for better testability and dependency injection
- */
 import type { BuildingFeature, StreetFeature } from '../types/geojson';
 
 export interface DataService {

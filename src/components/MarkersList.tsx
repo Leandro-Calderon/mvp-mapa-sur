@@ -1,4 +1,3 @@
-import React from "react";
 import { FeatureGroup, Marker, Popup } from "react-leaflet";
 import { customIcon } from "../constants/mapIcons";
 import type { BuildingFeature } from "../types/geojson";

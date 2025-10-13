@@ -1,4 +1,3 @@
-// Leaflet and React-Leaflet type definitions
 import React from 'react';
 import L from 'leaflet';
 import type { BuildingFilters, StreetFilters } from './filters';

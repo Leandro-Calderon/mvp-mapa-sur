@@ -1,6 +1,3 @@
-/**
- * Hook for using the abstract data service
- */
 import { useEffect, useState } from 'react';
 import type { DataService, DataServiceResult } from '../services/DataService';
 import type { BuildingFeature, StreetFeature } from '../types/geojson';

@@ -1,4 +1,3 @@
-// Filter interfaces for data filtering functionality
 export interface BuildingFilters {
   edificio: string;
   vivienda: string;

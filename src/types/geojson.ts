@@ -1,4 +1,3 @@
-// GeoJSON feature types for map data
 export interface GeoJsonFeature<T = Record<string, unknown>> {
   type: 'Feature';
   properties: T;

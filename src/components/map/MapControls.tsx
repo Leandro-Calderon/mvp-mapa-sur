@@ -1,4 +1,3 @@
-import React from "react";
 import { SearchPanel } from "../SearchPanel";
 import { LocationButton } from "../LocationButton";
 import type { SearchType } from "../SearchPanel";

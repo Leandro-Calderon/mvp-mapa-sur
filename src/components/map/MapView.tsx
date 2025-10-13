@@ -1,4 +1,3 @@
-import React from "react";
 import { MapContainer } from "./MapContainer";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";

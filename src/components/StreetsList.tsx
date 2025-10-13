@@ -1,4 +1,3 @@
-import React from "react";
 import { FeatureGroup, Polyline, Popup } from "react-leaflet";
 import type { StreetFeature } from "../types/geojson";
 
