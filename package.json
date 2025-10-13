@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "mvp-mapa-sur",
-  "license": "MIT",
+  "license": "AGPL-3.0-or-later",
   "private": false,
   "version": "0.0.0",
   "type": "module",
