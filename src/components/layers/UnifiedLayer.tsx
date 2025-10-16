@@ -1,4 +1,4 @@
-import { FeatureGroup, Marker, Popup, Polyline, Polygon } from "react-leaflet";
+import { FeatureGroup, Marker, Popup, Polyline, Polygon, useMap } from "react-leaflet";
 import { customIcon } from "../../constants/mapIcons";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 
@@ -13,10 +13,16 @@ export const UnifiedLayer = ({
   streetFeatures,
   showAllLayers
 }: UnifiedLayerProps) => {
+  const map = useMap();
+
+  // Detect if we're on a mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   console.log('UnifiedLayer: Rendering with', {
     buildingFeaturesCount: buildingFeatures.length,
     streetFeaturesCount: streetFeatures.length,
-    showAllLayers
+    showAllLayers,
+    isMobile
   });
 
   // Show layers when "See all" is enabled OR when there are filtered results
@@ -62,6 +68,70 @@ export const UnifiedLayer = ({
         ring.length > 0 &&
         ring.every(isLngLatPair)
       );
+  };
+
+  // Simplify polygon coordinates for mobile performance
+  const simplifyPolygon = (coordinates: number[][][]) => {
+    if (!isMobile) return coordinates;
+
+    // Simplify polygon coordinates for better performance on mobile
+    // Filter out some points to reduce complexity
+    return coordinates.map(ring =>
+      ring.length > 20 ? ring.filter((_, i) => i % 2 === 0) : ring
+    );
+  };
+
+  // Mobile-optimized polygon component
+  const MobilePolygon = ({
+    positions,
+    feature,
+    index
+  }: {
+    positions: number[][][];
+    feature: StreetFeature;
+    index: number;
+  }) => {
+    const simplifiedPositions = simplifyPolygon(positions);
+    
+    // Adjust stroke width based on device type
+    const strokeWidth = isMobile ? 4 : 3;
+    const fillOpacity = isMobile ? 0.4 : 0.3;
+    
+    return (
+      <Polygon
+        key={`street-${index}`}
+        positions={simplifiedPositions as [number, number][][]}
+        pathOptions={{
+          color: "blue",
+          weight: strokeWidth,
+          opacity: 1,
+          fillColor: "#3388ff",
+          fillOpacity: fillOpacity,
+          className: isMobile ? "mobile-polygon" : "",
+        }}
+        eventHandlers={{
+          click: (e) => {
+            // Ensure popup opens properly on touch devices
+            const polygon = e.target;
+            if (polygon && polygon.bindPopup) {
+              polygon.bindPopup(`
+                <div>
+                  <strong>${feature.properties.nombre}</strong>
+                  <br />
+                  Tipo: ${feature.properties.tipo}
+                </div>
+              `).openPopup(e.latlng);
+            }
+          },
+        }}
+      >
+        <Popup>
+          <strong>{feature.properties.nombre}</strong>
+          <br />
+          Tipo: {feature.properties.tipo}
+        </Popup>
+      </Polygon>
+    );
   };
 
   return (
@@ -153,23 +223,12 @@ export const UnifiedLayer = ({
               );
 
               return (
-                <Polygon
-                  key={`street-${index}`}
+                <MobilePolygon
+                  key={`street-polygon-${index}`}
                   positions={leafletPositions}
-                  pathOptions={{
-                    color: "blue",
-                    weight: 3,
-                    opacity: 1,
-                    fillColor: "#3388ff",
-                    fillOpacity: 0.3,
-                  }}
-                >
-                  <Popup>
-                    <strong>{feature.properties.nombre}</strong>
-                    <br />
-                    Tipo: {feature.properties.tipo}
-                  </Popup>
-                </Polygon>
+                  feature={feature}
+                  index={index}
+                />
               );
             }
 

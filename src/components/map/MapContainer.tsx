@@ -150,12 +150,16 @@ export const MapContainer = ({
     locationIconRef.current = createLocationIcon();
   }
 
+  // Detect if we're on a mobile device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
   return (
     <LeafletMapContainer
       center={mapState.center}
       zoom={mapState.zoom}
       zoomControl={false}
-      scrollWheelZoom
+      scrollWheelZoom={!isMobile} // Disable scroll wheel zoom on mobile to improve performance
+      touchZoom={isMobile} // Enable touch zoom on mobile
       className="h-full w-full"
       style={{ height: '100%', width: '100%' }}
     >

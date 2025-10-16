@@ -49,3 +49,42 @@ body {
   position: relative;
   z-index: 1000;
 }
+
+/* Mobile touch optimizations */
+@media (max-width: 768px) {
+  /* Improve touch interaction for map elements */
+  .leaflet-container {
+    touch-action: pan-x pan-y;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Ensure proper touch target sizes */
+  .leaflet-popup-content-wrapper {
+    min-width: 200px;
+    padding: 12px;
+  }
+  
+  .leaflet-popup-content {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Improve polygon touch interaction */
+  .leaflet-interactive {
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further optimize for very small screens */
+  .leaflet-popup-content-wrapper {
+    min-width: 180px;
+    padding: 10px;
+  }
+  
+  .leaflet-popup-content {
+    font-size: 13px;
+  }
+}
