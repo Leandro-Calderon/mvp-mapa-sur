@@ -10,7 +10,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727577, -32.939855]
+        "coordinates": [
+          -60.727577,
+          -32.939855
+        ]
       }
     },
     {
@@ -22,7 +25,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727411, -32.939611]
+        "coordinates": [
+          -60.727411,
+          -32.939611
+        ]
       }
     },
     {
@@ -34,7 +40,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727287, -32.939368]
+        "coordinates": [
+          -60.727287,
+          -32.939368
+        ]
       }
     },
     {
@@ -46,7 +55,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.728404, -32.939404]
+        "coordinates": [
+          -60.728404,
+          -32.939404
+        ]
       }
     },
     {
@@ -54,11 +66,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 53,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.728183, -32.939417]
+        "coordinates": [
+          -60.728183,
+          -32.939417
+        ]
       }
     },
     {
@@ -70,7 +85,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727958, -32.939147]
+        "coordinates": [
+          -60.727958,
+          -32.939147
+        ]
       }
     },
     {
@@ -78,11 +96,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 49,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727276, -32.938769]
+        "coordinates": [
+          -60.727276,
+          -32.938769
+        ]
       }
     },
     {
@@ -94,7 +115,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.728393, -32.9386478]
+        "coordinates": [
+          -60.728393,
+          -32.9386478
+        ]
       }
     },
     {
@@ -106,7 +130,10 @@
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.727706, -32.938877]
+        "coordinates": [
+          -60.727706,
+          -32.938877
+        ]
       }
     },
     {
@@ -114,11 +141,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 47,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.726493, -32.939773]
+        "coordinates": [
+          -60.726493,
+          -32.939773
+        ]
       }
     },
     {
@@ -126,11 +156,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 46,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.726709, -32.939593]
+        "coordinates": [
+          -60.726709,
+          -32.939593
+        ]
       }
     },
     {
@@ -138,11 +171,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 45,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.726826, -32.939327]
+        "coordinates": [
+          -60.726826,
+          -32.939327
+        ]
       }
     },
     {
@@ -150,11 +186,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 44,
-        "plan": "077"         
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.726161, -32.939071]
+        "coordinates": [
+          -60.726161,
+          -32.939071
+        ]
       }
     },
     {
@@ -162,11 +201,14 @@
       "properties": {
         "tipo": "tira",
         "nombre": 43,
-        "plan": "077" 
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.725936, -32.93926]
+        "coordinates": [
+          -60.725936,
+          -32.93926
+        ]
       }
     },
     {
@@ -174,11 +216,89 @@
       "properties": {
         "tipo": "tira",
         "nombre": 42,
-        "plan": "077"                
+        "plan": "077"
       },
       "geometry": {
         "type": "Point",
-        "coordinates": [-60.725742, -32.939287]
+        "coordinates": [
+          -60.725742,
+          -32.939287
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Torre",
+        "nombre": 76,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7091509,
+          -32.9004805
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Departamento",
+        "nombre": 40,
+        "plan": "126"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.5018932,
+          -33.1659255
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Departamento",
+        "nombre": 77,
+        "plan": "141"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.3878156,
+          -33.2680118
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Departamento",
+        "nombre": 37,
+        "plan": "141"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.3891009,
+          -33.267617
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Departamento",
+        "nombre": 32,
+        "plan": "141"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.3892439,
+          -33.2674048
+        ]
       }
     }
   ]

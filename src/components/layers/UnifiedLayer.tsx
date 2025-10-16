@@ -1,4 +1,4 @@
-import { FeatureGroup, Marker, Popup, Polyline } from "react-leaflet";
+import { FeatureGroup, Marker, Popup, Polyline, Polygon } from "react-leaflet";
 import { customIcon } from "../../constants/mapIcons";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 
@@ -52,6 +52,18 @@ export const UnifiedLayer = ({
       value.every(isLineStringCoordinates);
   };
 
+  const isPolygonCoordinates = (
+    value: unknown,
+  ): value is [number, number][][][] => {
+    return Array.isArray(value) &&
+      value.length > 0 &&
+      value.every((ring) =>
+        Array.isArray(ring) &&
+        ring.length > 0 &&
+        ring.every(isLngLatPair)
+      );
+  };
+
   return (
     <>
       {/* Building markers */}
@@ -81,45 +93,88 @@ export const UnifiedLayer = ({
       {shouldShowStreets && streetFeatures.length > 0 && (
         <FeatureGroup>
           {streetFeatures.map((feature, index) => {
-            // Handle both LineString (number[][]) and MultiLineString (number[][][]) coordinates
             const coordinates = feature.geometry.coordinates;
 
-            let lineStrings: [number, number][][] | null = null;
-
+            // Handle LineString geometry
             if (feature.geometry.type === "LineString" &&
               isLineStringCoordinates(coordinates)) {
-              lineStrings = [coordinates];
-            } else if (feature.geometry.type === "MultiLineString" &&
+              const leafletPositions = coordinates.map(([lng, lat]) => [lat, lng] as [number, number]);
+
+              return (
+                <Polyline
+                  key={`street-${index}`}
+                  positions={leafletPositions}
+                  pathOptions={{
+                    color: "cyan",
+                    weight: 5,
+                    opacity: 1,
+                  }}
+                >
+                  <Popup>
+                    <strong>{feature.properties.nombre}</strong>
+                    <br />
+                    Tipo: {feature.properties.tipo}
+                  </Popup>
+                </Polyline>
+              );
+            }
+
+            // Handle MultiLineString geometry
+            if (feature.geometry.type === "MultiLineString" &&
               isMultiLineStringCoordinates(coordinates)) {
-              lineStrings = coordinates;
+              const leafletPositions = coordinates.map((lineString) =>
+                lineString.map(([lng, lat]) => [lat, lng] as [number, number])
+              );
+
+              return (
+                <Polyline
+                  key={`street-${index}`}
+                  positions={leafletPositions}
+                  pathOptions={{
+                    color: "cyan",
+                    weight: 5,
+                    opacity: 1,
+                  }}
+                >
+                  <Popup>
+                    <strong>{feature.properties.nombre}</strong>
+                    <br />
+                    Tipo: {feature.properties.tipo}
+                  </Popup>
+                </Polyline>
+              );
             }
 
-            if (!lineStrings) {
-              return null;
+            // Handle Polygon geometry
+            if (feature.geometry.type === "Polygon" &&
+              isPolygonCoordinates(coordinates)) {
+              const leafletPositions = coordinates.map((ring) =>
+                (ring as unknown as [number, number][]).map(([lng, lat]) => [lat, lng] as [number, number])
+              );
+
+              return (
+                <Polygon
+                  key={`street-${index}`}
+                  positions={leafletPositions}
+                  pathOptions={{
+                    color: "blue",
+                    weight: 3,
+                    opacity: 1,
+                    fillColor: "#3388ff",
+                    fillOpacity: 0.3,
+                  }}
+                >
+                  <Popup>
+                    <strong>{feature.properties.nombre}</strong>
+                    <br />
+                    Tipo: {feature.properties.tipo}
+                  </Popup>
+                </Polygon>
+              );
             }
 
-            // Convert all coordinates from [lng, lat] to [lat, lng] for Leaflet
-            const leafletPositions = lineStrings.map((lineString) =>
-              lineString.map(([lng, lat]) => [lat, lng] as [number, number]),
-            );
-
-            return (
-              <Polyline
-                key={`street-${index}`}
-                positions={leafletPositions as [number, number][][]}
-                pathOptions={{
-                  color: "cyan",
-                  weight: 5,
-                  opacity: 1,
-                }}
-              >
-                <Popup>
-                  <strong>{feature.properties.nombre}</strong>
-                  <br />
-                  Tipo: {feature.properties.tipo}
-                </Popup>
-              </Polyline>
-            );
+            // If geometry type is not supported, return null
+            return null;
           })}
         </FeatureGroup>
       )}

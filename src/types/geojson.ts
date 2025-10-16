@@ -26,8 +26,8 @@ export interface StreetFeature extends GeoJsonFeature {
     tipo: string;
   };
   geometry: {
-    type: 'LineString' | 'MultiLineString';
-    coordinates: number[][] | number[][][];
+    type: 'LineString' | 'MultiLineString' | 'Polygon';
+    coordinates: number[][] | number[][][] | number[][][][];
   };
 }
 
