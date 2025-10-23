@@ -12,11 +12,11 @@ type Filters = {
 const createFilterPredicates = (filters: Filters) => ({
   edificioFilter: (item: BuildingFeature) =>
     !filters.edificio ||
-    item.properties.nombre.toString().includes(filters.edificio.trim()),
+    (item.properties.nombre !== null && item.properties.nombre.toString().includes(filters.edificio.trim())),
 
   viviendaFilter: (item: BuildingFeature) =>
     !filters.vivienda ||
-    item.properties.nombre.toString().includes(filters.vivienda.trim()),
+    (item.properties.nombre !== null && item.properties.nombre.toString().includes(filters.vivienda.trim())),
 
   planFilter: (item: BuildingFeature) =>
     !filters.plan || item.properties.plan.includes(filters.plan.trim()),

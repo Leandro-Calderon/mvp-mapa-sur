@@ -300,6 +300,366 @@
           -33.2674048
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": null,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -61.3794318,
+          -32.8181296
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 16,
+        "plan": "131"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7297132,
+          -32.9113307
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 33,
+        "plan": "94"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7375826,
+          -32.9133404
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 55,
+        "plan": "210"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7293894,
+          -32.9138426
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 19,
+        "plan": "131"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7296796,
+          -32.912136
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 18,
+        "plan": "131"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7298532,
+          -32.9121681
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 16,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7138614,
+          -32.8958422
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 30,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7135027,
+          -32.8983257
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 42,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7129487,
+          -32.8991739
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 44,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7129406,
+          -32.8993995
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 45,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7127474,
+          -32.8997497
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 43,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7126855,
+          -32.8994624
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 48,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7123632,
+          -32.8999497
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 46,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7123647,
+          -32.9002328
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 41,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.712688,
+          -32.8992519
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 51,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7125212,
+          -32.8991801
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 54,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7122726,
+          -32.898808
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 40,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7126247,
+          -32.8984036
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 32,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7131613,
+          -32.8982214
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 87,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.71041,
+          -32.9004835
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 83,
+        "plan": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.709767,
+          -32.9003449
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 86,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7096042,
+          -32.9011273
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 85,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7094707,
+          -32.900936
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "tipo": "Bloque",
+        "nombre": 90,
+        "plan": "43"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -60.7100951,
+          -32.9010557
+        ]
+      }
     }
   ]
 }

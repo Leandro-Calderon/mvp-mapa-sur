@@ -10,9 +10,9 @@ export interface GeoJsonFeature<T = Record<string, unknown>> {
 export interface BuildingFeature extends GeoJsonFeature {
   properties: {
     tipo: string;
-    nombre: number;
+    nombre: number | null;
     plan: string;
-    id: number;
+    id?: number;
   };
   geometry: {
     type: 'Point';
