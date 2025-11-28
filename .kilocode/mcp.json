@@ -1,8 +1,1 @@
-{
-  "mcpServers": {
-    "context7": {
-      "type": "streamable-http",
-      "url": "https://mcp.context7.com/mcp"
-    }
-  }
-}
+{"mcpServers":{"sequentialthinking":{"command":"npx","args":["-y","@modelcontextprotocol/server-sequential-thinking"]},"chrome-devtools":{"command":"npx","args":["-y","chrome-devtools-mcp@latest"]}}}
