@@ -1,0 +1,147 @@
+.data-status-notification {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+  animation: slideIn 0.3s ease-out;
+}
+
+.data-status-notification.error {
+  background: rgba(254, 242, 242, 0.95);
+  border-color: #fca5a5;
+}
+
+.data-status-notification.warning {
+  background: rgba(254, 252, 232, 0.95);
+  border-color: #fbbf24;
+}
+
+.data-status-notification.info {
+  background: rgba(239, 246, 255, 0.95);
+  border-color: #93c5fd;
+}
+
+.notification-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.notification-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.notification-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.refresh-button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.refresh-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .data-status-notification {
+    top: 60px;
+    right: 5px;
+    left: 5px;
+    max-width: none;
+    padding: 10px;
+  }
+  
+  .notification-content {
+    gap: 8px;
+  }
+  
+  .notification-icon {
+    font-size: 18px;
+  }
+  
+  .notification-title {
+    font-size: 13px;
+  }
+  
+  .notification-subtitle {
+    font-size: 11px;
+  }
+  
+  .refresh-button {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
+
+/* Animation */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Pulse animation for warnings */
+.data-status-notification.warning {
+  animation: slideIn 0.3s ease-out, pulse-warning 3s infinite 2s;
+}
+
+@keyframes pulse-warning {
+  0% {
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.25);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.15);
+  }
+}

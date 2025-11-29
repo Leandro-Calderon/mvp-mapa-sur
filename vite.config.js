@@ -100,6 +100,26 @@ export default defineConfig({
               },
             },
           },
+          {
+            urlPattern: /.*\/assets\/.*\.geojson$/i,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "geojson-cache",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+                purgeOnQuotaError: true,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+              fetchOptions: {
+                credentials: "same-origin",
+                mode: "cors",
+                cache: "no-cache"
+              },
+            },
+          },
         ],
       },
 

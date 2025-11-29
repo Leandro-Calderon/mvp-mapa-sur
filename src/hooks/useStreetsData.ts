@@ -1,8 +1,8 @@
 import { useDataService } from './useDataService';
-import { GeoJsonDataService } from '../services/DataService';
+import { createDataService } from '../services/OfflineDataService';
 
-// Create a singleton instance of the data service
-const dataService = new GeoJsonDataService();
+// Create a singleton instance of offline data service
+const dataService = createDataService();
 
 export const useStreetsData = () => {
   const { streets } = useDataService(dataService);

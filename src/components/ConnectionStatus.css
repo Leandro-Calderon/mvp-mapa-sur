@@ -1,0 +1,141 @@
+.connection-status {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  top: auto;
+  right: auto;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+  max-width: 250px;
+  opacity: 1;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.connection-status.offline {
+  background: rgba(255, 248, 225, 0.95);
+  border-color: #fbbf24;
+}
+
+.connection-status.online {
+  background: rgba(240, 253, 244, 0.95);
+  border-color: #34d399;
+}
+
+.connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.connection-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.connection-text {
+  font-weight: 600;
+  color: #374151;
+}
+
+.connection-type {
+  color: #6b7280;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.cache-info {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 6px;
+  margin-top: 4px;
+}
+
+.cache-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.cache-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.cache-indicator.cached {
+  color: #059669;
+}
+
+.cache-indicator.not-cached {
+  color: #dc2626;
+}
+
+.last-sync {
+  font-size: 10px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .connection-status {
+    bottom: 5px;
+    left: 5px;
+    padding: 6px 8px;
+    font-size: 11px;
+    max-width: 200px;
+  }
+  
+  .connection-icon {
+    font-size: 14px;
+  }
+}
+
+/* Animation for status changes */
+.connection-status {
+  transition: all 0.3s ease;
+}
+
+.connection-status.offline {
+  animation: pulse-warning 2s infinite;
+}
+
+/* Fade in/out animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes pulse-warning {
+  0% {
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.3);
+  }
+  100% {
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
+  }
+}
