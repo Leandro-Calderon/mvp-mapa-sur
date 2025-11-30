@@ -6,6 +6,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+architectural-analysis-29-11-25.md
 
 dist
 dist-ssr
