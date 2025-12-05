@@ -3,6 +3,7 @@ import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
 import { ConnectionStatus } from "../ConnectionStatus";
 import { DataStatusNotification } from "../DataStatusNotification";
+import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
 import { createDataService } from "../../services/OfflineDataService";
@@ -21,9 +22,12 @@ export const MapView = () => {
         streets: false
     });
 
+    // State for legend visibility
+    const [showLegend, setShowLegend] = useState(true);
+
     // Update cache info when data loads
     const { buildings, streets, refresh } = useDataService(offlineService);
-    
+
     useEffect(() => {
         const updateCacheInfo = async () => {
             try {
@@ -132,6 +136,11 @@ export const MapView = () => {
             <ConnectionStatus
                 showCacheInfo={true}
                 cacheInfo={cacheInfo}
+            />
+
+            <FonaviLegend
+                isVisible={showLegend && filteredBuildings.length > 0}
+                onClose={() => setShowLegend(false)}
             />
         </div>
     );

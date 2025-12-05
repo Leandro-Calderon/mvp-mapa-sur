@@ -4,7 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 56,
         "plan": "077"
       },
@@ -19,7 +19,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 55,
         "plan": "077"
       },
@@ -34,7 +34,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 48,
         "plan": "077"
       },
@@ -49,7 +49,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 54,
         "plan": "077"
       },
@@ -64,7 +64,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 53,
         "plan": "077"
       },
@@ -79,7 +79,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 52,
         "plan": "077"
       },
@@ -94,7 +94,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 49,
         "plan": "077"
       },
@@ -109,7 +109,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 51,
         "plan": "077"
       },
@@ -124,7 +124,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 50,
         "plan": "077"
       },
@@ -139,7 +139,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 47,
         "plan": "077"
       },
@@ -154,7 +154,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 46,
         "plan": "077"
       },
@@ -169,7 +169,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 45,
         "plan": "077"
       },
@@ -184,7 +184,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 44,
         "plan": "077"
       },
@@ -199,7 +199,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 43,
         "plan": "077"
       },
@@ -214,7 +214,7 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "tira",
+        "tipo": "Bloque",
         "nombre": 42,
         "plan": "077"
       },

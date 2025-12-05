@@ -1,0 +1,76 @@
+/* Estilos para los marcadores FONAVI */
+
+.fonavi-marker {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.fonavi-marker:hover {
+  stroke-width: 3;
+  filter: brightness(1.1);
+}
+
+/* Estilos específicos por tipo */
+.fonavi-bloque {
+  /* Los bloques usan color rojo suave #FF6B6B */
+}
+
+.fonavi-torre {
+  /* Las torres usan color turquesa #4ECDC4 */
+}
+
+.fonavi-departamento {
+  /* Los departamentos usan color azul #45B7D1 */
+}
+
+/* Animación para marcadores */
+@keyframes markerPulse {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+.fonavi-marker.highlighted {
+  animation: markerPulse 2s ease-in-out infinite;
+}
+
+/* Estilos para tooltips */
+.leaflet-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  font-size: 12px !important;
+}
+
+/* Estilos para popups */
+.leaflet-popup-content-wrapper {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .leaflet-tooltip {
+    font-size: 11px !important;
+  }
+  
+  .leaflet-popup-content {
+    margin: 8px 12px !important;
+    font-size: 13px !important;
+  }
+}

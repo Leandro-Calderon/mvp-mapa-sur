@@ -1,5 +1,6 @@
 import { FeatureGroup, Marker, Popup, Polyline, Polygon, useMap } from "react-leaflet";
 import { customIcon } from "../../constants/mapIcons";
+import { FonaviMarkers } from "../FonaviMarkers";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 
 interface UnifiedLayerProps {
@@ -92,11 +93,11 @@ export const UnifiedLayer = ({
     index: number;
   }) => {
     const simplifiedPositions = simplifyPolygon(positions);
-    
+
     // Adjust stroke width based on device type
     const strokeWidth = isMobile ? 4 : 3;
     const fillOpacity = isMobile ? 0.4 : 0.3;
-    
+
     return (
       <Polygon
         key={`street-${index}`}
@@ -136,26 +137,10 @@ export const UnifiedLayer = ({
 
   return (
     <>
-      {/* Building markers */}
+      {/* Building markers with CircleMarker */}
       {shouldShowBuildings && buildingFeatures.length > 0 && (
         <FeatureGroup>
-          {buildingFeatures.map((feature, index) => {
-            // Create immutable reversed coordinates [lat, lng] for Leaflet
-            const [lng, lat] = feature.geometry.coordinates;
-
-            return (
-              <Marker
-                icon={customIcon}
-                key={`building-${index}`}
-                position={[lat, lng]}
-              >
-                <Popup>
-                  {feature.properties.tipo}: {feature.properties.nombre} - Plan{" "}
-                  {feature.properties.plan}
-                </Popup>
-              </Marker>
-            );
-          })}
+          <FonaviMarkers features={buildingFeatures} />
         </FeatureGroup>
       )}
 
