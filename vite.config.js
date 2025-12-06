@@ -71,7 +71,7 @@ export default defineConfig({
       workbox: {
         globDirectory: "dist",
         sourcemap: true,
-        globPatterns:  ["**/*.{js,css,html}"],
+        globPatterns: ["**/*.{js,css,html}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         skipWaiting: true,
         cleanupOutdatedCaches: true,
@@ -135,6 +135,13 @@ export default defineConfig({
     outDir: "dist", // Carpeta de salida para la build
     sourcemap: true, // Opcional, útil para debugging
     publicDir: "public",
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   },
   css: {
     devSourcemap: true,

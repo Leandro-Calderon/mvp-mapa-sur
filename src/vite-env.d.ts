@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-pwa/react" />
+/// <reference types="vitest" />
 
 interface ImportMetaEnv {
   readonly DEV: boolean

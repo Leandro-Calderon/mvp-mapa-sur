@@ -6,13 +6,14 @@ import { DataStatusNotification } from "../DataStatusNotification";
 import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
-import { createDataService } from "../../services/OfflineDataService";
+import { createDataService, type OfflineDataService } from "../../services/OfflineDataService";
 import { useState, useEffect } from "react";
+import { logger } from "../../utils/logger";
 import styles from "./MapView.module.css";
 
 export const MapView = () => {
     // Initialize offline data service for cache info
-    const [offlineService] = useState(() => createDataService() as any);
+    const [offlineService] = useState<OfflineDataService>(() => createDataService() as OfflineDataService);
     const [cacheInfo, setCacheInfo] = useState<{
         buildings: boolean;
         streets: boolean;
@@ -41,7 +42,7 @@ export const MapView = () => {
                     )
                 });
             } catch (error) {
-                console.error('Error getting cache info:', error);
+                logger.error('Error getting cache info:', error);
             }
         };
 

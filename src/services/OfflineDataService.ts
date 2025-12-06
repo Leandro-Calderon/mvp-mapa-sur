@@ -2,6 +2,7 @@ import type { BuildingFeature, StreetFeature } from '../types/geojson';
 import type { DataService } from './DataService';
 import { indexedDBService, type CacheEntry } from './IndexedDBService';
 import { connectionService } from './ConnectionService';
+import { logger } from '../utils/logger';
 
 export interface OfflineDataOptions {
   maxCacheAge?: number; // in milliseconds, default 24 hours
@@ -16,7 +17,7 @@ export interface OfflineDataServiceResult<T> {
   lastUpdated?: number;
 }
 
-class OfflineDataService implements DataService {
+export class OfflineDataService implements DataService {
   private readonly buildingsPath = 'assets/fonavi.geojson';
   private readonly streetsPath = 'assets/calles.geojson';
   private readonly BUILDINGS_CACHE_KEY = 'buildings';
@@ -79,7 +80,7 @@ class OfflineDataService implements DataService {
             lastUpdated: Date.now()
           };
         } catch (networkError) {
-          console.warn(`Network request failed for ${cacheKey}:`, networkError);
+          logger.warn(`Network request failed for ${cacheKey}`, networkError);
 
           // If network fails and we have cached data, return it even if stale
           if (hasCachedData) {
@@ -109,7 +110,7 @@ class OfflineDataService implements DataService {
       throw new Error(`No cached data available for ${cacheKey} and device is offline`);
 
     } catch (error) {
-      console.error(`Error in fetchWithCache for ${cacheKey}:`, error);
+      logger.error(`Error in fetchWithCache for ${cacheKey}`, error);
       throw error;
     }
   }
@@ -148,7 +149,7 @@ class OfflineDataService implements DataService {
       );
 
       // Log the source for debugging
-      console.log(`Buildings loaded from: ${result.fromCache ? 'cache' : 'network'}${result.isStale ? ' (stale)' : ''}`);
+      logger.debug(`Buildings loaded from: ${result.fromCache ? 'cache' : 'network'}${result.isStale ? ' (stale)' : ''}`);
 
       return result.data;
     } catch (error) {
@@ -166,7 +167,7 @@ class OfflineDataService implements DataService {
       );
 
       // Log the source for debugging
-      console.log(`Streets loaded from: ${result.fromCache ? 'cache' : 'network'}${result.isStale ? ' (stale)' : ''}`);
+      logger.debug(`Streets loaded from: ${result.fromCache ? 'cache' : 'network'}${result.isStale ? ' (stale)' : ''}`);
 
       return result.data;
     } catch (error) {

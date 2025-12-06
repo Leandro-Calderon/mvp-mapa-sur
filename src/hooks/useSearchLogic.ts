@@ -5,6 +5,7 @@ import { useFilteredData } from './useFilteredData';
 import { useFilteredStreets } from './useFilteredStreets';
 import { useGeolocation } from './useGeolocation';
 import { sanitizeSearchQuery } from '../utils/sanitization';
+import { logger } from '../utils/logger';
 import type { SearchType } from '../components/SearchPanel';
 
 export const useSearchLogic = () => {
@@ -73,12 +74,12 @@ export const useSearchLogic = () => {
   }, []);
 
   const handleTypeChange = useCallback((type: SearchType) => {
-    console.log('useSearchLogic: Type changed from', searchType, 'to', type);
-    console.log('useSearchLogic: Current appliedQuery:', appliedQuery, 'appliedType:', appliedType);
+    logger.debug('useSearchLogic: Type changed', { from: searchType, to: type });
+    logger.debug('useSearchLogic: Current state', { appliedQuery, appliedType });
 
     // If there's an applied query and the type is changing, clear the results
     if (appliedQuery && type !== searchType) {
-      console.log('useSearchLogic: Clearing applied query due to type change');
+      logger.debug('useSearchLogic: Clearing applied query due to type change');
       setAppliedQuery("");
       setAppliedType(null);
       setAppliedRevision((prev) => prev + 1);
@@ -86,7 +87,7 @@ export const useSearchLogic = () => {
 
     // Also clear the input text when switching types
     if (type !== searchType) {
-      console.log('useSearchLogic: Clearing search query input due to type change');
+      logger.debug('useSearchLogic: Clearing search query input due to type change');
       setSearchQuery("");
     }
 
@@ -95,16 +96,16 @@ export const useSearchLogic = () => {
 
   const handleSubmit = useCallback(() => {
     const trimmed = normalizedSearchQuery;
-    console.log('useSearchLogic: handleSubmit called with query:', trimmed, 'type:', searchType);
+    logger.debug('useSearchLogic: handleSubmit called', { query: trimmed, type: searchType });
 
     if (!trimmed) {
-      console.log('useSearchLogic: Empty query, clearing filters');
+      logger.debug('useSearchLogic: Empty query, clearing filters');
       setAppliedQuery("");
       setAppliedType(null);
       return;
     }
 
-    console.log('useSearchLogic: Applying filters - query:', trimmed, 'type:', searchType);
+    logger.debug('useSearchLogic: Applying filters', { query: trimmed, type: searchType });
     setAppliedQuery(trimmed);
     setAppliedType(searchType);
     setAppliedRevision((prev) => prev + 1);
@@ -136,19 +137,18 @@ export const useSearchLogic = () => {
   }, [buildingResults, streetResults]);
 
   const handleShowAllToggle = useCallback(() => {
-    console.log('useSearchLogic: handleShowAllToggle called, current value:', showAllLayers);
+    logger.debug('useSearchLogic: handleShowAllToggle called', { currentValue: showAllLayers });
     setShowAllLayers((prev) => !prev);
   }, [showAllLayers]);
 
   const handleLocationToggle = useCallback((active: boolean) => {
-    console.log('useSearchLogic: handleLocationToggle called with active:', active);
-    setLocationActive(active);
+    logger.debug('useSearchLogic: handleLocationToggle called', { active });
 
     if (active) {
-      console.log('Starting location tracking');
+      logger.debug('Starting location tracking');
       startTracking();
     } else {
-      console.log('Stopping location tracking');
+      logger.debug('Stopping location tracking');
       stopTracking();
     }
   }, [startTracking, stopTracking]);
@@ -159,7 +159,7 @@ export const useSearchLogic = () => {
 
   // Auto-show layers based on search results
   useEffect(() => {
-    console.log('useSearchLogic: Auto-show layers effect triggered', {
+    logger.debug('useSearchLogic: Auto-show layers effect triggered', {
       normalizedAppliedQuery,
       appliedType,
       buildingResults,
@@ -167,20 +167,20 @@ export const useSearchLogic = () => {
     });
 
     if (!normalizedAppliedQuery || !appliedType) {
-      console.log('useSearchLogic: No applied query or type, hiding layers');
+      logger.debug('useSearchLogic: No applied query or type, hiding layers');
       setShowBuildings(false);
       setShowStreets(false);
       return;
     }
 
     if (appliedType === "calle") {
-      console.log('useSearchLogic: Street search, showing streets if results > 0:', streetResults > 0);
+      logger.debug('useSearchLogic: Street search', { showingStreets: streetResults > 0 });
       setShowBuildings(false);
       setShowStreets(streetResults > 0);
       return;
     }
 
-    console.log('useSearchLogic: Building search, showing buildings if results > 0:', buildingResults > 0);
+    logger.debug('useSearchLogic: Building search', { showingBuildings: buildingResults > 0 });
     setShowStreets(false);
     setShowBuildings(buildingResults > 0);
   }, [appliedRevision, normalizedAppliedQuery, appliedType, buildingResults, streetResults]);

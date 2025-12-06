@@ -64,7 +64,7 @@ export default [
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-var-requires": "off",
       // Add rules that were missing
       "@typescript-eslint/ban-types": "off",

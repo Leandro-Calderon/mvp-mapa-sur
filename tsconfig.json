@@ -18,7 +18,10 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "allowJs": false,
-    "checkJs": false
+    "checkJs": false,
+    "types": [
+      "vitest/globals"
+    ]
   },
   "include": [
     "src/**/*"
