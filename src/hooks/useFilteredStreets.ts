@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from "react";
 import type { StreetFeature } from "../types/geojson";
+import { matchesStreetName } from "../utils/searchMatcher";
 
 type StreetFilters = {
   streetName: string,
@@ -12,7 +13,7 @@ type StreetFilters = {
  * @returns Filtered array of street features
  */
 export const useFilteredStreets = (
-  data: StreetFeature[], 
+  data: StreetFeature[],
   filters: StreetFilters
 ) => {
   const filterStreet = useCallback(
@@ -22,10 +23,8 @@ export const useFilteredStreets = (
         return true;
       }
 
-      // Case-insensitive search in street name
-      return street.properties.nombre
-        .toLowerCase()
-        .includes(filters.streetName.toLowerCase().trim());
+      // Use word boundary matching for numbers in street names
+      return matchesStreetName(street.properties.nombre, filters.streetName);
     },
     [filters]
   );

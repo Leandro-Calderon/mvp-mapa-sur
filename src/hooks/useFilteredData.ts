@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from "react";
 
 import type { BuildingFeature } from "../types/geojson";
+import { matchesBuildingName } from "../utils/searchMatcher";
 
 type Filters = {
   edificio: string,
@@ -21,14 +22,12 @@ export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
         return true;
       }
 
-      // Check each filter inline to avoid creating intermediate objects
+      // Check each filter using exact matching for building names
       const matchEdificio = !trimmedEdificio ||
-        (item.properties.nombre !== null &&
-          item.properties.nombre.toString().includes(trimmedEdificio));
+        matchesBuildingName(item.properties.nombre, trimmedEdificio);
 
       const matchVivienda = !trimmedVivienda ||
-        (item.properties.nombre !== null &&
-          item.properties.nombre.toString().includes(trimmedVivienda));
+        matchesBuildingName(item.properties.nombre, trimmedVivienda);
 
       const matchPlan = !trimmedPlan ||
         item.properties.plan?.includes(trimmedPlan);
