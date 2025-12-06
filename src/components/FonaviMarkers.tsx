@@ -1,6 +1,7 @@
 import { CircleMarker, Popup, Tooltip } from "react-leaflet";
 import type { BuildingFeature } from "../types/geojson";
 import "../styles/FonaviMarkers.css";
+import { logger } from "../utils/logger";
 
 // Función para obtener el color según el tipo
 const getColorByTipo = (tipo: string): string => {
@@ -35,7 +36,7 @@ interface FonaviMarkersProps {
 }
 
 export const FonaviMarkers = ({ features }: FonaviMarkersProps) => {
-  console.log('FonaviMarkers: Rendering', features.length, 'features');
+  logger.debug('FonaviMarkers: Rendering features', { count: features.length });
 
   return (
     <>

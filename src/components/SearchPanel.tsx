@@ -1,5 +1,6 @@
 import React from "react";
 import "./SearchPanel.css";
+import { logger } from "../utils/logger";
 
 export type SearchType = "edificio" | "departamento" | "calle" | "plan";
 
@@ -65,8 +66,8 @@ export const SearchPanel = ({
 
   const handleTypeSelect = (type: SearchType) => {
     if (type !== _type) {
-      console.log('SearchPanel: Type changed from', _type, 'to', type);
-      console.log('SearchPanel: Current appliedQuery:', appliedQuery, 'appliedType:', appliedType);
+      logger.debug('Type changed', { from: _type, to: type });
+      logger.debug('Current state', { appliedQuery, appliedType });
       onTypeChange(type);
     }
   };
@@ -78,7 +79,7 @@ export const SearchPanel = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      console.log('SearchPanel: Enter key pressed, calling onSubmit');
+      logger.debug('SearchPanel: Enter key pressed, calling onSubmit');
       onSubmit();
     }
   };

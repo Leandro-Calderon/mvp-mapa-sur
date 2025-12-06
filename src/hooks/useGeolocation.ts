@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { LatLngArray } from "../types/map";
+import { logger } from "../utils/logger";
 
 interface PositionOptions {
   enableHighAccuracy?: boolean;
@@ -30,29 +31,29 @@ export const useGeolocation = (): GeolocationResult => {
   const [watchId, setWatchId] = useState<number | null>(null);
 
   const handleSuccess = useCallback((pos: GeolocationPosition) => {
-    console.log('Geolocation success:', pos);
+    logger.debug('Geolocation success', pos);
     const { latitude, longitude, accuracy: positionAccuracy } = pos.coords;
-    console.log('Setting position to:', [latitude, longitude]);
+    logger.debug('Setting position to', [latitude, longitude]);
     setPosition([latitude, longitude]);
     setAccuracy(positionAccuracy);
     setError(null);
   }, []);
 
   const handleError = useCallback((err: GeolocationPositionError) => {
-    console.error('Geolocation error:', err);
-    console.error('Error code:', err.code);
-    console.error('Error message:', err.message);
+    logger.error('Geolocation error', err);
+    logger.error('Error code', { code: err.code });
+    logger.error('Error message', { message: err.message });
 
     // Log specific error types
     switch (err.code) {
       case err.PERMISSION_DENIED:
-        console.error('GPS permission denied by user');
+        logger.error('GPS permission denied by user');
         break;
       case err.POSITION_UNAVAILABLE:
-        console.error('GPS position unavailable (possibly turned off)');
+        logger.error('GPS position unavailable (possibly turned off)');
         break;
       case err.TIMEOUT:
-        console.error('GPS request timed out');
+        logger.error('GPS request timed out');
         break;
     }
 
@@ -61,52 +62,52 @@ export const useGeolocation = (): GeolocationResult => {
   }, []);
 
   const startTracking = useCallback(async () => {
-    console.log('Starting geolocation tracking...');
+    logger.debug('Starting geolocation tracking');
     if (!navigator.geolocation) {
-      console.error('Geolocation not supported');
+      logger.error('Geolocation not supported');
       setError("Geolocation is not supported by your browser");
       return;
     }
 
     // Check if Permissions API is available
     if ('permissions' in navigator) {
-      console.log('Permissions API available, checking location permission status...');
+      logger.debug('Permissions API available, checking location permission status');
       try {
         const permission = await navigator.permissions.query({ name: 'geolocation' });
-        console.log('Current permission state:', permission.state);
+        logger.debug('Current permission state', { state: permission.state });
 
         if (permission.state === 'denied') {
-          console.error('Location permission previously denied');
+          logger.error('Location permission previously denied');
           setError("Location permission was denied. Please enable location in your browser settings.");
           return;
         }
 
         if (permission.state === 'prompt') {
-          console.log('Will prompt user for location permission');
+          logger.debug('Will prompt user for location permission');
         }
       } catch (error) {
-        console.error('Error checking permission status:', error);
+        logger.error('Error checking permission status', error);
       }
     } else {
-      console.log('Permissions API not available, will request permission directly');
+      logger.debug('Permissions API not available, will request permission directly');
     }
 
-    console.log('Requesting geolocation permission...');
+    logger.debug('Requesting geolocation permission');
     const id = navigator.geolocation.watchPosition(
       handleSuccess,
       handleError,
       GEOLOCATION_OPTIONS
     );
 
-    console.log('Geolocation watch ID:', id);
+    logger.debug('Geolocation watch ID', { id });
     setWatchId(id);
     setIsActive(true);
   }, [handleSuccess, handleError]);
 
   const stopTracking = useCallback(() => {
-    console.log('Stopping geolocation tracking...');
+    logger.debug('Stopping geolocation tracking');
     if (watchId) {
-      console.log('Clearing watch ID:', watchId);
+      logger.debug('Clearing watch ID', { watchId });
       navigator.geolocation.clearWatch(watchId);
       setWatchId(null);
       setPosition(null);

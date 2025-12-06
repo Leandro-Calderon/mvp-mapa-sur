@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./LocationButton.css";
 import { GpsDisabledModal } from "./GpsDisabledModal";
+import { logger } from "../utils/logger";
 
 interface LocationButtonProps {
   onToggle: (active: boolean) => void;
@@ -26,19 +27,19 @@ export const LocationButton = ({
   }, [_isActive]);
 
   const handleClick = () => {
-    console.log('Location button clicked, current state:', active);
+    logger.debug('Location button clicked', { active });
 
     // When trying to activate location, check GPS status first
     if (!active) {
-      console.log('Attempting to activate location - checking GPS status first');
+      logger.debug('Attempting to activate location - checking GPS status first');
 
       if (navigator.geolocation) {
-        console.log('Geolocation API available, checking GPS status...');
+        logger.debug('Geolocation API available, checking GPS status');
 
         // Check if GPS is enabled before requesting position
         checkGpsStatusAndRequest();
       } else {
-        console.error('Geolocation not supported');
+        logger.error('Geolocation not supported');
         alert('La geolocalización no es compatible con tu navegador.');
       }
       return;
@@ -46,21 +47,21 @@ export const LocationButton = ({
 
     // Normal toggle for deactivating
     const newActive = !active;
-    console.log('Location button new state:', newActive);
+    logger.debug('Location button new state', { newActive });
     setActive(newActive);
     onToggle(newActive);
   };
 
   const checkGpsStatusAndRequest = () => {
-    console.log('Checking GPS status before requesting position...');
+    logger.debug('Checking GPS status before requesting position');
 
     // First check permission status if available
     if ('permissions' in navigator) {
       navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
-        console.log('Current permission status:', permissionStatus.state);
+        logger.debug('Current permission status', { state: permissionStatus.state });
 
         if (permissionStatus.state === 'denied') {
-          console.log('Permission previously denied, showing user instructions');
+          logger.debug('Permission previously denied, showing user instructions');
           showGpsDisabledMessage();
           return;
         }
@@ -70,19 +71,19 @@ export const LocationButton = ({
         navigator.geolocation.getCurrentPosition(
           // Success callback - GPS is working
           () => {
-            console.log('GPS is enabled, proceeding with full position request');
+            logger.debug('GPS is enabled, proceeding with full position request');
             requestPosition();
           },
           // Error callback - check if it's because GPS is disabled
           (error) => {
-            console.error('GPS status check error:', error);
+            logger.error('GPS status check error', error);
 
             if (error.code === error.POSITION_UNAVAILABLE) {
-              console.log('GPS is turned off, showing user invitation to enable it');
+              logger.debug('GPS is turned off, showing user invitation to enable it');
               showGpsDisabledMessage();
             } else {
               // For other errors (permission denied, timeout), proceed with normal flow
-              console.log('GPS check failed with other error, proceeding with normal request');
+              logger.debug('GPS check failed with other error, proceeding with normal request');
               requestPosition();
             }
           },
@@ -93,7 +94,7 @@ export const LocationButton = ({
           }
         );
       }).catch(error => {
-        console.error('Error checking permission status:', error);
+        logger.error('Error checking permission status', error);
         // If we can't check permissions, just try to get position
         requestPosition();
       });
@@ -104,7 +105,7 @@ export const LocationButton = ({
   };
 
   const showGpsDisabledMessage = () => {
-    console.log('Showing GPS disabled modal');
+    logger.debug('Showing GPS disabled modal');
     setShowGpsModal(true);
   };
 
@@ -113,23 +114,22 @@ export const LocationButton = ({
   };
 
   const requestPosition = () => {
-    console.log('Requesting position...');
+    logger.debug('Requesting position');
     // Use getCurrentPosition to trigger the OS-level permission prompt
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('Successfully got position after OS prompt:', position);
+        logger.debug('Successfully got position after OS prompt', position);
         // Explicitly mark active = true (don't toggle) to avoid races with parent state
         setActive(true);
         onToggle(true);
       },
       (error) => {
-        console.error('Error after OS permission prompt:', error);
-        console.log('Error code:', error.code);
-        console.log('Error message:', error.message);
+        logger.error('Error after OS permission prompt', error);
+        logger.error('Error details', { code: error.code, message: error.message });
 
         // Handle specific error types
         if (error.code === error.PERMISSION_DENIED) {
-          console.log('Permission denied by user');
+          logger.debug('Permission denied by user');
           // For mobile devices, provide specific instructions
           if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
             const isAndroid = /Android/i.test(navigator.userAgent);
@@ -144,10 +144,10 @@ export const LocationButton = ({
             alert('Por favor, habilita el GPS en la configuración de tu navegador y recarga la página.');
           }
         } else if (error.code === error.POSITION_UNAVAILABLE) {
-          console.log('GPS position unavailable (this shouldn\'t happen after our check)');
+          logger.debug('GPS position unavailable');
           alert('No se pudo obtener tu ubicación. Asegúrate de que el GPS esté activado y tienes buena señal.');
         } else if (error.code === error.TIMEOUT) {
-          console.log('GPS request timed out');
+          logger.debug('GPS request timed out');
           alert('No se pudo obtener tu ubicación. Intenta de nuevo.');
         }
 
