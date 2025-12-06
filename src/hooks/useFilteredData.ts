@@ -8,38 +8,34 @@ type Filters = {
   plan: string,
 };
 
-// Separate filter predicates for better maintainability and testing
-const createFilterPredicates = (filters: Filters) => ({
-  edificioFilter: (item: BuildingFeature) =>
-    !filters.edificio ||
-    (item.properties.nombre !== null && item.properties.nombre.toString().includes(filters.edificio.trim())),
-
-  viviendaFilter: (item: BuildingFeature) =>
-    !filters.vivienda ||
-    (item.properties.nombre !== null && item.properties.nombre.toString().includes(filters.vivienda.trim())),
-
-  planFilter: (item: BuildingFeature) =>
-    !filters.plan || item.properties.plan.includes(filters.plan.trim()),
-});
-
 export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
   // Memoize the filter function to prevent unnecessary recreations
   const filterItem = useCallback(
     (item: BuildingFeature) => {
+      const trimmedEdificio = filters.edificio?.trim() || '';
+      const trimmedVivienda = filters.vivienda?.trim() || '';
+      const trimmedPlan = filters.plan?.trim() || '';
+
       // Early return if no filters are active
-      if (!filters.edificio && !filters.vivienda && !filters.plan) {
+      if (!trimmedEdificio && !trimmedVivienda && !trimmedPlan) {
         return true;
       }
 
-      const predicates = createFilterPredicates(filters);
+      // Check each filter inline to avoid creating intermediate objects
+      const matchEdificio = !trimmedEdificio ||
+        (item.properties.nombre !== null &&
+          item.properties.nombre.toString().includes(trimmedEdificio));
 
-      return (
-        predicates.edificioFilter(item) &&
-        predicates.viviendaFilter(item) &&
-        predicates.planFilter(item)
-      );
+      const matchVivienda = !trimmedVivienda ||
+        (item.properties.nombre !== null &&
+          item.properties.nombre.toString().includes(trimmedVivienda));
+
+      const matchPlan = !trimmedPlan ||
+        item.properties.plan?.includes(trimmedPlan);
+
+      return matchEdificio && matchVivienda && matchPlan;
     },
-    [filters]
+    [filters.edificio, filters.vivienda, filters.plan]
   );
 
   // Memoize the filtered results
@@ -53,7 +49,3 @@ export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
   }, [data, filterItem]);
 };
 
-// Optional: Export helper functions for testing
-export const __test__ = {
-  createFilterPredicates,
-};

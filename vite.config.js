@@ -70,7 +70,7 @@ export default defineConfig({
 
       workbox: {
         globDirectory: "dist",
-        sourcemap: true,
+        sourcemap: false, // Desactivado para producción
         globPatterns: ["**/*.{js,css,html}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         skipWaiting: true,
@@ -132,16 +132,31 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: "dist", // Carpeta de salida para la build
-    sourcemap: true, // Opcional, útil para debugging
-    publicDir: "public",
+    outDir: "dist",
+    sourcemap: false, // Desactivado para producción - ahorra ~139 KiB
+    target: 'es2020', // Navegadores modernos - elimina polyfills legacy (~12 KiB)
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.debug', 'console.info'],
+        passes: 2 // Múltiples pasadas de compresión
+      },
+      mangle: {
+        safari10: false // No necesitamos soporte Safari 10
       }
-    }
+    },
+    rollupOptions: {
+      output: {
+        // Code splitting para mejor caching y carga paralela
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'leaflet-vendor': ['leaflet', 'react-leaflet'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 500, // Advertir si chunks > 500KB
   },
   css: {
     devSourcemap: true,

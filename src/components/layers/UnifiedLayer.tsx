@@ -1,7 +1,56 @@
-import { FeatureGroup, Marker, Popup, Polyline, Polygon, useMap } from "react-leaflet";
-import { customIcon } from "../../constants/mapIcons";
+import { memo, useMemo } from "react";
+import { FeatureGroup, Popup, Polyline, Polygon, useMap } from "react-leaflet";
 import { FonaviMarkers } from "../FonaviMarkers";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
+import { logger } from "../../utils/logger";
+import { isMobile } from "../../utils/deviceDetection";
+
+// Type guard functions for street coordinates validation (moved outside component)
+const isLngLatPair = (value: unknown): value is [number, number] => {
+  return Array.isArray(value) &&
+    value.length === 2 &&
+    typeof value[0] === "number" &&
+    typeof value[1] === "number";
+};
+
+const isLineStringCoordinates = (
+  value: unknown,
+): value is [number, number][] => {
+  return Array.isArray(value) &&
+    value.length > 0 &&
+    value.every(isLngLatPair);
+};
+
+const isMultiLineStringCoordinates = (
+  value: unknown,
+): value is [number, number][][] => {
+  return Array.isArray(value) &&
+    value.length > 0 &&
+    value.every(isLineStringCoordinates);
+};
+
+const isPolygonCoordinates = (
+  value: unknown,
+): value is [number, number][][][] => {
+  return Array.isArray(value) &&
+    value.length > 0 &&
+    value.every((ring) =>
+      Array.isArray(ring) &&
+      ring.length > 0 &&
+      ring.every(isLngLatPair)
+    );
+};
+
+// Simplify polygon coordinates for mobile performance
+const simplifyPolygon = (coordinates: number[][][]) => {
+  if (!isMobile) return coordinates;
+
+  // Simplify polygon coordinates for better performance on mobile
+  // Filter out some points to reduce complexity
+  return coordinates.map(ring =>
+    ring.length > 20 ? ring.filter((_, i) => i % 2 === 0) : ring
+  );
+};
 
 interface UnifiedLayerProps {
   buildingFeatures: BuildingFeature[];
@@ -9,78 +58,36 @@ interface UnifiedLayerProps {
   showAllLayers: boolean;
 }
 
-export const UnifiedLayer = ({
+export const UnifiedLayer = memo(({
   buildingFeatures,
   streetFeatures,
   showAllLayers
 }: UnifiedLayerProps) => {
   const map = useMap();
 
-  // Detect if we're on a mobile device
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-  console.log('UnifiedLayer: Rendering with', {
+  logger.debug('UnifiedLayer: Rendering with', {
     buildingFeaturesCount: buildingFeatures.length,
     streetFeaturesCount: streetFeatures.length,
     showAllLayers,
     isMobile
   });
 
-  // Show layers when "See all" is enabled OR when there are filtered results
-  const shouldShowBuildings = showAllLayers || buildingFeatures.length > 0;
-  const shouldShowStreets = showAllLayers || streetFeatures.length > 0;
+  // Memoize display decisions
+  const shouldShowBuildings = useMemo(() =>
+    showAllLayers || buildingFeatures.length > 0,
+    [showAllLayers, buildingFeatures.length]
+  );
 
-  console.log('UnifiedLayer: Display decisions', {
+  const shouldShowStreets = useMemo(() =>
+    showAllLayers || streetFeatures.length > 0,
+    [showAllLayers, streetFeatures.length]
+  );
+
+
+  logger.debug('UnifiedLayer: Display decisions', {
     shouldShowBuildings,
     shouldShowStreets
   });
-
-  // Type guard functions for street coordinates validation
-  const isLngLatPair = (value: unknown): value is [number, number] => {
-    return Array.isArray(value) &&
-      value.length === 2 &&
-      typeof value[0] === "number" &&
-      typeof value[1] === "number";
-  };
-
-  const isLineStringCoordinates = (
-    value: unknown,
-  ): value is [number, number][] => {
-    return Array.isArray(value) &&
-      value.length > 0 &&
-      value.every(isLngLatPair);
-  };
-
-  const isMultiLineStringCoordinates = (
-    value: unknown,
-  ): value is [number, number][][] => {
-    return Array.isArray(value) &&
-      value.length > 0 &&
-      value.every(isLineStringCoordinates);
-  };
-
-  const isPolygonCoordinates = (
-    value: unknown,
-  ): value is [number, number][][][] => {
-    return Array.isArray(value) &&
-      value.length > 0 &&
-      value.every((ring) =>
-        Array.isArray(ring) &&
-        ring.length > 0 &&
-        ring.every(isLngLatPair)
-      );
-  };
-
-  // Simplify polygon coordinates for mobile performance
-  const simplifyPolygon = (coordinates: number[][][]) => {
-    if (!isMobile) return coordinates;
-
-    // Simplify polygon coordinates for better performance on mobile
-    // Filter out some points to reduce complexity
-    return coordinates.map(ring =>
-      ring.length > 20 ? ring.filter((_, i) => i % 2 === 0) : ring
-    );
-  };
 
   // Mobile-optimized polygon component
   const MobilePolygon = ({
@@ -224,4 +231,6 @@ export const UnifiedLayer = ({
       )}
     </>
   );
-};
+});
+
+UnifiedLayer.displayName = 'UnifiedLayer';

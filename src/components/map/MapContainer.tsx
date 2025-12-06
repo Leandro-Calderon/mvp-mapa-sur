@@ -6,6 +6,8 @@ import { UnifiedLayer } from "../layers/UnifiedLayer";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LatLngArray } from "../../types/map";
 import L from "leaflet";
+import { logger } from "../../utils/logger";
+import { isMobile } from "../../utils/deviceDetection";
 
 const TILE_LAYER_CONFIG = {
   url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -117,7 +119,7 @@ const LocationFlyTo = ({
 
   useEffect(() => {
     if (userPosition && isLocationTracking && !hasFocusedRef.current) {
-      console.log('Flying to user location:', userPosition);
+      logger.debug('Flying to user location:', userPosition);
       map.flyTo(userPosition, 16, {
         duration: 2
       });
@@ -150,9 +152,6 @@ export const MapContainer = ({
     locationIconRef.current = createLocationIcon();
   }
 
-  // Detect if we're on a mobile device
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  
   return (
     <LeafletMapContainer
       center={mapState.center}

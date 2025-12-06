@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import type { DataService, DataServiceResult } from '../services/DataService';
 import type { BuildingFeature, StreetFeature } from '../types/geojson';
 import type { OfflineDataServiceResult } from '../services/OfflineDataService';
@@ -10,174 +10,157 @@ export interface EnhancedDataServiceResult<T> extends DataServiceResult<T> {
   lastUpdated?: number;
 }
 
-export const useDataService = (service: DataService) => {
-  const [buildingsResult, setBuildingsResult] = useState<EnhancedDataServiceResult<BuildingFeature[]>>({
-    data: [],
-    loading: true,
-    error: null,
-    fromCache: false,
-    isStale: false
-  });
+// Helper to schedule background refresh with requestIdleCallback
+const scheduleBackgroundRefresh = (callback: () => void) => {
+  if ('requestIdleCallback' in window) {
+    (window as Window).requestIdleCallback(() => callback(), { timeout: 2000 });
+  } else {
+    // Fallback for browsers without requestIdleCallback
+    setTimeout(callback, 1000);
+  }
+};
 
-  const [streetsResult, setStreetsResult] = useState<EnhancedDataServiceResult<StreetFeature[]>>({
-    data: [],
-    loading: true,
-    error: null,
-    fromCache: false,
-    isStale: false
-  });
+// Default initial state for data results
+const createInitialState = <T>(): EnhancedDataServiceResult<T[]> => ({
+  data: [] as T[],
+  loading: true,
+  error: null,
+  fromCache: false,
+  isStale: false
+});
+
+// Generic data loader configuration
+interface DataLoaderConfig<T> {
+  loadWithMetadata: (options: { forceRefresh: boolean; preferOffline: boolean }) => Promise<OfflineDataServiceResult<T[]>>;
+  loadBasic: () => Promise<T[]>;
+  hasMetadata: boolean;
+}
+
+// Generic function to load data with either metadata or basic service
+async function loadDataType<T>(
+  config: DataLoaderConfig<T>,
+  forceRefresh: boolean,
+  preferOffline: boolean,
+  isOnline: boolean,
+  setResult: React.Dispatch<React.SetStateAction<EnhancedDataServiceResult<T[]>>>,
+  onStaleData?: () => void
+): Promise<void> {
+  try {
+    setResult(prev => ({
+      ...prev,
+      loading: true,
+      error: null
+    }));
+
+    if (config.hasMetadata) {
+      const metadata = await config.loadWithMetadata({
+        forceRefresh,
+        preferOffline: preferOffline && !forceRefresh
+      });
+
+      setResult({
+        data: metadata.data,
+        loading: false,
+        error: null,
+        fromCache: metadata.fromCache,
+        isStale: metadata.isStale,
+        lastUpdated: metadata.lastUpdated
+      });
+
+      // If data is stale and we're online, trigger background refresh
+      if (isOnline && metadata.isStale && !forceRefresh && onStaleData) {
+        scheduleBackgroundRefresh(onStaleData);
+      }
+    } else {
+      const data = await config.loadBasic();
+      setResult({
+        data,
+        loading: false,
+        error: null,
+        fromCache: false,
+        isStale: false
+      });
+    }
+  } catch (error) {
+    setResult({
+      data: [],
+      loading: false,
+      error: error instanceof Error ? error : new Error('Unknown error'),
+      fromCache: false,
+      isStale: false
+    });
+  }
+}
+
+export const useDataService = (service: DataService) => {
+  const [buildingsResult, setBuildingsResult] = useState<EnhancedDataServiceResult<BuildingFeature[]>>(
+    createInitialState<BuildingFeature>()
+  );
+
+  const [streetsResult, setStreetsResult] = useState<EnhancedDataServiceResult<StreetFeature[]>>(
+    createInitialState<StreetFeature>()
+  );
+
+  // Track if a refresh is already scheduled to prevent multiple concurrent refreshes
+  const refreshScheduledRef = useRef(false);
 
   const loadData = useCallback(async (forceRefresh = false) => {
     const isOnline = connectionService.isOnline();
     const preferOffline = connectionService.shouldUseOfflineFirst();
 
-    // Load buildings
-    try {
-      setBuildingsResult(prev => ({
-        ...prev,
-        loading: true,
-        error: null
-      }));
+    // Check service capabilities once
+    const hasBuildingsMetadata = 'loadBuildingsWithMetadata' in service;
+    const hasStreetsMetadata = 'loadStreetsWithMetadata' in service;
 
-      // Check if we have enhanced service (OfflineDataService)
-      const isOfflineService = 'loadBuildingsWithMetadata' in service;
-
-      let buildings: BuildingFeature[];
-      let buildingsMetadata: OfflineDataServiceResult<BuildingFeature[]> | null = null;
-
-      if (isOfflineService) {
-        buildingsMetadata = await (service as any).loadBuildingsWithMetadata({
-          forceRefresh,
-          preferOffline: preferOffline && !forceRefresh
-        }) as OfflineDataServiceResult<BuildingFeature[]>;
-        buildings = buildingsMetadata.data;
-      } else {
-        buildings = await service.loadBuildings();
-      }
-
-      if (buildingsMetadata) {
-        if (isOnline && buildingsMetadata.isStale && !forceRefresh) {
-          // Data is stale but we're online, try to refresh in background
-          setBuildingsResult({
-            data: buildingsMetadata.data,
-            loading: false,
-            error: null,
-            fromCache: buildingsMetadata.fromCache,
-            isStale: buildingsMetadata.isStale,
-            lastUpdated: buildingsMetadata.lastUpdated
-          });
-
-          // Trigger background refresh
-          setTimeout(() => loadData(true), 1000);
-        } else {
-          setBuildingsResult({
-            data: buildingsMetadata.data,
-            loading: false,
-            error: null,
-            fromCache: buildingsMetadata.fromCache,
-            isStale: buildingsMetadata.isStale,
-            lastUpdated: buildingsMetadata.lastUpdated
-          });
-        }
-      } else {
-        // Fallback for regular DataService
-        setBuildingsResult({
-          data: buildings,
-          loading: false,
-          error: null,
-          fromCache: false,
-          isStale: false
+    // Create a refresh callback that prevents multiple concurrent refreshes
+    const triggerRefresh = () => {
+      if (!refreshScheduledRef.current) {
+        refreshScheduledRef.current = true;
+        loadData(true).finally(() => {
+          refreshScheduledRef.current = false;
         });
       }
-    } catch (error) {
-      setBuildingsResult({
-        data: [],
-        loading: false,
-        error: error instanceof Error ? error : new Error('Unknown error'),
-        fromCache: false,
-        isStale: false
-      });
-    }
+    };
 
-    // Load streets
-    try {
-      setStreetsResult(prev => ({
-        ...prev,
-        loading: true,
-        error: null
-      }));
-
-      // Check if we have enhanced service (OfflineDataService)
-      const isOfflineService = 'loadStreetsWithMetadata' in service;
-
-      let streets: StreetFeature[];
-      let streetsMetadata: OfflineDataServiceResult<StreetFeature[]> | null = null;
-
-      if (isOfflineService) {
-        streetsMetadata = await (service as any).loadStreetsWithMetadata({
-          forceRefresh,
-          preferOffline: preferOffline && !forceRefresh
-        }) as OfflineDataServiceResult<StreetFeature[]>;
-        streets = streetsMetadata.data;
-      } else {
-        streets = await service.loadStreets();
-      }
-
-      if (streetsMetadata) {
-        if (isOnline && streetsMetadata.isStale && !forceRefresh) {
-          // Data is stale but we're online, try to refresh in background
-          setStreetsResult({
-            data: streetsMetadata.data,
-            loading: false,
-            error: null,
-            fromCache: streetsMetadata.fromCache,
-            isStale: streetsMetadata.isStale,
-            lastUpdated: streetsMetadata.lastUpdated
-          });
-
-          // Trigger background refresh
-          setTimeout(() => loadData(true), 1000);
-        } else {
-          setStreetsResult({
-            data: streetsMetadata.data,
-            loading: false,
-            error: null,
-            fromCache: streetsMetadata.fromCache,
-            isStale: streetsMetadata.isStale,
-            lastUpdated: streetsMetadata.lastUpdated
-          });
-        }
-      } else {
-        // Fallback for regular DataService
-        setStreetsResult({
-          data: streets,
-          loading: false,
-          error: null,
-          fromCache: false,
-          isStale: false
-        });
-      }
-    } catch (error) {
-      setStreetsResult({
-        data: [],
-        loading: false,
-        error: error instanceof Error ? error : new Error('Unknown error'),
-        fromCache: false,
-        isStale: false
-      });
-    }
+    // Load buildings and streets in parallel
+    await Promise.all([
+      loadDataType<BuildingFeature>(
+        {
+          loadWithMetadata: (opts) => (service as any).loadBuildingsWithMetadata(opts),
+          loadBasic: () => service.loadBuildings(),
+          hasMetadata: hasBuildingsMetadata
+        },
+        forceRefresh,
+        preferOffline,
+        isOnline,
+        setBuildingsResult,
+        triggerRefresh
+      ),
+      loadDataType<StreetFeature>(
+        {
+          loadWithMetadata: (opts) => (service as any).loadStreetsWithMetadata(opts),
+          loadBasic: () => service.loadStreets(),
+          hasMetadata: hasStreetsMetadata
+        },
+        forceRefresh,
+        preferOffline,
+        isOnline,
+        setStreetsResult,
+        triggerRefresh
+      )
+    ]);
   }, [service]);
 
   useEffect(() => {
     let isMounted = true;
 
     const initialLoad = async () => {
-      await loadData();
+      if (isMounted) {
+        await loadData();
+      }
     };
 
-    if (isMounted) {
-      initialLoad();
-    }
+    initialLoad();
 
     return () => {
       isMounted = false;
@@ -208,3 +191,4 @@ export const useDataService = (service: DataService) => {
     networkQuality: connectionService.getNetworkQuality()
   };
 };
+

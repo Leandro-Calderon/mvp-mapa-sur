@@ -32,7 +32,14 @@
 
   <!-- Performance Optimization -->
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+  <link rel="preconnect" href="https://a.tile.openstreetmap.org" crossorigin>
+  <link rel="preconnect" href="https://b.tile.openstreetmap.org" crossorigin>
+  <link rel="preconnect" href="https://c.tile.openstreetmap.org" crossorigin>
   <link rel="dns-prefetch" href="https://tile.openstreetmap.org">
+
+  <!-- Preload critical GeoJSON data -->
+  <link rel="preload" href="./assets/fonavi.geojson" as="fetch" type="application/json" crossorigin>
+  <link rel="preload" href="./assets/calles.geojson" as="fetch" type="application/json" crossorigin>
 
   <!-- Favicons -->
   <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -40,6 +47,49 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png">
 
   <title>mvp-mapa-sur</title>
+
+  <!-- Critical CSS inline para FCP instantáneo -->
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body,
+    #root {
+      height: 100%;
+      width: 100%;
+      overflow: hidden
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #e8f1e8
+    }
+
+    #root {
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .loading-placeholder {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e0e0e0;
+      border-top-color: #4ECDC4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+  </style>
 </head>
 
 <body>

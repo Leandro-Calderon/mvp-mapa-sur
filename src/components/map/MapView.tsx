@@ -1,4 +1,4 @@
-import { MapContainer } from "./MapContainer";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
 import { ConnectionStatus } from "../ConnectionStatus";
@@ -7,9 +7,42 @@ import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
 import { createDataService, type OfflineDataService } from "../../services/OfflineDataService";
-import { useState, useEffect } from "react";
 import { logger } from "../../utils/logger";
 import styles from "./MapView.module.css";
+
+// Lazy load the MapContainer for better initial load performance
+const MapContainer = lazy(() =>
+    import("./MapContainer").then(module => ({ default: module.MapContainer }))
+);
+
+// Loading fallback for the map
+const MapLoadingFallback = () => (
+    <div style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#f0f0f0',
+        color: '#666'
+    }}>
+        <div style={{
+            width: '48px',
+            height: '48px',
+            border: '4px solid #e0e0e0',
+            borderTopColor: '#4ECDC4',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+        }} />
+        <p style={{ marginTop: '16px', fontSize: '14px' }}>Cargando mapa...</p>
+        <style>{`
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        `}</style>
+    </div>
+);
 
 export const MapView = () => {
     // Initialize offline data service for cache info
@@ -91,15 +124,17 @@ export const MapView = () => {
 
     return (
         <div className={styles.mapContainer} style={{ minHeight: '100vh' }}>
-            <MapContainer
-                filteredBuildings={filteredBuildings}
-                filteredStreets={filteredStreets}
-                showAllLayers={showAllLayers}
-                userPosition={userPosition}
-                locationAccuracy={locationAccuracy}
-                locationError={locationError}
-                isLocationTracking={isLocationTracking}
-            />
+            <Suspense fallback={<MapLoadingFallback />}>
+                <MapContainer
+                    filteredBuildings={filteredBuildings}
+                    filteredStreets={filteredStreets}
+                    showAllLayers={showAllLayers}
+                    userPosition={userPosition}
+                    locationAccuracy={locationAccuracy}
+                    locationError={locationError}
+                    isLocationTracking={isLocationTracking}
+                />
+            </Suspense>
 
             <MapNotifications
                 isLoading={isLoading}
