@@ -2,10 +2,11 @@
   "type": "FeatureCollection",
   "features": [
     {
+      "id": "0",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 56,
+        "nombre": 56.0,
         "plan": "077"
       },
       "geometry": {
@@ -17,10 +18,11 @@
       }
     },
     {
+      "id": "1",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 55,
+        "nombre": 55.0,
         "plan": "077"
       },
       "geometry": {
@@ -32,10 +34,11 @@
       }
     },
     {
+      "id": "2",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 48,
+        "nombre": 48.0,
         "plan": "077"
       },
       "geometry": {
@@ -47,10 +50,11 @@
       }
     },
     {
+      "id": "3",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 54,
+        "nombre": 54.0,
         "plan": "077"
       },
       "geometry": {
@@ -62,10 +66,11 @@
       }
     },
     {
+      "id": "4",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 53,
+        "nombre": 53.0,
         "plan": "077"
       },
       "geometry": {
@@ -77,10 +82,11 @@
       }
     },
     {
+      "id": "5",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 52,
+        "nombre": 52.0,
         "plan": "077"
       },
       "geometry": {
@@ -92,10 +98,11 @@
       }
     },
     {
+      "id": "6",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 49,
+        "nombre": 49.0,
         "plan": "077"
       },
       "geometry": {
@@ -107,10 +114,11 @@
       }
     },
     {
+      "id": "7",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 51,
+        "nombre": 51.0,
         "plan": "077"
       },
       "geometry": {
@@ -122,10 +130,11 @@
       }
     },
     {
+      "id": "8",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 50,
+        "nombre": 50.0,
         "plan": "077"
       },
       "geometry": {
@@ -137,10 +146,11 @@
       }
     },
     {
+      "id": "9",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 47,
+        "nombre": 47.0,
         "plan": "077"
       },
       "geometry": {
@@ -152,10 +162,11 @@
       }
     },
     {
+      "id": "10",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 46,
+        "nombre": 46.0,
         "plan": "077"
       },
       "geometry": {
@@ -167,10 +178,11 @@
       }
     },
     {
+      "id": "11",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 45,
+        "nombre": 45.0,
         "plan": "077"
       },
       "geometry": {
@@ -182,10 +194,11 @@
       }
     },
     {
+      "id": "12",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 44,
+        "nombre": 44.0,
         "plan": "077"
       },
       "geometry": {
@@ -197,10 +210,11 @@
       }
     },
     {
+      "id": "13",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 43,
+        "nombre": 43.0,
         "plan": "077"
       },
       "geometry": {
@@ -212,10 +226,11 @@
       }
     },
     {
+      "id": "14",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 42,
+        "nombre": 42.0,
         "plan": "077"
       },
       "geometry": {
@@ -227,10 +242,11 @@
       }
     },
     {
+      "id": "15",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 40,
+        "nombre": 40.0,
         "plan": "126"
       },
       "geometry": {
@@ -242,10 +258,11 @@
       }
     },
     {
+      "id": "16",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 77,
+        "nombre": 77.0,
         "plan": "141"
       },
       "geometry": {
@@ -257,10 +274,11 @@
       }
     },
     {
+      "id": "17",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 37,
+        "nombre": 37.0,
         "plan": "141"
       },
       "geometry": {
@@ -272,10 +290,11 @@
       }
     },
     {
+      "id": "18",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 32,
+        "nombre": 32.0,
         "plan": "141"
       },
       "geometry": {
@@ -287,6 +306,7 @@
       }
     },
     {
+      "id": "19",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
@@ -302,10 +322,11 @@
       }
     },
     {
+      "id": "20",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 16,
+        "nombre": 16.0,
         "plan": "131"
       },
       "geometry": {
@@ -317,10 +338,11 @@
       }
     },
     {
+      "id": "21",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 33,
+        "nombre": 33.0,
         "plan": "94"
       },
       "geometry": {
@@ -332,10 +354,11 @@
       }
     },
     {
+      "id": "22",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 55,
+        "nombre": 55.0,
         "plan": "210"
       },
       "geometry": {
@@ -347,10 +370,11 @@
       }
     },
     {
+      "id": "23",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 18,
+        "nombre": 18.0,
         "plan": "131"
       },
       "geometry": {
@@ -362,10 +386,11 @@
       }
     },
     {
+      "id": "24",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 16,
+        "nombre": 16.0,
         "plan": "43"
       },
       "geometry": {
@@ -377,10 +402,11 @@
       }
     },
     {
+      "id": "25",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 30,
+        "nombre": 30.0,
         "plan": ""
       },
       "geometry": {
@@ -392,10 +418,11 @@
       }
     },
     {
+      "id": "26",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 42,
+        "nombre": 42.0,
         "plan": ""
       },
       "geometry": {
@@ -407,10 +434,11 @@
       }
     },
     {
+      "id": "27",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 44,
+        "nombre": 44.0,
         "plan": "43"
       },
       "geometry": {
@@ -422,10 +450,11 @@
       }
     },
     {
+      "id": "28",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 45,
+        "nombre": 45.0,
         "plan": "43"
       },
       "geometry": {
@@ -437,10 +466,11 @@
       }
     },
     {
+      "id": "29",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 43,
+        "nombre": 43.0,
         "plan": ""
       },
       "geometry": {
@@ -452,10 +482,11 @@
       }
     },
     {
+      "id": "30",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 48,
+        "nombre": 48.0,
         "plan": ""
       },
       "geometry": {
@@ -467,10 +498,11 @@
       }
     },
     {
+      "id": "31",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 46,
+        "nombre": 46.0,
         "plan": "43"
       },
       "geometry": {
@@ -482,10 +514,11 @@
       }
     },
     {
+      "id": "32",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 41,
+        "nombre": 41.0,
         "plan": "43"
       },
       "geometry": {
@@ -497,10 +530,11 @@
       }
     },
     {
+      "id": "33",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 51,
+        "nombre": 51.0,
         "plan": "43"
       },
       "geometry": {
@@ -512,10 +546,11 @@
       }
     },
     {
+      "id": "34",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 54,
+        "nombre": 54.0,
         "plan": "43"
       },
       "geometry": {
@@ -527,10 +562,11 @@
       }
     },
     {
+      "id": "35",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 40,
+        "nombre": 40.0,
         "plan": "43"
       },
       "geometry": {
@@ -542,10 +578,11 @@
       }
     },
     {
+      "id": "36",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 32,
+        "nombre": 32.0,
         "plan": "43"
       },
       "geometry": {
@@ -557,10 +594,11 @@
       }
     },
     {
+      "id": "37",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 87,
+        "nombre": 87.0,
         "plan": ""
       },
       "geometry": {
@@ -572,10 +610,11 @@
       }
     },
     {
+      "id": "38",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 83,
+        "nombre": 83.0,
         "plan": ""
       },
       "geometry": {
@@ -587,10 +626,11 @@
       }
     },
     {
+      "id": "39",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 86,
+        "nombre": 86.0,
         "plan": "43"
       },
       "geometry": {
@@ -602,10 +642,11 @@
       }
     },
     {
+      "id": "40",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 85,
+        "nombre": 85.0,
         "plan": "43"
       },
       "geometry": {
@@ -617,10 +658,11 @@
       }
     },
     {
+      "id": "41",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 90,
+        "nombre": 90.0,
         "plan": "43"
       },
       "geometry": {
@@ -632,10 +674,11 @@
       }
     },
     {
+      "id": "42",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 76,
+        "nombre": 76.0,
         "plan": ""
       },
       "geometry": {
@@ -647,55 +690,11 @@
       }
     },
     {
+      "id": "46",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 40,
-        "plan": "126"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.5018932,
-          -33.1659255
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Departamento",
-        "nombre": 77,
-        "plan": "141"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.3878156,
-          -33.2680118
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Departamento",
-        "nombre": 37,
-        "plan": "141"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.3891009,
-          -33.267617
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Departamento",
-        "nombre": 35,
+        "nombre": 35.0,
         "plan": "225"
       },
       "geometry": {
@@ -707,25 +706,11 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": null,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -61.3794318,
-          -32.8181296
-        ]
-      }
-    },
-    {
+      "id": "48",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 9,
+        "nombre": 9.0,
         "plan": "157"
       },
       "geometry": {
@@ -737,36 +722,7 @@
       }
     },
     {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 16,
-        "plan": "131"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7297132,
-          -32.9113307
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 33,
-        "plan": "94"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7375826,
-          -32.9133404
-        ]
-      }
-    },
-    {
+      "id": "51",
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
@@ -782,25 +738,11 @@
       }
     },
     {
+      "id": "53",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 55,
-        "plan": "210"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7293894,
-          -32.9138426
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 19,
+        "nombre": 19.0,
         "plan": "131"
       },
       "geometry": {
@@ -812,10 +754,11 @@
       }
     },
     {
+      "id": "54",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 48,
+        "nombre": 48.0,
         "plan": "210"
       },
       "geometry": {
@@ -827,265 +770,11 @@
       }
     },
     {
+      "id": "72",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 16,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7138614,
-          -32.8958422
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 30,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7135027,
-          -32.8983257
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 42,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7129487,
-          -32.8991739
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 44,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7129406,
-          -32.8993995
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 45,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7127474,
-          -32.8997497
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 43,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7126855,
-          -32.8994624
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 48,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7123632,
-          -32.8999497
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 46,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7123647,
-          -32.9002328
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 41,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.712688,
-          -32.8992519
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 51,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7125212,
-          -32.8991801
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 54,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7122726,
-          -32.898808
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 40,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7126247,
-          -32.8984036
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 87,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.71041,
-          -32.9004835
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 83,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.709767,
-          -32.9003449
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 86,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7096042,
-          -32.9011273
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 85,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7094707,
-          -32.900936
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 90,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7100951,
-          -32.9010557
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 57,
+        "nombre": 57.0,
         "plan": ""
       },
       "geometry": {
@@ -1097,10 +786,11 @@
       }
     },
     {
+      "id": "73",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 64,
+        "nombre": 64.0,
         "plan": "77"
       },
       "geometry": {
@@ -1112,10 +802,11 @@
       }
     },
     {
+      "id": "74",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 6,
+        "nombre": 6.0,
         "plan": "75"
       },
       "geometry": {
@@ -1127,10 +818,11 @@
       }
     },
     {
+      "id": "75",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 8,
+        "nombre": 8.0,
         "plan": "75"
       },
       "geometry": {
@@ -1142,10 +834,11 @@
       }
     },
     {
+      "id": "76",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 7,
+        "nombre": 7.0,
         "plan": "75"
       },
       "geometry": {
@@ -1157,10 +850,11 @@
       }
     },
     {
+      "id": "77",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 1,
+        "nombre": 1.0,
         "plan": "129"
       },
       "geometry": {
@@ -1172,6 +866,7 @@
       }
     },
     {
+      "id": "78",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
@@ -1187,6 +882,7 @@
       }
     },
     {
+      "id": "79",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
@@ -1202,6 +898,7 @@
       }
     },
     {
+      "id": "80",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
@@ -1217,10 +914,11 @@
       }
     },
     {
+      "id": "81",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 5,
+        "nombre": 5.0,
         "plan": "79"
       },
       "geometry": {
@@ -1232,10 +930,11 @@
       }
     },
     {
+      "id": "82",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 11,
+        "nombre": 11.0,
         "plan": ""
       },
       "geometry": {
@@ -1247,10 +946,11 @@
       }
     },
     {
+      "id": "83",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 10,
+        "nombre": 10.0,
         "plan": "79"
       },
       "geometry": {
@@ -1262,10 +962,11 @@
       }
     },
     {
+      "id": "84",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 6,
+        "nombre": 6.0,
         "plan": "79"
       },
       "geometry": {
@@ -1277,10 +978,11 @@
       }
     },
     {
+      "id": "85",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 5,
+        "nombre": 5.0,
         "plan": "79"
       },
       "geometry": {
@@ -1292,10 +994,11 @@
       }
     },
     {
+      "id": "86",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
-        "nombre": 1,
+        "nombre": 1.0,
         "plan": "79"
       },
       "geometry": {
@@ -1307,6 +1010,7 @@
       }
     },
     {
+      "id": "87",
       "type": "Feature",
       "properties": {
         "tipo": "Torre",
@@ -1322,10 +1026,11 @@
       }
     },
     {
+      "id": "88",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 15,
+        "nombre": 15.0,
         "plan": "80"
       },
       "geometry": {
@@ -1337,10 +1042,11 @@
       }
     },
     {
+      "id": "89",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 16,
+        "nombre": 16.0,
         "plan": "80"
       },
       "geometry": {
@@ -1352,10 +1058,11 @@
       }
     },
     {
+      "id": "90",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 17,
+        "nombre": 17.0,
         "plan": "80"
       },
       "geometry": {
@@ -1367,10 +1074,11 @@
       }
     },
     {
+      "id": "91",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 14,
+        "nombre": 14.0,
         "plan": "80"
       },
       "geometry": {
@@ -1382,10 +1090,11 @@
       }
     },
     {
+      "id": "92",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 20,
+        "nombre": 20.0,
         "plan": "80"
       },
       "geometry": {
@@ -1397,10 +1106,11 @@
       }
     },
     {
+      "id": "93",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 17,
+        "nombre": 17.0,
         "plan": "80"
       },
       "geometry": {
@@ -1412,10 +1122,11 @@
       }
     },
     {
+      "id": "94",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 21,
+        "nombre": 21.0,
         "plan": ""
       },
       "geometry": {
@@ -1427,10 +1138,11 @@
       }
     },
     {
+      "id": "95",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 28,
+        "nombre": 28.0,
         "plan": ""
       },
       "geometry": {
@@ -1442,10 +1154,11 @@
       }
     },
     {
+      "id": "96",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 15,
+        "nombre": 15.0,
         "plan": "57"
       },
       "geometry": {
@@ -1457,10 +1170,11 @@
       }
     },
     {
+      "id": "97",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 22,
+        "nombre": 22.0,
         "plan": "57"
       },
       "geometry": {
@@ -1472,10 +1186,11 @@
       }
     },
     {
+      "id": "98",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 16,
+        "nombre": 16.0,
         "plan": "57"
       },
       "geometry": {
@@ -1487,10 +1202,11 @@
       }
     },
     {
+      "id": "99",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 7,
+        "nombre": 7.0,
         "plan": "57"
       },
       "geometry": {
@@ -1502,10 +1218,11 @@
       }
     },
     {
+      "id": "100",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 11,
+        "nombre": 11.0,
         "plan": "57"
       },
       "geometry": {
@@ -1517,10 +1234,11 @@
       }
     },
     {
+      "id": "101",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 8,
+        "nombre": 8.0,
         "plan": "57"
       },
       "geometry": {
@@ -1532,10 +1250,11 @@
       }
     },
     {
+      "id": "102",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 3,
+        "nombre": 3.0,
         "plan": "57"
       },
       "geometry": {
@@ -1547,10 +1266,11 @@
       }
     },
     {
+      "id": "103",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 10,
+        "nombre": 10.0,
         "plan": "57"
       },
       "geometry": {
@@ -1562,10 +1282,11 @@
       }
     },
     {
+      "id": "104",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 4,
+        "nombre": 4.0,
         "plan": "57"
       },
       "geometry": {
@@ -1577,10 +1298,11 @@
       }
     },
     {
+      "id": "105",
       "type": "Feature",
       "properties": {
         "tipo": "Bloque",
-        "nombre": 5,
+        "nombre": 5.0,
         "plan": "57"
       },
       "geometry": {
