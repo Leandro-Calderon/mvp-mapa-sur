@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import "./SearchPanel.css";
 import { logger } from "../utils/logger";
 
@@ -53,6 +53,8 @@ export const SearchPanel = ({
     plan: "Buscar plan..."
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const trimmedQuery = _query.trim();
   const trimmedAppliedQuery = appliedQuery.trim();
 
@@ -80,12 +82,23 @@ export const SearchPanel = ({
     if (e.key === "Enter") {
       e.preventDefault();
       logger.debug('SearchPanel: Enter key pressed, calling onSubmit');
+      // Blur the input to dismiss the mobile keyboard
+      inputRef.current?.blur();
       onSubmit();
     }
   };
 
   const clearSearch = () => {
     onClear();
+  };
+
+  const handleShowAllClick = () => {
+    // Blur input to dismiss mobile keyboard
+    inputRef.current?.blur();
+    // Collapse the panel for better map visibility
+    onToggleCollapse(true);
+    // Toggle the show all layers state
+    onShowAllToggle();
   };
 
   const togglePanel = () => {
@@ -163,6 +176,7 @@ export const SearchPanel = ({
         <div className="search-input-row">
           <div className="search-input-group">
             <input
+              ref={inputRef}
               type="text"
               className="search-input"
               placeholder={placeholders[_type]}
@@ -178,7 +192,7 @@ export const SearchPanel = ({
           </div>
           <button
             className={`layer-btn layer-btn-row ${showAllLayers ? "active" : ""}`}
-            onClick={onShowAllToggle}
+            onClick={handleShowAllClick}
           >
             <span className="layer-icon">👁️</span>
             <span>Ver Todo</span>
