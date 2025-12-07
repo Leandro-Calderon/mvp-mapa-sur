@@ -37,9 +37,7 @@
   <link rel="preconnect" href="https://c.tile.openstreetmap.org" crossorigin>
   <link rel="dns-prefetch" href="https://tile.openstreetmap.org">
 
-  <!-- Preload critical GeoJSON data -->
-  <link rel="preload" href="./assets/fonavi.geojson" as="fetch" type="application/json" crossorigin>
-  <link rel="preload" href="./assets/calles.geojson" as="fetch" type="application/json" crossorigin>
+  <!-- GeoJSON loaded lazily by MapContainer, no preload needed for better FCP/LCP -->
 
   <!-- Favicons -->
   <link rel="icon" href="/favicon.ico" sizes="48x48">

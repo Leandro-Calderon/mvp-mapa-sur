@@ -161,4 +161,10 @@ export default defineConfig({
   css: {
     devSourcemap: true,
   },
+  preview: {
+    headers: {
+      // Cache headers para mejorar Lighthouse score
+      'Cache-Control': 'public, max-age=31536000, immutable'
+    }
+  },
 });
