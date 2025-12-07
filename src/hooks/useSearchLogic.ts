@@ -117,8 +117,8 @@ export const useSearchLogic = () => {
     // Clear the input after applying the search (results remain visible)
     setSearchQuery("");
 
-    // Collapse the panel for better map visibility
-    setPanelCollapsed(true);
+    // Note: Panel collapse is handled by the useEffect that watches for results
+    // This way the panel stays open if there are no results (0 matches)
   }, [normalizedSearchQuery, searchType]);
 
   const handleClear = useCallback(() => {
@@ -194,6 +194,22 @@ export const useSearchLogic = () => {
     setShowStreets(false);
     setShowBuildings(buildingResults > 0);
   }, [appliedRevision, normalizedAppliedQuery, appliedType, buildingResults, streetResults]);
+
+  // Auto-collapse panel only when search has results
+  // Keep panel open when no results so user can see the error message
+  useEffect(() => {
+    if (!normalizedAppliedQuery || !appliedType) {
+      return;
+    }
+
+    const hasResults = totalResults > 0;
+    if (hasResults) {
+      logger.debug('useSearchLogic: Search successful, collapsing panel', { totalResults });
+      setPanelCollapsed(true);
+    } else {
+      logger.debug('useSearchLogic: No results, keeping panel open');
+    }
+  }, [appliedRevision, normalizedAppliedQuery, appliedType, totalResults]);
 
   return {
     // State
