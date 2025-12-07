@@ -106,6 +106,10 @@ export const useSearchLogic = () => {
     }
 
     logger.debug('useSearchLogic: Applying filters', { query: trimmed, type: searchType });
+
+    // Deactivate "Ver Todo" mode - search and show all are mutually exclusive
+    setShowAllLayers(false);
+
     setAppliedQuery(trimmed);
     setAppliedType(searchType);
     setAppliedRevision((prev) => prev + 1);
