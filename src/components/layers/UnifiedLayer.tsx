@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useLayoutEffect, useRef } from "react";
 import { FeatureGroup, Popup, Polyline, Polygon, useMap } from "react-leaflet";
 import { FonaviMarkers } from "../FonaviMarkers";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
@@ -64,6 +64,23 @@ export const UnifiedLayer = memo(({
   showAllLayers
 }: UnifiedLayerProps) => {
   const map = useMap();
+  const prevStreetCountRef = useRef(streetFeatures.length);
+
+  // Close any open popups SYNCHRONOUSLY when street features are cleared
+  // useLayoutEffect runs synchronously before the browser paints, preventing
+  // React errors when unmounting components with active Leaflet popups
+  useLayoutEffect(() => {
+    const prevCount = prevStreetCountRef.current;
+    const currentCount = streetFeatures.length;
+
+    // If we had streets before and now we don't, close all popups immediately
+    if (prevCount > 0 && currentCount === 0) {
+      logger.debug('UnifiedLayer: Closing popups SYNCHRONOUSLY due to streets being cleared');
+      map.closePopup();
+    }
+
+    prevStreetCountRef.current = currentCount;
+  }, [streetFeatures.length, map]);
 
   logger.debug('UnifiedLayer: Rendering with', {
     buildingFeaturesCount: buildingFeatures.length,

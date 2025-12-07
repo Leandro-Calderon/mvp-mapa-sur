@@ -29,7 +29,22 @@ export const matchesBuildingName = (
 };
 
 /**
+ * Counts valid characters in a string (excluding spaces and dots)
+ * @param str - Input string
+ * @returns Number of valid characters
+ */
+const countValidChars = (str: string): number => {
+    return str.replace(/[\s.]/g, '').length;
+};
+
+/**
+ * Minimum number of valid characters required for street name matching
+ */
+const MIN_VALID_CHARS = 3;
+
+/**
  * Matches street name with word boundary support for numbers
+ * - Requires minimum 3 valid characters (excluding spaces and dots)
  * - "5" matches "Pasaje 5" but not "Pasaje 55"
  * - "Pasaje" matches "Pasaje 5" (case-insensitive prefix/contains)
  * - Case-insensitive text matching
@@ -48,6 +63,11 @@ export const matchesStreetName = (
 
     const normalizedQuery = query.trim().toLowerCase();
     const normalizedNombre = nombre.toLowerCase();
+
+    // Require minimum valid characters for matching (excluding spaces and dots)
+    if (countValidChars(normalizedQuery) < MIN_VALID_CHARS) {
+        return false;
+    }
 
     // Check if query is purely numeric
     const isNumericQuery = /^\d+$/.test(normalizedQuery);

@@ -109,6 +109,9 @@ export const useSearchLogic = () => {
     setAppliedQuery(trimmed);
     setAppliedType(searchType);
     setAppliedRevision((prev) => prev + 1);
+
+    // Clear the input after applying the search (results remain visible)
+    setSearchQuery("");
   }, [normalizedSearchQuery, searchType]);
 
   const handleClear = useCallback(() => {
