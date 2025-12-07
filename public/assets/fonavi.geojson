@@ -229,21 +229,6 @@
     {
       "type": "Feature",
       "properties": {
-        "tipo": "Torre",
-        "nombre": 76,
-        "plan": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7091509,
-          -32.9004805
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "tipo": "Departamento",
         "nombre": 40,
         "plan": "126"
@@ -358,21 +343,6 @@
         "coordinates": [
           -60.7293894,
           -32.9138426
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 19,
-        "plan": "131"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7296796,
-          -32.912136
         ]
       }
     },
@@ -725,21 +695,6 @@
       "type": "Feature",
       "properties": {
         "tipo": "Departamento",
-        "nombre": 32,
-        "plan": "141"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.3892439,
-          -33.2674048
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Departamento",
         "nombre": 35,
         "plan": "225"
       },
@@ -853,21 +808,6 @@
         "coordinates": [
           -60.7296796,
           -32.912136
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 18,
-        "plan": "131"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7298532,
-          -32.9121681
         ]
       }
     },
@@ -1063,21 +1003,6 @@
         "coordinates": [
           -60.7126247,
           -32.8984036
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "tipo": "Bloque",
-        "nombre": 32,
-        "plan": "43"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -60.7131613,
-          -32.8982214
         ]
       }
     },

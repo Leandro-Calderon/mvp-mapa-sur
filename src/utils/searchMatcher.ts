@@ -29,6 +29,41 @@ export const matchesBuildingName = (
 };
 
 /**
+ * Normalizes a plan string by removing leading zeros
+ * @param plan - Plan string (e.g., "077", "43")
+ * @returns Normalized plan without leading zeros (e.g., "77", "43")
+ */
+const normalizePlan = (plan: string): string => {
+    // Remove leading zeros, but keep at least one digit
+    return plan.replace(/^0+/, '') || '0';
+};
+
+/**
+ * Matches plan numbers with leading zero normalization
+ * - "077" matches "077" and "77"
+ * - "55" matches "55" and "055"
+ * - Exact match required (no substring matching)
+ * 
+ * @param plan - Plan string from the data
+ * @param query - Search query string
+ * @returns true if plans match (with leading zero normalization)
+ */
+export const matchesPlan = (
+    plan: string | undefined,
+    query: string
+): boolean => {
+    if (!plan || !query.trim()) {
+        return false;
+    }
+
+    const normalizedQueryPlan = normalizePlan(query.trim());
+    const normalizedDataPlan = normalizePlan(plan);
+
+    // Exact match after normalizing leading zeros
+    return normalizedDataPlan === normalizedQueryPlan;
+};
+
+/**
  * Counts valid characters in a string (excluding spaces and dots)
  * @param str - Input string
  * @returns Number of valid characters

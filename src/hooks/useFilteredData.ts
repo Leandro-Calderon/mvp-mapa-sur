@@ -1,13 +1,16 @@
 import { useMemo, useCallback } from "react";
 
 import type { BuildingFeature } from "../types/geojson";
-import { matchesBuildingName } from "../utils/searchMatcher";
+import { matchesBuildingName, matchesPlan } from "../utils/searchMatcher";
 
 type Filters = {
   edificio: string,
   vivienda: string,
   plan: string,
 };
+
+// Building types that count as "Edificio" (Torre and Bloque)
+const EDIFICIO_TYPES = ["Torre", "Bloque"];
 
 export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
   // Memoize the filter function to prevent unnecessary recreations
@@ -22,15 +25,19 @@ export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
         return true;
       }
 
-      // Check each filter using exact matching for building names
+      // Edificio filter: only match Torre and Bloque types
       const matchEdificio = !trimmedEdificio ||
-        matchesBuildingName(item.properties.nombre, trimmedEdificio);
+        (EDIFICIO_TYPES.includes(item.properties.tipo) &&
+          matchesBuildingName(item.properties.nombre, trimmedEdificio));
 
+      // Vivienda/Departamento filter: only match Departamento type
       const matchVivienda = !trimmedVivienda ||
-        matchesBuildingName(item.properties.nombre, trimmedVivienda);
+        (item.properties.tipo === "Departamento" &&
+          matchesBuildingName(item.properties.nombre, trimmedVivienda));
 
+      // Plan filter: exact match with leading zero normalization
       const matchPlan = !trimmedPlan ||
-        item.properties.plan?.includes(trimmedPlan);
+        matchesPlan(item.properties.plan, trimmedPlan);
 
       return matchEdificio && matchVivienda && matchPlan;
     },
