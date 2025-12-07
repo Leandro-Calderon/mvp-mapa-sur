@@ -7,7 +7,8 @@
   border-radius: 50%;
   background: white;
   border: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  /* Enhanced shadow for outdoor visibility */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,7 +25,7 @@
 
 .location-btn:active {
   transform: scale(0.94);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .location-btn.active {
@@ -60,36 +61,85 @@
   color: white;
 }
 
+/* Loading state with pulsing animation */
+.location-btn.loading {
+  background: white;
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+.location-btn.loading .location-icon {
+  color: #2563eb;
+  animation: spin 1s linear infinite;
+}
+
 @keyframes location-icon-bounce {
   0% {
     transform: translateY(0);
   }
+
   20% {
     transform: translateY(-3px);
   }
+
   40% {
     transform: translateY(0);
   }
+
   60% {
     transform: translateY(-1.5px);
   }
+
   80% {
     transform: translateY(0);
   }
+
   100% {
     transform: translateY(0);
   }
 }
 
 @keyframes location-icon-shake {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0);
   }
-  10%, 30%, 50%, 70%, 90% {
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translateX(-2px);
   }
-  20%, 40%, 60%, 80% {
+
+  20%,
+  40%,
+  60%,
+  80% {
     transform: translateX(2px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-border {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0), 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 }
 

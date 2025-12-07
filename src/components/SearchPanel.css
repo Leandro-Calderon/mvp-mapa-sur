@@ -6,7 +6,7 @@
   width: min(480px, calc(100vw - 24px));
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05);  /* Enhanced shadow for outdoor visibility */
   transition: all 0.3s ease;
   z-index: 1000;
 }
@@ -52,7 +52,7 @@
 .search-input-preview {
   flex: 1;
   font-size: 16px;
-  color: #666;
+  color: #374151;  /* Improved contrast for outdoor use */
 }
 
 .collapse-icon {
@@ -93,7 +93,7 @@
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   background: white;
-  color: #666;
+  color: #374151;  /* Improved contrast for outdoor use */
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

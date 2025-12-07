@@ -167,8 +167,9 @@ export const LocationButton = ({
   const buttonClassName = [
     "location-btn",
     active ? "active" : "idle",
+    _isTracking && !active ? "loading" : "",
     hasError ? "error" : "",
-  ].join(" ");
+  ].filter(Boolean).join(" ");
 
   return (
     <>
