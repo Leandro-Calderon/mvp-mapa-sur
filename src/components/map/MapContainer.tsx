@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { MapContainer as LeafletMapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer as LeafletMapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
 import { UnifiedLayer } from "../layers/UnifiedLayer";
@@ -24,6 +24,8 @@ interface MapContainerProps {
   locationAccuracy: number | null;
   locationError: string | null;
   isLocationTracking: boolean;
+  searchRevision: number;
+  onMapClick?: () => void;
 }
 
 // Create a custom icon for the user's location
@@ -135,6 +137,113 @@ const LocationFlyTo = ({
   return null;
 };
 
+// Component to handle flying to search results
+const SearchResultsFlyTo = ({
+  buildings,
+  streets,
+  searchRevision
+}: {
+  buildings: BuildingFeature[];
+  streets: StreetFeature[];
+  searchRevision: number;
+}) => {
+  const map = useMap();
+  const lastRevisionRef = useRef(0);
+
+  useEffect(() => {
+    // Only trigger on new searches (revision changed)
+    if (searchRevision === 0 || searchRevision === lastRevisionRef.current) {
+      return;
+    }
+
+    const totalResults = buildings.length + streets.length;
+    if (totalResults === 0) {
+      return;
+    }
+
+    lastRevisionRef.current = searchRevision;
+    logger.debug('SearchResultsFlyTo: Flying to search results', { totalResults, searchRevision });
+
+    // Build bounds from all results
+    const bounds = L.latLngBounds([]);
+
+    // Add building coordinates (Points)
+    buildings.forEach((building) => {
+      const [lng, lat] = building.geometry.coordinates;
+      bounds.extend([lat, lng]);
+    });
+
+    // Add street coordinates (LineString, MultiLineString, or Polygon)
+    streets.forEach((street) => {
+      const { type, coordinates } = street.geometry;
+
+      if (type === 'LineString') {
+        // coordinates is number[][]
+        (coordinates as number[][]).forEach(([lng, lat]) => {
+          bounds.extend([lat, lng]);
+        });
+      } else if (type === 'MultiLineString' || type === 'Polygon') {
+        // coordinates is number[][][]
+        (coordinates as number[][][]).forEach((line) => {
+          line.forEach(([lng, lat]) => {
+            bounds.extend([lat, lng]);
+          });
+        });
+      }
+    });
+
+    if (!bounds.isValid()) {
+      logger.warn('SearchResultsFlyTo: Invalid bounds, skipping navigation');
+      return;
+    }
+
+    // Single result: flyTo with high zoom
+    if (totalResults === 1) {
+      const center = bounds.getCenter();
+      map.flyTo(center, 17, { duration: 1.5 });
+    } else {
+      // Multiple results: fitBounds to show all
+      map.flyToBounds(bounds, {
+        padding: [50, 50],
+        duration: 1.5,
+        maxZoom: 17
+      });
+    }
+  }, [buildings, streets, searchRevision, map]);
+
+  return null;
+};
+
+// Component to handle map click events for closing panels
+const MapClickHandler = ({
+  onMapClick
+}: {
+  onMapClick?: () => void;
+}) => {
+  useMapEvents({
+    click: (e) => {
+      // Check if click was on an empty area (not on a marker or interactive element)
+      // Leaflet sets originalEvent.target to the map container for empty clicks
+      const target = e.originalEvent?.target as HTMLElement;
+
+      // If clicking on a Leaflet interactive element (marker, polygon, etc.), ignore
+      if (target?.closest('.leaflet-interactive') || target?.closest('.leaflet-marker-icon')) {
+        return;
+      }
+
+      logger.debug('MapClickHandler: Map empty area clicked');
+      onMapClick?.();
+    },
+    popupopen: () => {
+      // When a popup opens (clicking on a marker/street), also collapse the panel
+      logger.debug('MapClickHandler: Popup opened, collapsing panel');
+      onMapClick?.();
+    }
+  });
+
+  return null;
+};
+
 export const MapContainer = ({
   filteredBuildings,
   filteredStreets,
@@ -142,7 +251,9 @@ export const MapContainer = ({
   userPosition,
   locationAccuracy,
   locationError,
-  isLocationTracking
+  isLocationTracking,
+  searchRevision,
+  onMapClick
 }: MapContainerProps) => {
   const { mapState } = useMapContext();
   const locationIconRef = useRef<L.DivIcon | null>(null);
@@ -169,16 +280,24 @@ export const MapContainer = ({
         maxNativeZoom={TILE_LAYER_CONFIG.maxNativeZoom}
       />
       <MapHashSync />
+      <MapClickHandler onMapClick={onMapClick} />
       <UnifiedLayer
         buildingFeatures={filteredBuildings}
         streetFeatures={filteredStreets}
         showAllLayers={showAllLayers}
       />
 
-      {/* Component to handle flyTo functionality */}
+      {/* Component to handle flyTo functionality for user location */}
       <LocationFlyTo
         userPosition={userPosition}
         isLocationTracking={isLocationTracking}
+      />
+
+      {/* Component to handle flyTo functionality for search results */}
+      <SearchResultsFlyTo
+        buildings={filteredBuildings}
+        streets={filteredStreets}
+        searchRevision={searchRevision}
       />
 
       {/* User location marker */}

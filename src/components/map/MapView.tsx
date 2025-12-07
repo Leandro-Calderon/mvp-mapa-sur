@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, useCallback } from "react";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
 import { ConnectionStatus } from "../ConnectionStatus";
@@ -88,6 +88,7 @@ export const MapView = () => {
         searchType,
         appliedQuery,
         appliedType,
+        appliedRevision,
         panelCollapsed,
         showAllLayers,
         locationActive,
@@ -122,6 +123,17 @@ export const MapView = () => {
     const dataError = buildingsError || streetsError;
     const isLoading = buildingsLoading || streetsLoading;
 
+    // Handle map click to collapse search panel (only if search input is not focused)
+    const handleMapClick = useCallback(() => {
+        // Check if search input is currently focused
+        const activeElement = document.activeElement;
+        const isSearchInputFocused = activeElement?.classList.contains('search-input');
+
+        if (!isSearchInputFocused && !panelCollapsed) {
+            handlePanelToggle(true);
+        }
+    }, [panelCollapsed, handlePanelToggle]);
+
     return (
         <div className={styles.mapContainer} style={{ minHeight: '100vh' }}>
             <Suspense fallback={<MapLoadingFallback />}>
@@ -133,6 +145,8 @@ export const MapView = () => {
                     locationAccuracy={locationAccuracy}
                     locationError={locationError}
                     isLocationTracking={isLocationTracking}
+                    searchRevision={appliedRevision}
+                    onMapClick={handleMapClick}
                 />
             </Suspense>
 

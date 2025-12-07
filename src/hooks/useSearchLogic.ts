@@ -112,6 +112,9 @@ export const useSearchLogic = () => {
 
     // Clear the input after applying the search (results remain visible)
     setSearchQuery("");
+
+    // Collapse the panel for better map visibility
+    setPanelCollapsed(true);
   }, [normalizedSearchQuery, searchType]);
 
   const handleClear = useCallback(() => {
@@ -194,6 +197,7 @@ export const useSearchLogic = () => {
     searchType,
     appliedQuery,
     appliedType,
+    appliedRevision,
     panelCollapsed,
     showBuildings,
     showStreets,
