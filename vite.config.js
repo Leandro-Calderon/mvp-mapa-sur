@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import viteCompression from "vite-plugin-compression";
 
 export default defineConfig({
   base: "/mvp-mapa-sur/",
@@ -130,6 +131,13 @@ export default defineConfig({
         suppressWarnings: true,
       },
     }),
+    // Pre-generar archivos .br (Brotli) para mejor compresión que gzip (~20% mejor)
+    viteCompression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+      threshold: 10240, // Solo comprimir archivos > 10KB
+      deleteOriginFile: false, // Mantener originales para fallback
+    }),
   ],
   build: {
     outDir: "dist",
@@ -142,6 +150,8 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
+        dead_code: true, // Eliminar código muerto
+        unused: true, // Eliminar variables no usadas
         pure_funcs: ['console.log', 'console.debug', 'console.info'],
         passes: 2 // Múltiples pasadas de compresión
       },
@@ -156,7 +166,6 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'maplibre': ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
           'react-map-gl-vendor': ['react-map-gl'], // Separar react-map-gl
-          'pmtiles': ['pmtiles'], // Separar pmtiles para mejor caching
         }
       }
     },
