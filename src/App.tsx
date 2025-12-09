@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.css";
-// Leaflet CSS cargado dinámicamente para evitar render-blocking
 import { MapProvider } from "./context/MapContext";
 import { MapView } from "./components/map/MapView";
 import { useMapHash } from "./hooks/useMapHash";
@@ -15,11 +14,6 @@ function App(): React.JSX.Element {
 
     updateServiceWorker
   } = useRegisterSW();
-
-  // Cargar Leaflet CSS dinámicamente para evitar render-blocking
-  useEffect(() => {
-    import('leaflet/dist/leaflet.css');
-  }, []);
 
   const handleUpdate = () => {
     updateServiceWorker(true);

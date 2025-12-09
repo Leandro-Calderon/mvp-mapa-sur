@@ -8,11 +8,14 @@
     content="Mapa para marcar la geolocalización de edificios o viviendas para llegar más rápido" />
 
   <!-- Security Headers -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-  script-src 'self' 'unsafe-inline'; 
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; 
+  script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
   style-src 'self' 'unsafe-inline'; 
-  img-src 'self' data: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com blob:; 
-  connect-src 'self' https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com;">
+  worker-src 'self' blob:;
+  child-src 'self' blob:;
+  img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com https://tiles.openfreemap.org https://wms.ign.gob.ar https://imagenes.ign.gob.ar https://server.arcgisonline.com; 
+  connect-src 'self' https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://tiles.openfreemap.org https://wms.ign.gob.ar https://imagenes.ign.gob.ar https://server.arcgisonline.com https://demotiles.maplibre.org;">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta http-equiv="Permissions-Policy" content="geolocation=(self), camera=(), microphone=()">
@@ -31,10 +34,12 @@
   <meta name="application-name" content="mvp-mapa-sur">
 
   <!-- Performance Optimization -->
+  <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
   <link rel="preconnect" href="https://a.tile.openstreetmap.org" crossorigin>
   <link rel="preconnect" href="https://b.tile.openstreetmap.org" crossorigin>
   <link rel="preconnect" href="https://c.tile.openstreetmap.org" crossorigin>
+  <link rel="dns-prefetch" href="https://tiles.openfreemap.org">
   <link rel="dns-prefetch" href="https://tile.openstreetmap.org">
 
   <!-- GeoJSON loaded lazily by MapContainer, no preload needed for better FCP/LCP -->

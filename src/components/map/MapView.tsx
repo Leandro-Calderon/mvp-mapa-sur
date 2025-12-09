@@ -135,7 +135,7 @@ export const MapView = () => {
     }, [panelCollapsed, handlePanelToggle]);
 
     return (
-        <div className={styles.mapContainer} style={{ minHeight: '100vh' }}>
+        <div className={styles.mapContainer} style={{ height: '100vh', width: '100%' }}>
             <Suspense fallback={<MapLoadingFallback />}>
                 <MapContainer
                     filteredBuildings={filteredBuildings}

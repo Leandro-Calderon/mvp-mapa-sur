@@ -1,14 +1,14 @@
 import React from 'react';
-import L from 'leaflet';
+import type { Map as MapLibreMap, LngLat, LngLatBounds as MapLibreBounds } from 'maplibre-gl';
 import type { BuildingFilters, StreetFilters } from './filters';
 
-// Basic Leaflet types
-export interface LatLng {
-  lat: number;
+// Basic coordinate types (GeoJSON standard: [lng, lat])
+export interface LngLatLike {
   lng: number;
+  lat: number;
 }
 
-export type LatLngArray = [number, number]; // [latitude, longitude]
+export type LngLatArray = [number, number]; // [longitude, latitude] - GeoJSON standard
 
 export interface LatLngBounds {
   getNorth: () => number;
@@ -17,64 +17,35 @@ export interface LatLngBounds {
   getWest: () => number;
 }
 
-// Map instance type wrapper
-export interface MapInstance {
-  getCenter: () => L.LatLng;
-  getZoom: () => number;
-  setView: (_center: L.LatLngExpression, _zoom?: number) => MapInstance;
-  addLayer: (_layer: L.Layer) => MapInstance;
-  removeLayer: (_layer: L.Layer) => MapInstance;
-  fitBounds: (_bounds: L.LatLngBoundsExpression, _options?: L.FitBoundsOptions) => MapInstance;
-  getBounds: () => L.LatLngBounds;
-  setZoom: (_zoom: number) => MapInstance;
-  panTo: (_latlng: L.LatLngExpression) => MapInstance;
-  flyTo: (_latlng: L.LatLngExpression, _zoom?: number) => MapInstance;
+// Map instance type - now uses MapLibre
+export type MapInstance = MapLibreMap;
+
+// Re-export MapLibre types for convenience
+export type { LngLat, MapLibreBounds };
+
+// Map state for context
+export interface MapState {
+  center: LngLatArray; // [lng, lat]
+  zoom: number;
+  bearing?: number;
+  pitch?: number;
 }
 
-// Icon wrapper type
-export interface IconOptions {
-  iconUrl?: string;
-  iconSize?: L.PointTuple;
-  iconAnchor?: L.PointTuple;
-  popupAnchor?: L.PointTuple;
-  shadowUrl?: string;
-  shadowSize?: L.PointTuple;
-  className?: string;
-  html?: string;
-}
-
-export interface CustomIcon extends L.Icon {
-  options: IconOptions & L.IconOptions;
-}
-
-// Marker wrapper type
-export interface MarkerInstance {
-  addTo: (_map: MapInstance) => MarkerInstance;
-  bindPopup: (_content: string | HTMLElement) => MarkerInstance;
-  openPopup: () => MarkerInstance;
-  closePopup: () => MarkerInstance;
-  setLatLng: (_latlng: L.LatLngExpression) => MarkerInstance;
-  getLatLng: () => L.LatLng;
-}
-
-// Layer wrapper type
-export interface LayerInstance {
-  addTo: (_map: MapInstance) => LayerInstance;
-  remove: () => LayerInstance;
+// Map view state for react-map-gl
+export interface ViewState {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+  bearing?: number;
+  pitch?: number;
 }
 
 // Context types
 export interface MapContextValue {
   mapState: MapState;
-  setMapState: (_state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => void;
+  setMapState: (_state: Partial<MapState>) => void;
   mapRef: React.MutableRefObject<MapInstance | null>;
   setMapReference: (_map: MapInstance) => void;
-}
-
-export interface MapState {
-  center: LatLng | LatLngArray;
-  zoom: number;
-  bounds?: LatLngBounds;
 }
 
 // Hook return types
@@ -86,7 +57,7 @@ export interface DataHookResult<T> {
 
 // Component prop types
 export interface MapComponentProps {
-  center?: LatLng;
+  center?: LngLatArray;
   zoom?: number;
   className?: string;
   style?: React.CSSProperties;
@@ -95,4 +66,21 @@ export interface MapComponentProps {
 export interface FilterComponentProps {
   filters: BuildingFilters | StreetFilters;
   onFilterChange: (_filters: BuildingFilters | StreetFilters) => void;
+}
+
+// Map style types
+export type MapStyleId = 'liberty' | 'dark' | 'satellite';
+
+export interface MapStyleConfig {
+  id: MapStyleId;
+  name: string;
+  url: string;
+}
+
+// Popup state
+export interface PopupInfo {
+  longitude: number;
+  latitude: number;
+  properties: Record<string, unknown>;
+  layerId: string;
 }

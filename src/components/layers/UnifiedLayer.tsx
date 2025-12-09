@@ -1,56 +1,16 @@
-import { memo, useMemo, useLayoutEffect, useRef } from "react";
-import { FeatureGroup, Popup, Polyline, Polygon, useMap } from "react-leaflet";
-import { FonaviMarkers } from "../FonaviMarkers";
+/**
+ * UnifiedLayer - Legacy compatibility layer
+ * 
+ * This component is no longer used as markers and layers are now rendered
+ * directly in MapContainer.tsx using react-map-gl's Source and Layer components.
+ * 
+ * The functionality has been moved to:
+ * - MapContainer.tsx: Buildings layer with clustering, streets layer
+ * 
+ * This file is kept for reference but can be safely deleted.
+ */
+
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
-import { logger } from "../../utils/logger";
-import { isMobile } from "../../utils/deviceDetection";
-
-// Type guard functions for street coordinates validation (moved outside component)
-const isLngLatPair = (value: unknown): value is [number, number] => {
-  return Array.isArray(value) &&
-    value.length === 2 &&
-    typeof value[0] === "number" &&
-    typeof value[1] === "number";
-};
-
-const isLineStringCoordinates = (
-  value: unknown,
-): value is [number, number][] => {
-  return Array.isArray(value) &&
-    value.length > 0 &&
-    value.every(isLngLatPair);
-};
-
-const isMultiLineStringCoordinates = (
-  value: unknown,
-): value is [number, number][][] => {
-  return Array.isArray(value) &&
-    value.length > 0 &&
-    value.every(isLineStringCoordinates);
-};
-
-const isPolygonCoordinates = (
-  value: unknown,
-): value is [number, number][][][] => {
-  return Array.isArray(value) &&
-    value.length > 0 &&
-    value.every((ring) =>
-      Array.isArray(ring) &&
-      ring.length > 0 &&
-      ring.every(isLngLatPair)
-    );
-};
-
-// Simplify polygon coordinates for mobile performance
-const simplifyPolygon = (coordinates: number[][][]) => {
-  if (!isMobile) return coordinates;
-
-  // Simplify polygon coordinates for better performance on mobile
-  // Filter out some points to reduce complexity
-  return coordinates.map(ring =>
-    ring.length > 20 ? ring.filter((_, i) => i % 2 === 0) : ring
-  );
-};
 
 interface UnifiedLayerProps {
   buildingFeatures: BuildingFeature[];
@@ -58,196 +18,13 @@ interface UnifiedLayerProps {
   showAllLayers: boolean;
 }
 
-export const UnifiedLayer = memo(({
-  buildingFeatures,
-  streetFeatures,
-  showAllLayers
-}: UnifiedLayerProps) => {
-  const map = useMap();
-  const prevStreetCountRef = useRef(streetFeatures.length);
-
-  // Close any open popups SYNCHRONOUSLY when street features are cleared
-  // useLayoutEffect runs synchronously before the browser paints, preventing
-  // React errors when unmounting components with active Leaflet popups
-  useLayoutEffect(() => {
-    const prevCount = prevStreetCountRef.current;
-    const currentCount = streetFeatures.length;
-
-    // If we had streets before and now we don't, close all popups immediately
-    if (prevCount > 0 && currentCount === 0) {
-      logger.debug('UnifiedLayer: Closing popups SYNCHRONOUSLY due to streets being cleared');
-      map.closePopup();
-    }
-
-    prevStreetCountRef.current = currentCount;
-  }, [streetFeatures.length, map]);
-
-  logger.debug('UnifiedLayer: Rendering with', {
-    buildingFeaturesCount: buildingFeatures.length,
-    streetFeaturesCount: streetFeatures.length,
-    showAllLayers,
-    isMobile
-  });
-
-  // Memoize display decisions
-  const shouldShowBuildings = useMemo(() =>
-    showAllLayers || buildingFeatures.length > 0,
-    [showAllLayers, buildingFeatures.length]
-  );
-
-  const shouldShowStreets = useMemo(() =>
-    showAllLayers || streetFeatures.length > 0,
-    [showAllLayers, streetFeatures.length]
-  );
-
-
-  logger.debug('UnifiedLayer: Display decisions', {
-    shouldShowBuildings,
-    shouldShowStreets
-  });
-
-  // Mobile-optimized polygon component
-  const MobilePolygon = ({
-    positions,
-    feature,
-    index
-  }: {
-    positions: number[][][];
-    feature: StreetFeature;
-    index: number;
-  }) => {
-    const simplifiedPositions = simplifyPolygon(positions);
-
-    // Adjust stroke width based on device type
-    const strokeWidth = isMobile ? 4 : 3;
-    const fillOpacity = isMobile ? 0.4 : 0.3;
-
-    return (
-      <Polygon
-        key={`street-${index}`}
-        positions={simplifiedPositions as [number, number][][]}
-        pathOptions={{
-          color: "blue",
-          weight: strokeWidth,
-          opacity: 1,
-          fillColor: "#3388ff",
-          fillOpacity: fillOpacity,
-          className: isMobile ? "mobile-polygon" : "",
-        }}
-        eventHandlers={{
-          click: (e) => {
-            // Ensure popup opens properly on touch devices
-            const polygon = e.target;
-            if (polygon && polygon.bindPopup) {
-              polygon.bindPopup(`
-                <div>
-                  <strong>${feature.properties.nombre}</strong>
-                  <br />
-                  Tipo: ${feature.properties.tipo}
-                </div>
-              `).openPopup(e.latlng);
-            }
-          },
-        }}
-      >
-        <Popup>
-          <strong>{feature.properties.nombre}</strong>
-          <br />
-          Tipo: {feature.properties.tipo}
-        </Popup>
-      </Polygon>
-    );
-  };
-
-  return (
-    <>
-      {/* Building markers with CircleMarker */}
-      {shouldShowBuildings && buildingFeatures.length > 0 && (
-        <FeatureGroup>
-          <FonaviMarkers features={buildingFeatures} />
-        </FeatureGroup>
-      )}
-
-      {/* Street polylines */}
-      {shouldShowStreets && streetFeatures.length > 0 && (
-        <FeatureGroup>
-          {streetFeatures.map((feature, index) => {
-            const coordinates = feature.geometry.coordinates;
-
-            // Handle LineString geometry
-            if (feature.geometry.type === "LineString" &&
-              isLineStringCoordinates(coordinates)) {
-              const leafletPositions = coordinates.map(([lng, lat]) => [lat, lng] as [number, number]);
-
-              return (
-                <Polyline
-                  key={`street-${index}`}
-                  positions={leafletPositions}
-                  pathOptions={{
-                    color: "cyan",
-                    weight: 5,
-                    opacity: 1,
-                  }}
-                >
-                  <Popup>
-                    <strong>{feature.properties.nombre}</strong>
-                    <br />
-                    Tipo: {feature.properties.tipo}
-                  </Popup>
-                </Polyline>
-              );
-            }
-
-            // Handle MultiLineString geometry
-            if (feature.geometry.type === "MultiLineString" &&
-              isMultiLineStringCoordinates(coordinates)) {
-              const leafletPositions = coordinates.map((lineString) =>
-                lineString.map(([lng, lat]) => [lat, lng] as [number, number])
-              );
-
-              return (
-                <Polyline
-                  key={`street-${index}`}
-                  positions={leafletPositions}
-                  pathOptions={{
-                    color: "cyan",
-                    weight: 5,
-                    opacity: 1,
-                  }}
-                >
-                  <Popup>
-                    <strong>{feature.properties.nombre}</strong>
-                    <br />
-                    Tipo: {feature.properties.tipo}
-                  </Popup>
-                </Polyline>
-              );
-            }
-
-            // Handle Polygon geometry
-            if (feature.geometry.type === "Polygon" &&
-              isPolygonCoordinates(coordinates)) {
-              const leafletPositions = coordinates.map((ring) =>
-                (ring as unknown as [number, number][]).map(([lng, lat]) => [lat, lng] as [number, number])
-              );
-
-              return (
-                <MobilePolygon
-                  key={`street-polygon-${index}`}
-                  positions={leafletPositions}
-                  feature={feature}
-                  index={index}
-                />
-              );
-            }
-
-            // If geometry type is not supported, return null
-            return null;
-          })}
-        </FeatureGroup>
-      )}
-    </>
-  );
-});
+/**
+ * @deprecated Layers are now rendered in MapContainer using react-map-gl Source/Layer
+ */
+export const UnifiedLayer = (_props: UnifiedLayerProps) => {
+  // This component is no longer used
+  // All layer rendering is now in MapContainer.tsx
+  return null;
+};
 
 UnifiedLayer.displayName = 'UnifiedLayer';

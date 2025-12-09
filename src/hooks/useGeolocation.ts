@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { LatLngArray } from "../types/map";
+import type { LngLatArray } from "../types/map";
 import { logger } from "../utils/logger";
 
 interface PositionOptions {
@@ -15,7 +15,7 @@ const GEOLOCATION_OPTIONS: PositionOptions = {
 };
 
 interface GeolocationResult {
-  position: LatLngArray | null;
+  position: LngLatArray | null;
   accuracy: number | null;
   error: string | null;
   isActive: boolean;
@@ -24,7 +24,7 @@ interface GeolocationResult {
 }
 
 export const useGeolocation = (): GeolocationResult => {
-  const [position, setPosition] = useState<LatLngArray | null>(null);
+  const [position, setPosition] = useState<LngLatArray | null>(null);
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -33,8 +33,9 @@ export const useGeolocation = (): GeolocationResult => {
   const handleSuccess = useCallback((pos: GeolocationPosition) => {
     logger.debug('Geolocation success', pos);
     const { latitude, longitude, accuracy: positionAccuracy } = pos.coords;
-    logger.debug('Setting position to', [latitude, longitude]);
-    setPosition([latitude, longitude]);
+    // MapLibre uses [lng, lat] (GeoJSON standard)
+    logger.debug('Setting position to [lng, lat]', [longitude, latitude]);
+    setPosition([longitude, latitude]);
     setAccuracy(positionAccuracy);
     setError(null);
   }, []);

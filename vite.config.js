@@ -152,7 +152,7 @@ export default defineConfig({
         // Code splitting para mejor caching y carga paralela
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'leaflet-vendor': ['leaflet', 'react-leaflet'],
+          'maplibre-vendor': ['maplibre-gl', 'react-map-gl'],
         }
       }
     },

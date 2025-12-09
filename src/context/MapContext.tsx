@@ -1,22 +1,31 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
-import type { MapContextValue, MapState, MapInstance, LatLng, LatLngArray } from "../types/map";
+import type { MapContextValue, MapState, MapInstance, LngLatArray } from "../types/map";
 
 const MapContext = createContext<MapContextValue | null>(null);
 
+// Default center: Rosario, Santa Fe, Argentina [lng, lat]
+const DEFAULT_CENTER: LngLatArray = [-60.66904, -32.93968];
+const DEFAULT_ZOOM = 12;
+
 interface MapProviderProps {
   children: ReactNode;
-  initialState: MapState;
+  initialState?: Partial<MapState>;
 }
 
 export const MapProvider = ({ children, initialState }: MapProviderProps): React.JSX.Element => {
-  const [mapState, setMapState] = useState<MapState>(initialState);
+  const [mapState, setMapState] = useState<MapState>({
+    center: initialState?.center ?? DEFAULT_CENTER,
+    zoom: initialState?.zoom ?? DEFAULT_ZOOM,
+    bearing: initialState?.bearing ?? 0,
+    pitch: initialState?.pitch ?? 0,
+  });
   const mapRef = useRef<MapInstance | null>(null);
 
   const setMapReference = useCallback((map: MapInstance) => {
     mapRef.current = map;
   }, []);
 
-  const setMapStateCallback = useCallback((state: Partial<Omit<MapState, 'center'>> & { center?: LatLng | LatLngArray }) => {
+  const setMapStateCallback = useCallback((state: Partial<MapState>) => {
     setMapState(prevState => ({ ...prevState, ...state }));
   }, []);
 
@@ -43,3 +52,6 @@ export const useMapContext = (): MapContextValue => {
 
   return context;
 };
+
+// Export defaults for use elsewhere
+export { DEFAULT_CENTER, DEFAULT_ZOOM };
