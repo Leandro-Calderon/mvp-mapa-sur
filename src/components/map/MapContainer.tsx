@@ -152,7 +152,8 @@ export const MapContainer = memo(({
         map.flyTo({
           center: userPosition,
           zoom: 17,
-          duration: 1500,
+          duration: 2000,
+          essential: true,
         });
       }
     }
@@ -298,12 +299,18 @@ export const MapContainer = memo(({
     // Single result: flyTo with high zoom
     if (totalResults === 1) {
       const center = bounds.getCenter();
-      map.flyTo({ center, zoom: 17, duration: 1500 });
+      map.flyTo({
+        center,
+        zoom: 17,
+        duration: 2000,
+        essential: true
+      });
     } else {
       // Multiple results: fitBounds
       map.fitBounds(bounds, {
         padding: 50,
-        duration: 1500,
+        duration: 2000,
+        essential: true,
         maxZoom: 17,
       });
     }
@@ -346,7 +353,8 @@ export const MapContainer = memo(({
 
         map.fitBounds(bounds, {
           padding: 50,
-          duration: 1500,
+          duration: 2000,
+          essential: true,
           maxZoom: 14, // Lower zoom to see all clusters
         });
       }

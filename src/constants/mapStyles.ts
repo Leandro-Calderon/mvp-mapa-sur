@@ -5,12 +5,12 @@ export const MAP_STYLES: Record<MapStyleId, MapStyleConfig> = {
     liberty: {
         id: 'liberty',
         name: 'Claro',
-        url: 'https://tiles.openfreemap.org/styles/liberty',
+        url: '/mvp-mapa-sur/styles/liberty.json',
     },
     dark: {
         id: 'dark',
         name: 'Oscuro',
-        url: 'https://tiles.openfreemap.org/styles/dark',
+        url: '/mvp-mapa-sur/styles/dark.json',
     },
     satellite: {
         id: 'satellite',

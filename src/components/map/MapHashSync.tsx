@@ -12,6 +12,7 @@ export const MapHashSync = () => {
     const { updateMapHash, getInitialMapState } = useMapHash();
     const isInitializedRef = useRef(false);
     const hashChangeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isUpdatingHashRef = useRef(false);
 
     useEffect(() => {
         if (!map) return;
@@ -40,8 +41,16 @@ export const MapHashSync = () => {
             hashChangeTimeoutRef.current = setTimeout(() => {
                 const center = map.getCenter();
                 const zoom = map.getZoom();
+
+                // Set flag to ignore the next hashchange event
+                isUpdatingHashRef.current = true;
                 updateMapHash(center.lng, center.lat, Math.round(zoom));
                 logger.debug('MapHashSync: Updated hash', { lng: center.lng, lat: center.lat, zoom });
+
+                // Reset flag after a short delay to allow the event to fire
+                setTimeout(() => {
+                    isUpdatingHashRef.current = false;
+                }, 100);
             }, 300);
         };
 
@@ -49,12 +58,18 @@ export const MapHashSync = () => {
 
         // Handle browser back/forward navigation
         const handleHashChange = () => {
+            // Ignore if we just updated the hash ourselves
+            if (isUpdatingHashRef.current) {
+                return;
+            }
+
             const state = getInitialMapState();
             if (state) {
-                logger.debug('MapHashSync: Hash changed, jumping to', state);
-                map.jumpTo({
+                logger.debug('MapHashSync: Hash changed outside map, flying to', state);
+                map.flyTo({
                     center: [state.center[0], state.center[1]],
                     zoom: state.zoom,
+                    duration: 1500
                 });
             }
         };
