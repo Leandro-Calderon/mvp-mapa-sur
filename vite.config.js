@@ -136,6 +136,8 @@ export default defineConfig({
     sourcemap: false, // Desactivado para producción - ahorra ~139 KiB
     target: 'es2020', // Navegadores modernos - elimina polyfills legacy (~12 KiB)
     minify: 'terser',
+    cssCodeSplit: true, // Habilitar CSS code splitting para cargar MapLibre CSS bajo demanda
+    modulePreload: { polyfill: false }, // Deshabilitar polyfill de modulepreload (navegadores modernos no lo necesitan)
     terserOptions: {
       compress: {
         drop_console: true,
@@ -149,10 +151,12 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // Code splitting para mejor caching y carga paralela
+        // Code splitting mejorado para mejor caching y carga paralela
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'maplibre-vendor': ['maplibre-gl', 'react-map-gl'],
+          'maplibre': ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
+          'react-map-gl-vendor': ['react-map-gl'], // Separar react-map-gl
+          'pmtiles': ['pmtiles'], // Separar pmtiles para mejor caching
         }
       }
     },

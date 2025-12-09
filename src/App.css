@@ -41,7 +41,8 @@ body {
     border: 2px solid #333;
   }
 
-  .leaflet-popup-content-wrapper {
+  /* MapLibre popups - high contrast */
+  .maplibregl-popup-content {
     border: 2px solid #000 !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
   }
@@ -69,7 +70,7 @@ body {
 @media (max-width: 768px) {
 
   /* Improve touch interaction for map elements */
-  .leaflet-container {
+  .maplibregl-map {
     touch-action: pan-x pan-y;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -77,18 +78,15 @@ body {
   }
 
   /* Ensure proper touch target sizes */
-  .leaflet-popup-content-wrapper {
+  .maplibregl-popup-content {
     min-width: 200px;
     padding: 12px;
-  }
-
-  .leaflet-popup-content {
     font-size: 14px;
     line-height: 1.4;
   }
 
   /* Improve polygon touch interaction */
-  .leaflet-interactive {
+  .maplibregl-canvas {
     touch-action: manipulation;
   }
 }
@@ -96,12 +94,9 @@ body {
 @media (max-width: 480px) {
 
   /* Further optimize for very small screens */
-  .leaflet-popup-content-wrapper {
+  .maplibregl-popup-content {
     min-width: 180px;
     padding: 10px;
-  }
-
-  .leaflet-popup-content {
     font-size: 13px;
   }
 }
