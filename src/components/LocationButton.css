@@ -146,7 +146,7 @@
 /* Mobile optimizations */
 @media (max-width: 480px) {
   .location-btn {
-    bottom: 80px;
+    bottom: 60px;
     /* Increased for mobile attribution clearance */
     right: 12px;
     width: 52px;
