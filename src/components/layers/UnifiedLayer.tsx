@@ -1,15 +1,3 @@
-/**
- * UnifiedLayer - Legacy compatibility layer
- * 
- * This component is no longer used as markers and layers are now rendered
- * directly in MapContainer.tsx using react-map-gl's Source and Layer components.
- * 
- * The functionality has been moved to:
- * - MapContainer.tsx: Buildings layer with clustering, streets layer
- * 
- * This file is kept for reference but can be safely deleted.
- */
-
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 
 interface UnifiedLayerProps {
