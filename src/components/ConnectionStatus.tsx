@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useConnectionStatus } from '../hooks/useConnectionStatus';
-import './ConnectionStatus.css';
+import React, { useEffect, useState } from "react";
+import { useConnectionStatus } from "../hooks/useConnectionStatus";
+import "./ConnectionStatus.css";
 
 interface ConnectionStatusProps {
   showCacheInfo?: boolean;
@@ -13,16 +13,18 @@ interface ConnectionStatusProps {
 
 export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   showCacheInfo = false,
-  cacheInfo
+  cacheInfo,
 }) => {
-  const { isOnline, isOffline, networkQuality, effectiveType } = useConnectionStatus();
+  const { isOnline, isOffline, networkQuality, effectiveType } =
+    useConnectionStatus();
   const [isVisible, setIsVisible] = useState(true);
   const [hasBeenHidden, setHasBeenHidden] = useState(false);
   const [previousOnlineStatus, setPreviousOnlineStatus] = useState(() => {
     // Initialize with the current online status to avoid false positives on mount
     return navigator.onLine;
   });
-  const [isShowingForStatusChange, setIsShowingForStatusChange] = useState(false);
+  const [isShowingForStatusChange, setIsShowingForStatusChange] =
+    useState(false);
 
   // Auto-hide after 3 seconds on initial mount
   useEffect(() => {
@@ -63,27 +65,35 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
   }, [isOnline, previousOnlineStatus, hasBeenHidden, isShowingForStatusChange]);
 
   const getNetworkQualityIcon = () => {
-    if (isOffline) return '📴';
+    if (isOffline) return "📴";
     switch (networkQuality) {
-      case 'fast': return '🚀';
-      case 'medium': return '📶';
-      case 'slow': return '🐌';
-      default: return '❓';
+      case "fast":
+        return "🚀";
+      case "medium":
+        return "📶";
+      case "slow":
+        return "🐌";
+      default:
+        return "❓";
     }
   };
 
   const getNetworkQualityText = () => {
-    if (isOffline) return 'Sin conexión';
+    if (isOffline) return "Sin conexión";
     switch (networkQuality) {
-      case 'fast': return 'Conexión rápida';
-      case 'medium': return 'Conexión media';
-      case 'slow': return 'Conexión lenta';
-      default: return 'Calidad desconocida';
+      case "fast":
+        return "Conexión rápida";
+      case "medium":
+        return "Conexión media";
+      case "slow":
+        return "Conexión lenta";
+      default:
+        return "Calidad desconocida";
     }
   };
 
   const formatLastSync = (timestamp?: number) => {
-    if (!timestamp) return 'Nunca';
+    if (!timestamp) return "Nunca";
 
     const now = Date.now();
     const diff = now - timestamp;
@@ -91,14 +101,14 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days > 0) return `Hace ${days} día${days > 1 ? 's' : ''}`;
-    if (hours > 0) return `Hace ${hours} hora${hours > 1 ? 's' : ''}`;
-    if (minutes > 0) return `Hace ${minutes} minuto${minutes > 1 ? 's' : ''}`;
-    return 'Ahora mismo';
+    if (days > 0) return `Hace ${days} día${days > 1 ? "s" : ""}`;
+    if (hours > 0) return `Hace ${hours} hora${hours > 1 ? "s" : ""}`;
+    if (minutes > 0) return `Hace ${minutes} minuto${minutes > 1 ? "s" : ""}`;
+    return "Ahora mismo";
   };
 
   return isVisible ? (
-    <div className={`connection-status ${isOffline ? 'offline' : 'online'}`}>
+    <div className={`connection-status ${isOffline ? "offline" : "online"}`}>
       <div className="connection-indicator">
         <span className="connection-icon">{getNetworkQualityIcon()}</span>
         <span className="connection-text">{getNetworkQualityText()}</span>
@@ -110,11 +120,15 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
       {showCacheInfo && cacheInfo && (
         <div className="cache-info">
           <div className="cache-status">
-            <span className={`cache-indicator ${cacheInfo.buildings ? 'cached' : 'not-cached'}`}>
-              🏢 Edificios: {cacheInfo.buildings ? '✅' : '❌'}
+            <span
+              className={`cache-indicator ${cacheInfo.buildings ? "cached" : "not-cached"}`}
+            >
+              🏢 Edificios: {cacheInfo.buildings ? "✅" : "❌"}
             </span>
-            <span className={`cache-indicator ${cacheInfo.streets ? 'cached' : 'not-cached'}`}>
-              🛣️ Calles: {cacheInfo.streets ? '✅' : '❌'}
+            <span
+              className={`cache-indicator ${cacheInfo.streets ? "cached" : "not-cached"}`}
+            >
+              🛣️ Calles: {cacheInfo.streets ? "✅" : "❌"}
             </span>
           </div>
           {cacheInfo.lastSync && (
@@ -127,3 +141,4 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
     </div>
   ) : null;
 };
+
