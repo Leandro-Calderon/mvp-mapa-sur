@@ -224,7 +224,7 @@ export const MapContainer = memo(({
       return;
     }
 
-    const feature = features[0];
+    const feature = features[0]!;
     const layerId = feature.layer?.id;
 
     logger.debug('MapContainer: Feature clicked', { layerId, properties: feature.properties });
@@ -303,7 +303,7 @@ export const MapContainer = memo(({
     // Add building coordinates
     filteredBuildings.forEach((building) => {
       const [lng, lat] = building.geometry.coordinates;
-      bounds.extend([lng, lat]);
+      bounds.extend([lng!, lat!]);
     });
 
     // Add street coordinates
@@ -312,12 +312,12 @@ export const MapContainer = memo(({
 
       if (type === 'LineString') {
         (coordinates as number[][]).forEach(([lng, lat]) => {
-          bounds.extend([lng, lat]);
+          bounds.extend([lng!, lat!]);
         });
       } else if (type === 'MultiLineString' || type === 'Polygon') {
         (coordinates as number[][][]).forEach((line) => {
           line.forEach(([lng, lat]) => {
-            bounds.extend([lng, lat]);
+            bounds.extend([lng!, lat!]);
           });
         });
       }
@@ -368,17 +368,17 @@ export const MapContainer = memo(({
         // Add all building coordinates
         filteredBuildings.forEach((building) => {
           const [lng, lat] = building.geometry.coordinates;
-          bounds.extend([lng, lat]);
+          bounds.extend([lng!, lat!]);
         });
 
         // Add street coordinates if any
         filteredStreets.forEach((street) => {
           const { type, coordinates } = street.geometry;
           if (type === 'LineString') {
-            (coordinates as number[][]).forEach(([lng, lat]) => bounds.extend([lng, lat]));
+            (coordinates as number[][]).forEach(([lng, lat]) => bounds.extend([lng!, lat!]));
           } else if (type === 'MultiLineString' || type === 'Polygon') {
             (coordinates as number[][][]).forEach((line) => {
-              line.forEach(([lng, lat]) => bounds.extend([lng, lat]));
+              line.forEach(([lng, lat]) => bounds.extend([lng!, lat!]));
             });
           }
         });

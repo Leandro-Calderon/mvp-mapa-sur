@@ -2,6 +2,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useGeolocation } from './useGeolocation';
 
+// Helper to create mock GeolocationCoordinates with required toJSON method
+const makeCoords = (lat: number, lng: number, accuracy: number): GeolocationCoordinates => ({
+    latitude: lat,
+    longitude: lng,
+    accuracy,
+    altitude: null,
+    altitudeAccuracy: null,
+    heading: null,
+    speed: null,
+    toJSON(): GeolocationCoordinates { return this; },
+});
+
+// Helper to create mock GeolocationPosition with required toJSON method
+const makePosition = (lat: number, lng: number, accuracy: number): GeolocationPosition => ({
+    coords: makeCoords(lat, lng, accuracy),
+    timestamp: Date.now(),
+    toJSON(): GeolocationPosition { return this; },
+});
+
 describe('useGeolocation', () => {
     let mockGeolocation: {
         getCurrentPosition: ReturnType<typeof vi.fn>;
@@ -42,18 +61,7 @@ describe('useGeolocation', () => {
     it('should start tracking when startTracking is called', async () => {
         const watchId = 123;
         // Mock a successful position response so isActive gets set
-        const mockPosition: GeolocationPosition = {
-            coords: {
-                latitude: -32.93,
-                longitude: -60.67,
-                accuracy: 50,
-                altitude: null,
-                altitudeAccuracy: null,
-                heading: null,
-                speed: null,
-            },
-            timestamp: Date.now(),
-        };
+        const mockPosition = makePosition(-32.93, -60.67, 50);
         mockGeolocation.watchPosition.mockImplementation((success) => {
             success(mockPosition);
             return watchId;
@@ -71,18 +79,7 @@ describe('useGeolocation', () => {
     });
 
     it('should update position on successful geolocation', async () => {
-        const mockPosition: GeolocationPosition = {
-            coords: {
-                latitude: 40.7128,
-                longitude: -74.006,
-                accuracy: 10,
-                altitude: null,
-                altitudeAccuracy: null,
-                heading: null,
-                speed: null,
-            },
-            timestamp: Date.now(),
-        };
+        const mockPosition = makePosition(40.7128, -74.006, 10);
 
         mockGeolocation.watchPosition.mockImplementation((success) => {
             success(mockPosition);
@@ -272,18 +269,7 @@ describe('useGeolocation', () => {
     });
 
     it('should not start tracking if already active', async () => {
-        const mockPosition: GeolocationPosition = {
-            coords: {
-                latitude: -32.93,
-                longitude: -60.67,
-                accuracy: 50,
-                altitude: null,
-                altitudeAccuracy: null,
-                heading: null,
-                speed: null,
-            },
-            timestamp: Date.now(),
-        };
+        const mockPosition = makePosition(-32.93, -60.67, 50);
         mockGeolocation.watchPosition.mockImplementation((success) => {
             success(mockPosition);
             return 123;
