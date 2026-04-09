@@ -17,13 +17,6 @@ const getTypeClass = (tipo: string): string => {
   }
 };
 
-/** Color hex for building type (used in badge) */
-const TYPE_COLORS: Record<string, string> = {
-  Bloque: '#FF6B6B',
-  Torre: '#4ECDC4',
-  Departamento: '#45B7D1',
-};
-
 export const MapPopupContent = ({ popupInfo }: MapPopupContentProps) => {
   const [copied, setCopied] = useState(false);
   const { properties, longitude, latitude } = popupInfo;

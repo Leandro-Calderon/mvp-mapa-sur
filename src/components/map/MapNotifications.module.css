@@ -9,6 +9,7 @@
   font-size: 13px;
   color: #1f2933;
   z-index: 1200;
+  animation: notifSlideIn 0.25s ease-out;
 }
 
 .errorIndicator {
@@ -23,4 +24,16 @@
   color: #991b1b;
   z-index: 1300;
   max-width: 220px;
+  animation: notifSlideIn 0.25s ease-out;
+}
+
+@keyframes notifSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

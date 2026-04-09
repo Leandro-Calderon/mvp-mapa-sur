@@ -37,7 +37,7 @@ export const FonaviLegend = memo(({ isVisible, onClose }: FonaviLegendProps) => 
         title="Mostrar leyenda"
         aria-label="Mostrar leyenda de tipos FONAVI"
       >
-        🎨
+        ℹ️
       </button>
     );
   }

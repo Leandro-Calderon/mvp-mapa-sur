@@ -2,7 +2,6 @@ import { lazy, Suspense, useState, useEffect, useCallback } from "react";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
 import { ConnectionStatus } from "../ConnectionStatus";
-import { DataStatusNotification } from "../DataStatusNotification";
 import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
@@ -26,40 +25,12 @@ const MapLoadingFallback = () => (
 export const MapView = () => {
     // Use the shared singleton data service — same instance as useBuildingsData/useStreetsData
     const offlineService = getDataService();
-    const [cacheInfo, setCacheInfo] = useState<{
-        buildings: boolean;
-        streets: boolean;
-        lastSync?: number;
-    }>({
-        buildings: false,
-        streets: false
-    });
 
     // State for legend visibility
     const [showLegend, setShowLegend] = useState(true);
 
-    // Update cache info when data loads
+    // Load data
     const { buildings, streets, refresh } = useDataService(offlineService);
-
-    useEffect(() => {
-        const updateCacheInfo = async () => {
-            try {
-                const cacheData = await offlineService.getCacheInfo();
-                setCacheInfo({
-                    buildings: !!cacheData.buildings,
-                    streets: !!cacheData.streets,
-                    lastSync: Math.max(
-                        cacheData.buildings?.timestamp || 0,
-                        cacheData.streets?.timestamp || 0
-                    )
-                });
-            } catch (error) {
-                logger.error('Error getting cache info:', error);
-            }
-        };
-
-        updateCacheInfo();
-    }, [buildings.data, streets.data, offlineService]);
 
     const {
         // State
@@ -157,15 +128,10 @@ export const MapView = () => {
                 locationError={locationError}
             />
 
-            <DataStatusNotification
+            <ConnectionStatus
                 buildings={buildings}
                 streets={streets}
                 onRefresh={refresh}
-            />
-
-            <ConnectionStatus
-                showCacheInfo={true}
-                cacheInfo={cacheInfo}
             />
 
             <FonaviLegend

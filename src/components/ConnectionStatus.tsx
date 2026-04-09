@@ -1,59 +1,57 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { EnhancedDataServiceResult } from "../hooks/useDataService";
 import { useConnectionStatus } from "../hooks/useConnectionStatus";
 import "./ConnectionStatus.css";
 
 interface ConnectionStatusProps {
-  showCacheInfo?: boolean;
-  cacheInfo?: {
-    buildings: boolean;
-    streets: boolean;
-    lastSync?: number;
-  };
+  buildings: EnhancedDataServiceResult<any[]>;
+  streets: EnhancedDataServiceResult<any[]>;
+  onRefresh?: () => void;
 }
 
-export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
-  showCacheInfo = false,
-  cacheInfo,
-}) => {
+export const ConnectionStatus = ({
+  buildings,
+  streets,
+  onRefresh,
+}: ConnectionStatusProps) => {
   const { isOnline, isOffline, networkQuality, effectiveType } =
     useConnectionStatus();
   const [isVisible, setIsVisible] = useState(true);
   const [hasBeenHidden, setHasBeenHidden] = useState(false);
-  const [previousOnlineStatus, setPreviousOnlineStatus] = useState(() => {
-    // Initialize with the current online status to avoid false positives on mount
-    return navigator.onLine;
-  });
+  const [previousOnlineStatus, setPreviousOnlineStatus] = useState(
+    () => navigator.onLine
+  );
   const [isShowingForStatusChange, setIsShowingForStatusChange] =
     useState(false);
 
-  // Auto-hide after 3 seconds on initial mount
+  const isLoading = buildings.loading || streets.loading;
+  const hasErrors = !!buildings.error || !!streets.error;
+  const hasStaleData = buildings.isStale || streets.isStale;
+  const hasCacheData = buildings.fromCache || streets.fromCache;
+
+  // Auto-hide after 4 seconds on initial mount
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
       setHasBeenHidden(true);
-    }, 3000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Show again when connection status actually changes (online/offline toggle)
+  // Show again when connection status changes
   useEffect(() => {
-    // Skip if we haven't been hidden yet (initial show period)
-    if (!hasBeenHidden) {
-      return undefined;
-    }
+    if (!hasBeenHidden) return undefined;
 
-    // Only show if connection status changed from previous state and we're not already showing
     if (previousOnlineStatus !== isOnline && !isShowingForStatusChange) {
       setIsVisible(true);
       setPreviousOnlineStatus(isOnline);
       setIsShowingForStatusChange(true);
 
-      // Hide again after 3 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
         setIsShowingForStatusChange(false);
-      }, 3000);
+      }, 4000);
 
       return () => {
         clearTimeout(timer);
@@ -64,81 +62,114 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({
     return undefined;
   }, [isOnline, previousOnlineStatus, hasBeenHidden, isShowingForStatusChange]);
 
-  const getNetworkQualityIcon = () => {
+  // ─── Determine what to show ────────────────────────────────
+  // Priority: loading > errors > offline > stale > online
+
+  const getNetworkIcon = () => {
     if (isOffline) return "📴";
     switch (networkQuality) {
-      case "fast":
-        return "🚀";
-      case "medium":
-        return "📶";
-      case "slow":
-        return "🐌";
-      default:
-        return "❓";
+      case "fast": return "🚀";
+      case "medium": return "📶";
+      case "slow": return "🐌";
+      default: return "❓";
     }
   };
 
-  const getNetworkQualityText = () => {
+  const getNetworkText = () => {
     if (isOffline) return "Sin conexión";
     switch (networkQuality) {
-      case "fast":
-        return "Conexión rápida";
-      case "medium":
-        return "Conexión media";
-      case "slow":
-        return "Conexión lenta";
-      default:
-        return "Calidad desconocida";
+      case "fast": return "Conexión rápida";
+      case "medium": return "Conexión media";
+      case "slow": return "Conexión lenta";
+      default: return "Conectado";
     }
   };
 
   const formatLastSync = (timestamp?: number) => {
-    if (!timestamp) return "Nunca";
-
-    const now = Date.now();
-    const diff = now - timestamp;
-    const minutes = Math.floor(diff / (1000 * 60));
+    if (!timestamp) return null;
+    const diff = Date.now() - timestamp;
+    const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-
-    if (days > 0) return `Hace ${days} día${days > 1 ? "s" : ""}`;
-    if (hours > 0) return `Hace ${hours} hora${hours > 1 ? "s" : ""}`;
-    if (minutes > 0) return `Hace ${minutes} minuto${minutes > 1 ? "s" : ""}`;
-    return "Ahora mismo";
+    if (days > 0) return `Hace ${days}d`;
+    if (hours > 0) return `Hace ${hours}h`;
+    if (minutes > 0) return `Hace ${minutes}m`;
+    return "Ahora";
   };
 
+  const getType = (): "error" | "warning" | "info" | "success" => {
+    if (hasErrors) return "error";
+    if (isOffline || hasStaleData) return "warning";
+    if (hasCacheData) return "info";
+    return "success";
+  };
+
+  const cacheInfo = {
+    buildings: buildings.data.length > 0,
+    streets: streets.data.length > 0,
+    lastSync: buildings.lastUpdated ?? streets.lastUpdated,
+  };
+
+  // Don't render if loading or if everything is fine and already hidden
+  if (isLoading) return null;
+
   return isVisible ? (
-    <div className={`connection-status ${isOffline ? "offline" : "online"}`}>
-      <div className="connection-indicator">
-        <span className="connection-icon">{getNetworkQualityIcon()}</span>
-        <span className="connection-text">{getNetworkQualityText()}</span>
+    <div className={`connection-status ${getType()}`}>
+      <div className="cs-row">
+        <span className="cs-icon">{getNetworkIcon()}</span>
+        <span className="cs-text">{getNetworkText()}</span>
         {effectiveType && (
-          <span className="connection-type">({effectiveType})</span>
+          <span className="cs-type">({effectiveType})</span>
         )}
       </div>
 
-      {showCacheInfo && cacheInfo && (
-        <div className="cache-info">
-          <div className="cache-status">
-            <span
-              className={`cache-indicator ${cacheInfo.buildings ? "cached" : "not-cached"}`}
+      {/* Data status — replaces old DataStatusNotification */}
+      {hasErrors && (
+        <div className="cs-detail">
+          Error al cargar datos. Verificá tu conexión.
+          {onRefresh && (
+            <button
+              className="cs-refresh"
+              onClick={onRefresh}
+              disabled={isLoading}
             >
-              🏢 Edificios: {cacheInfo.buildings ? "✅" : "❌"}
-            </span>
-            <span
-              className={`cache-indicator ${cacheInfo.streets ? "cached" : "not-cached"}`}
-            >
-              🛣️ Calles: {cacheInfo.streets ? "✅" : "❌"}
-            </span>
-          </div>
-          {cacheInfo.lastSync && (
-            <div className="last-sync">
-              Última sincronización: {formatLastSync(cacheInfo.lastSync)}
-            </div>
+              🔄 Reintentar
+            </button>
           )}
         </div>
       )}
+
+      {hasStaleData && hasCacheData && !hasErrors && (
+        <div className="cs-detail">
+          Datos desactualizados — usando caché
+          {onRefresh && (
+            <button
+              className="cs-refresh"
+              onClick={onRefresh}
+              disabled={isLoading}
+            >
+              🔄 Actualizar
+            </button>
+          )}
+        </div>
+      )}
+
+      {!hasErrors && !hasStaleData && hasCacheData && (
+        <div className="cs-detail">Usando datos guardados localmente</div>
+      )}
+
+      {/* Cache indicators */}
+      <div className="cs-cache">
+        <span className={cacheInfo.buildings ? "cs-ok" : "cs-missing"}>
+          🏢 {cacheInfo.buildings ? "✓" : "…"}
+        </span>
+        <span className={cacheInfo.streets ? "cs-ok" : "cs-missing"}>
+          🛣️ {cacheInfo.streets ? "✓" : "…"}
+        </span>
+        {cacheInfo.lastSync && (
+          <span className="cs-sync">{formatLastSync(cacheInfo.lastSync)}</span>
+        )}
+      </div>
     </div>
   ) : null;
 };
-

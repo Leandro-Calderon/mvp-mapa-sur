@@ -1,141 +1,152 @@
+/* ─── Unified status bar (connection + data) ────────────── */
 .connection-status {
   position: fixed;
-  bottom: 10px;
-  left: 10px;
-  top: auto;
-  right: auto;
+  bottom: 12px;
+  left: 12px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: 280px;
   font-size: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
-  max-width: 250px;
-  opacity: 1;
-  animation: fadeInOut 3s ease-in-out;
+  line-height: 1.4;
+  backdrop-filter: blur(8px);
+  animation: csSlideIn 0.3s ease-out;
+  transition: opacity 0.3s, transform 0.3s;
 }
 
-.connection-status.offline {
-  background: rgba(255, 248, 225, 0.95);
-  border-color: #fbbf24;
+/* ─── Variants ──────────────────────────────────────────── */
+.connection-status.success {
+  background: rgba(240, 253, 244, 0.92);
+  border: 1px solid #86efac;
+  color: #166534;
 }
 
-.connection-status.online {
-  background: rgba(240, 253, 244, 0.95);
-  border-color: #34d399;
+.connection-status.info {
+  background: rgba(239, 246, 255, 0.92);
+  border: 1px solid #93c5fd;
+  color: #1e40af;
 }
 
-.connection-indicator {
+.connection-status.warning {
+  background: rgba(255, 251, 235, 0.92);
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  animation: csSlideIn 0.3s ease-out, csPulse 3s ease-in-out infinite 2s;
+}
+
+.connection-status.error {
+  background: rgba(254, 242, 242, 0.92);
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+/* ─── Row: icon + text + type ───────────────────────────── */
+.cs-row {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
 }
 
-.connection-icon {
-  font-size: 16px;
+.cs-icon {
+  font-size: 15px;
   line-height: 1;
+  flex-shrink: 0;
 }
 
-.connection-text {
+.cs-text {
   font-weight: 600;
-  color: #374151;
 }
 
-.connection-type {
-  color: #6b7280;
+.cs-type {
+  color: inherit;
+  opacity: 0.6;
   font-size: 11px;
-  margin-left: 4px;
+  margin-left: 2px;
 }
 
-.cache-info {
-  border-top: 1px solid #e5e7eb;
+/* ─── Detail message ───────────────────────────────────── */
+.cs-detail {
+  margin-top: 6px;
   padding-top: 6px;
-  margin-top: 4px;
-}
-
-.cache-status {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 4px;
-}
-
-.cache-indicator {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  opacity: 0.85;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ─── Refresh button ───────────────────────────────────── */
+.cs-refresh {
+  background: rgba(0, 0, 0, 0.08);
+  border: none;
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.cs-refresh:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.cs-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Cache indicators ─────────────────────────────────── */
+.cs-cache {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
   font-size: 11px;
 }
 
-.cache-indicator.cached {
-  color: #059669;
+.cs-ok {
+  opacity: 0.7;
 }
 
-.cache-indicator.not-cached {
-  color: #dc2626;
+.cs-missing {
+  opacity: 0.4;
 }
 
-.last-sync {
-  font-size: 10px;
-  color: #6b7280;
+.cs-sync {
+  margin-left: auto;
+  opacity: 0.5;
   font-style: italic;
 }
 
-/* Responsive adjustments */
+/* ─── Animations ────────────────────────────────────────── */
+@keyframes csSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes csPulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(252, 211, 77, 0.1); }
+  50% { box-shadow: 0 2px 12px rgba(252, 211, 77, 0.25); }
+}
+
+/* ─── Responsive ────────────────────────────────────────── */
 @media (max-width: 768px) {
   .connection-status {
-    bottom: 5px;
-    left: 5px;
-    padding: 6px 8px;
+    bottom: 8px;
+    left: 8px;
+    max-width: 240px;
+    padding: 8px 10px;
     font-size: 11px;
-    max-width: 200px;
   }
-  
-  .connection-icon {
-    font-size: 14px;
-  }
-}
 
-/* Animation for status changes */
-.connection-status {
-  transition: all 0.3s ease;
-}
-
-.connection-status.offline {
-  animation: pulse-warning 2s infinite;
-}
-
-/* Fade in/out animation */
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  10% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  90% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-
-@keyframes pulse-warning {
-  0% {
-    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
-  }
-  50% {
-    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.3);
-  }
-  100% {
-    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.1);
-  }
+  .cs-icon { font-size: 13px; }
 }
