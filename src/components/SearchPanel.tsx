@@ -121,82 +121,84 @@ export const SearchPanel = ({
         <div className="collapse-icon">▼</div>
       </div>
 
-      <div className="search-content">
-        {/* Search indicator */}
-        {trimmedAppliedQuery && (
-          <div className="search-indicator active">
-            <span>✓</span>
-            <span>
-              {searchResults === 1
-                ? "1 resultado encontrado"
-                : `${searchResults} resultados encontrados`}
-            </span>
+      <div className="search-content-wrapper">
+        <div className="search-content">
+          {/* Search indicator */}
+          {trimmedAppliedQuery && (
+            <div className="search-indicator active">
+              <span>✓</span>
+              <span>
+                {searchResults === 1
+                  ? "1 resultado encontrado"
+                  : `${searchResults} resultados encontrados`}
+              </span>
+            </div>
+          )}
+
+          {trimmedAppliedQuery && searchResults === 0 && (
+            <div className="search-feedback warning">
+              No encontramos coincidencias para tu búsqueda. Revisa los datos ingresados.
+            </div>
+          )}
+
+          {/* Search type selector - Row 2: Edificio | Departamento */}
+          <div className="search-type-row">
+            <button
+              className={`type-btn type-btn-row ${_type === "edificio" ? "active" : ""}`}
+              onClick={() => handleTypeSelect("edificio")}
+            >
+              🏢 Edificio
+            </button>
+            <button
+              className={`type-btn type-btn-row ${_type === "departamento" ? "active" : ""}`}
+              onClick={() => handleTypeSelect("departamento")}
+            >
+              🚪 Departamento
+            </button>
           </div>
-        )}
 
-        {trimmedAppliedQuery && searchResults === 0 && (
-          <div className="search-feedback warning">
-            No encontramos coincidencias para tu búsqueda. Revisa los datos ingresados.
+          {/* Search type selector - Row 3: Calle | Plan */}
+          <div className="search-type-row">
+            <button
+              className={`type-btn type-btn-row ${_type === "calle" ? "active" : ""}`}
+              onClick={() => handleTypeSelect("calle")}
+            >
+              🛣️ Calle
+            </button>
+            <button
+              className={`type-btn type-btn-row ${_type === "plan" ? "active" : ""}`}
+              onClick={() => handleTypeSelect("plan")}
+            >
+              📋 Plan
+            </button>
           </div>
-        )}
 
-        {/* Search type selector - Row 2: Edificio | Departamento */}
-        <div className="search-type-row">
-          <button
-            className={`type-btn type-btn-row ${_type === "edificio" ? "active" : ""}`}
-            onClick={() => handleTypeSelect("edificio")}
-          >
-            🏢 Edificio
-          </button>
-          <button
-            className={`type-btn type-btn-row ${_type === "departamento" ? "active" : ""}`}
-            onClick={() => handleTypeSelect("departamento")}
-          >
-            🚪 Departamento
-          </button>
-        </div>
-
-        {/* Search type selector - Row 3: Calle | Plan */}
-        <div className="search-type-row">
-          <button
-            className={`type-btn type-btn-row ${_type === "calle" ? "active" : ""}`}
-            onClick={() => handleTypeSelect("calle")}
-          >
-            🛣️ Calle
-          </button>
-          <button
-            className={`type-btn type-btn-row ${_type === "plan" ? "active" : ""}`}
-            onClick={() => handleTypeSelect("plan")}
-          >
-            📋 Plan
-          </button>
-        </div>
-
-        {/* Row 4: Input | Ver Todo */}
-        <div className="search-input-row">
-          <div className="search-input-group">
-            <input
-              ref={inputRef}
-              type="text"
-              className="search-input"
-              placeholder={placeholders[_type]}
-              value={_query}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-            />
-            {(_query || trimmedAppliedQuery) && (
-              <button className="clear-btn" onClick={clearSearch}>
-                ×
-              </button>
-            )}
+          {/* Row 4: Input | Ver Todo */}
+          <div className="search-input-row">
+            <div className="search-input-group">
+              <input
+                ref={inputRef}
+                type="text"
+                className="search-input"
+                placeholder={placeholders[_type]}
+                value={_query}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+              />
+              {(_query || trimmedAppliedQuery) && (
+                <button className="clear-btn" onClick={clearSearch}>
+                  ×
+                </button>
+              )}
+            </div>
+            <button
+              className={`layer-btn layer-btn-row ${showAllLayers ? "active" : ""}`}
+              onClick={handleShowAllClick}
+            >
+              <span className="layer-icon">👁️</span>
+              <span>Ver Todo</span>
+            </button>
           </div>
-          <button
-            className={`layer-btn layer-btn-row ${showAllLayers ? "active" : ""}`}
-            onClick={handleShowAllClick}
-          >
-            <span className="layer-icon">👁️</span>
-            <span>Ver Todo</span>
-          </button>
         </div>
       </div>
     </div>
