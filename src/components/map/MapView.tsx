@@ -2,7 +2,6 @@ import { lazy, Suspense, useState, useEffect, useCallback } from "react";
 import { MapNotifications } from "./MapNotifications";
 import { MapControls } from "./MapControls";
 import { ConnectionStatus } from "../ConnectionStatus";
-import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
 import { getDataService } from "../../services/OfflineDataService";
@@ -25,9 +24,6 @@ const MapLoadingFallback = () => (
 export const MapView = () => {
     // Use the shared singleton data service — same instance as useBuildingsData/useStreetsData
     const offlineService = getDataService();
-
-    // State for legend visibility
-    const [showLegend, setShowLegend] = useState(true);
 
     // Load data
     const { buildings, streets, refresh } = useDataService(offlineService);
@@ -132,11 +128,6 @@ export const MapView = () => {
                 buildings={buildings}
                 streets={streets}
                 onRefresh={refresh}
-            />
-
-            <FonaviLegend
-                isVisible={showLegend && filteredBuildings.length > 0}
-                onClose={() => setShowLegend(false)}
             />
         </div>
     );
