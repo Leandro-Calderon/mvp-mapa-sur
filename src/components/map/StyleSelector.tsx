@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { MapStyleId } from '../../types/map';
 import { AVAILABLE_STYLES } from '../../constants/mapStyles';
+import styles from './StyleSelector.module.css';
 
 interface StyleSelectorProps {
     currentStyle: MapStyleId;
@@ -26,39 +27,15 @@ export const StyleSelector = memo(({ currentStyle, onStyleChange }: StyleSelecto
     };
 
     return (
-        <div className="style-selector" style={{
-            position: 'absolute',
-            bottom: '130px', /* Positioned above location button (60px + 56px + gap) */
-            right: '16px',
-            zIndex: 1000,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-        }}>
+        <div className={styles.selector}>
             {AVAILABLE_STYLES.map((style) => (
                 <button
                     key={style.id}
+                    className={currentStyle === style.id ? styles.btnActive! : styles.btn!}
                     onClick={() => handleStyleSelect(style.id)}
-                    style={{
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        backgroundColor: currentStyle === style.id ? '#2563eb' : 'white',
-                        color: currentStyle === style.id ? 'white' : '#1f2933',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                        gap: '8px',
-                        fontSize: '13px',
-                        fontWeight: 500,
-                        transition: 'all 0.2s',
-                        minWidth: '110px',
-                    }}
                     aria-label={`Cambiar estilo a ${styleLabels[style.id]}`}
                 >
-                    <span style={{ fontSize: '16px' }}>{styleIcons[style.id]}</span>
+                    <span className={styles.icon!}>{styleIcons[style.id]}</span>
                     <span>{styleLabels[style.id]}</span>
                 </button>
             ))}

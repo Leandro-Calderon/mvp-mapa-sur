@@ -1,4 +1,5 @@
 import React, { Component, type ReactNode } from 'react';
+import styles from './map/MapView.module.css';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -38,35 +39,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          zIndex: 9999,
-          maxWidth: '400px',
-          textAlign: 'center'
-        }}>
-          <h2 style={{ color: '#dc2626', marginBottom: '12px' }}>
+        <div className={styles.errorContainer!}>
+          <h2 className={styles.errorTitle!}>
             Algo salió mal
           </h2>
-          <p style={{ color: '#6b7280', marginBottom: '16px' }}>
+          <p className={styles.errorMessage!}>
             La aplicación encontró un error inesperado. Por favor, recarga la página.
           </p>
           <button
+            className={styles.errorBtn!}
             onClick={() => window.location.reload()}
-            style={{
-              backgroundColor: '#2563eb',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
           >
             Recargar página
           </button>

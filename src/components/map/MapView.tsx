@@ -17,30 +17,9 @@ const MapContainer = lazy(() =>
 
 // Loading fallback for the map
 const MapLoadingFallback = () => (
-    <div style={{
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#f0f0f0',
-        color: '#666'
-    }}>
-        <div style={{
-            width: '48px',
-            height: '48px',
-            border: '4px solid #e0e0e0',
-            borderTopColor: '#4ECDC4',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-        }} />
-        <p style={{ marginTop: '16px', fontSize: '14px' }}>Cargando mapa...</p>
-        <style>{`
-            @keyframes spin {
-                to { transform: rotate(360deg); }
-            }
-        `}</style>
+    <div className={styles.loadingFallback!}>
+        <div className={styles.spinner!} />
+        <p className={styles.loadingText!}>Cargando mapa...</p>
     </div>
 );
 
@@ -136,7 +115,7 @@ export const MapView = () => {
     }, [panelCollapsed, handlePanelToggle]);
 
     return (
-        <div className={styles.mapContainer} style={{ height: '100vh', width: '100%' }}>
+        <div className={styles.mapContainer!}>
             <Suspense fallback={<MapLoadingFallback />}>
                 <MapContainer
                     filteredBuildings={filteredBuildings}
