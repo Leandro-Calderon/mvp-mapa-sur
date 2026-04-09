@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import styles from './FonaviLegend.module.css';
 
 // Función para obtener el color según el tipo
@@ -23,13 +23,37 @@ interface FonaviLegendProps {
 const TIPOS = ['Bloque', 'Torre', 'Departamento'];
 
 export const FonaviLegend = memo(({ isVisible, onClose }: FonaviLegendProps) => {
+  // Track whether the user dismissed the legend this session
+  const [dismissed, setDismissed] = useState(false);
+
   if (!isVisible) return null;
+
+  // User closed the legend — show reopen button
+  if (dismissed) {
+    return (
+      <button
+        className={styles.reopenBtn!}
+        onClick={() => setDismissed(false)}
+        title="Mostrar leyenda"
+        aria-label="Mostrar leyenda de tipos FONAVI"
+      >
+        🎨
+      </button>
+    );
+  }
 
   return (
     <div className={styles.legend}>
       <div className={styles.header}>
         <strong className={styles.title}>Tipos FONAVI</strong>
-        <button className={styles.closeBtn!} onClick={onClose}>
+        <button
+          className={styles.closeBtn!}
+          onClick={() => {
+            setDismissed(true);
+            onClose();
+          }}
+          aria-label="Cerrar leyenda"
+        >
           ×
         </button>
       </div>
