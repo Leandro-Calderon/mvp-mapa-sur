@@ -8,7 +8,7 @@ import Map, {
   type MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import maplibregl from "maplibre-gl";
-import type { GeoJSONSource, CirclePaint, SymbolLayout } from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
@@ -16,6 +16,7 @@ import { StyleSelector } from "./StyleSelector";
 import { MAP_STYLES, DEFAULT_STYLE } from "../../constants/mapStyles";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LngLatArray, MapStyleId, PopupInfo } from "../../types/map";
+import type { GpsErrorInfo } from "../../hooks/useGeolocation";
 import { logger } from "../../utils/logger";
 
 // Layer paint configurations
@@ -80,7 +81,7 @@ interface MapContainerProps {
   showAllLayers: boolean;
   userPosition: LngLatArray | null;
   locationAccuracy: number | null;
-  locationError: string | null;
+  locationError: GpsErrorInfo | null;
   isLocationTracking: boolean;
   searchRevision: number;
   onMapClick?: () => void;

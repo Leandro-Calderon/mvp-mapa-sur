@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { LocationButton } from './LocationButton';
+import type { GpsErrorInfo } from '../hooks/useGeolocation';
 
 // Mock GpsDisabledModal
 vi.mock('./GpsDisabledModal', () => ({
@@ -27,41 +28,12 @@ describe('LocationButton', () => {
     const defaultProps = {
         onToggle: vi.fn(),
         isActive: false,
-        isTracking: false,
-        hasError: false,
-        errorMessage: null,
-    };
-
-    let mockGeolocation: {
-        getCurrentPosition: ReturnType<typeof vi.fn>;
-        watchPosition: ReturnType<typeof vi.fn>;
-        clearWatch: ReturnType<typeof vi.fn>;
+        isLocating: false,
+        error: null as GpsErrorInfo | null,
     };
 
     beforeEach(() => {
         vi.clearAllMocks();
-
-        // Mock geolocation API
-        mockGeolocation = {
-            getCurrentPosition: vi.fn(),
-            watchPosition: vi.fn(),
-            clearWatch: vi.fn(),
-        };
-
-        Object.defineProperty(globalThis.navigator, 'geolocation', {
-            writable: true,
-            configurable: true,
-            value: mockGeolocation,
-        });
-
-        // Mock permissions API
-        Object.defineProperty(globalThis.navigator, 'permissions', {
-            writable: true,
-            configurable: true,
-            value: {
-                query: vi.fn().mockResolvedValue({ state: 'granted' }),
-            },
-        });
     });
 
     it('should render location button', () => {
@@ -91,22 +63,23 @@ describe('LocationButton', () => {
         expect(button).toHaveClass('active');
     });
 
-    it('should show error state when hasError is true', () => {
+    it('should show error state when error is provided', () => {
         const props = {
             ...defaultProps,
-            hasError: true,
-            errorMessage: 'GPS error',
+            error: { type: 'gps-disabled' as const, message: 'GPS error' },
         };
 
         render(<LocationButton {...props} />);
 
-        const button = screen.getByRole('button');
+        const button = screen.getByRole('button', { name: /gps error/i });
         expect(button).toHaveClass('error');
     });
 
     it('should call onToggle with false when active button is clicked', () => {
+        const onToggle = vi.fn();
         const props = {
             ...defaultProps,
+            onToggle,
             isActive: true,
         };
 
@@ -115,164 +88,104 @@ describe('LocationButton', () => {
         const button = screen.getByRole('button');
         fireEvent.click(button);
 
-        expect(defaultProps.onToggle).toHaveBeenCalledWith(false);
+        expect(onToggle).toHaveBeenCalledWith(false);
     });
 
-    it('should check geolocation support before activating', async () => {
-        render(<LocationButton {...defaultProps} />);
+    it('should call onToggle with true when inactive button is clicked', () => {
+        const onToggle = vi.fn();
+        render(<LocationButton {...defaultProps} onToggle={onToggle} />);
 
         const button = screen.getByRole('button');
         fireEvent.click(button);
 
-        await waitFor(() => {
-            expect(navigator.permissions.query).toHaveBeenCalledWith({ name: 'geolocation' });
-        });
+        expect(onToggle).toHaveBeenCalledWith(true);
     });
 
-    it('should handle successful geolocation permission', async () => {
-        const mockPosition: GeolocationPosition = {
-            coords: {
-                latitude: 40.7128,
-                longitude: -74.006,
-                accuracy: 10,
-                altitude: null,
-                altitudeAccuracy: null,
-                heading: null,
-                speed: null,
-                toJSON: () => ({}),
-            },
-            timestamp: Date.now(),
+    it('should show GPS modal when error type is gps-disabled', () => {
+        const props = {
+            ...defaultProps,
+            error: { type: 'gps-disabled' as const, message: 'GPS not available' },
         };
 
-        mockGeolocation.getCurrentPosition.mockImplementation((success) => {
-            success(mockPosition);
-        });
+        render(<LocationButton {...props} />);
 
-        render(<LocationButton {...defaultProps} />);
-
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(defaultProps.onToggle).toHaveBeenCalledWith(true);
-        });
+        expect(screen.getByTestId('gps-modal')).toBeInTheDocument();
     });
 
-    it('should show GPS disabled modal on permission denied', async () => {
-        Object.defineProperty(globalThis.navigator, 'permissions', {
-            writable: true,
-            configurable: true,
-            value: {
-                query: vi.fn().mockResolvedValue({ state: 'denied' }),
-            },
-        });
+    it('should show GPS modal when error type is permission-denied', () => {
+        const props = {
+            ...defaultProps,
+            error: { type: 'permission-denied' as const, message: 'Permission denied' },
+        };
 
-        render(<LocationButton {...defaultProps} />);
+        render(<LocationButton {...props} />);
 
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(screen.getByTestId('gps-modal')).toBeInTheDocument();
-        });
+        expect(screen.getByTestId('gps-modal')).toBeInTheDocument();
     });
 
-    it('should close GPS modal when close button is clicked', async () => {
-        Object.defineProperty(globalThis.navigator, 'permissions', {
-            writable: true,
-            configurable: true,
-            value: {
-                query: vi.fn().mockResolvedValue({ state: 'denied' }),
-            },
-        });
+    it('should NOT show GPS modal for timeout errors', () => {
+        const props = {
+            ...defaultProps,
+            error: { type: 'timeout' as const, message: 'Timeout' },
+        };
 
-        render(<LocationButton {...defaultProps} />);
+        render(<LocationButton {...props} />);
 
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
+        expect(screen.queryByTestId('gps-modal')).not.toBeInTheDocument();
+    });
 
-        await waitFor(() => {
-            expect(screen.getByTestId('gps-modal')).toBeInTheDocument();
-        });
+    it('should close GPS modal when close button is clicked', () => {
+        const props = {
+            ...defaultProps,
+            error: { type: 'gps-disabled' as const, message: 'GPS not available' },
+        };
+
+        render(<LocationButton {...props} />);
+
+        expect(screen.getByTestId('gps-modal')).toBeInTheDocument();
 
         const closeButton = screen.getByText('Close Modal');
         fireEvent.click(closeButton);
 
-        await waitFor(() => {
-            expect(screen.queryByTestId('gps-modal')).not.toBeInTheDocument();
-        });
+        expect(screen.queryByTestId('gps-modal')).not.toBeInTheDocument();
     });
 
-    it('should handle geolocation not supported', async () => {
-        Object.defineProperty(globalThis.navigator, 'geolocation', {
-            writable: true,
-            configurable: true,
-            value: undefined,
-        });
-
-        const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => { });
-
-        render(<LocationButton {...defaultProps} />);
-
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(alertSpy).toHaveBeenCalledWith(
-                expect.stringContaining('no es compatible')
-            );
-        });
-
-        alertSpy.mockRestore();
-    });
-
-    it('should handle GPS position unavailable error', async () => {
-        const mockError: GeolocationPositionError = {
-            code: 2,
-            message: 'Position unavailable',
-            PERMISSION_DENIED: 1,
-            POSITION_UNAVAILABLE: 2,
-            TIMEOUT: 3,
-        };
-
-        mockGeolocation.getCurrentPosition.mockImplementation((success, error) => {
-            // First call checks status
-            error!(mockError);
-        });
-
-        render(<LocationButton {...defaultProps} />);
-
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
-
-        await waitFor(() => {
-            expect(screen.queryByTestId('gps-modal')).toBeInTheDocument();
-        });
-    });
-
-    it('should sync internal state with prop changes', () => {
-        const { rerender } = render(<LocationButton {...defaultProps} />);
-
-        let button = screen.getByRole('button');
-        expect(button).toHaveClass('idle');
-
-        rerender(<LocationButton {...defaultProps} isActive={true} />);
-
-        button = screen.getByRole('button');
-        expect(button).toHaveClass('active');
-    });
-
-    it('should display error message in title when hasError is true', () => {
+    it('should show loading class when isLocating is true and not active', () => {
         const props = {
             ...defaultProps,
-            hasError: true,
-            errorMessage: 'GPS connection lost',
+            isLocating: true,
         };
 
         render(<LocationButton {...props} />);
 
         const button = screen.getByRole('button');
-        expect(button).toHaveAttribute('title', expect.stringContaining('GPS connection lost'));
+        expect(button).toHaveClass('loading');
+    });
+
+    it('should not show loading class when active', () => {
+        const props = {
+            ...defaultProps,
+            isActive: true,
+            isLocating: true,
+        };
+
+        render(<LocationButton {...props} />);
+
+        const button = screen.getByRole('button');
+        expect(button).not.toHaveClass('loading');
+        expect(button).toHaveClass('active');
+    });
+
+    it('should display error message in aria-label when error is present', () => {
+        const props = {
+            ...defaultProps,
+            error: { type: 'gps-disabled' as const, message: 'GPS connection lost' },
+        };
+
+        render(<LocationButton {...props} />);
+
+        const button = screen.getByRole('button', { name: 'GPS connection lost' });
+        expect(button).toHaveAttribute('aria-label', 'GPS connection lost');
     });
 
     it('should display correct aria-label for active state', () => {
@@ -297,36 +210,24 @@ describe('LocationButton', () => {
     it('should display correct aria-label for error state', () => {
         const props = {
             ...defaultProps,
-            hasError: true,
-            errorMessage: 'Custom error',
+            error: { type: 'permission-denied' as const, message: 'Custom error' },
         };
 
         render(<LocationButton {...props} />);
 
-        const button = screen.getByRole('button');
+        const button = screen.getByRole('button', { name: 'Custom error' });
         expect(button).toHaveAttribute('aria-label', 'Custom error');
     });
 
-    it('should handle permission check timeout', async () => {
-        mockGeolocation.getCurrentPosition.mockImplementation((success, error) => {
-            const mockError: GeolocationPositionError = {
-                code: 3,
-                message: 'Timeout',
-                PERMISSION_DENIED: 1,
-                POSITION_UNAVAILABLE: 2,
-                TIMEOUT: 3,
-            };
-            error!(mockError);
-        });
+    it('should reflect prop-driven active state changes', () => {
+        const { rerender } = render(<LocationButton {...defaultProps} />);
 
-        render(<LocationButton {...defaultProps} />);
+        let button = screen.getByRole('button');
+        expect(button).toHaveClass('idle');
 
-        const button = screen.getByRole('button');
-        fireEvent.click(button);
+        rerender(<LocationButton {...defaultProps} isActive={true} />);
 
-        // Should proceed with normal request on timeout
-        await waitFor(() => {
-            expect(mockGeolocation.getCurrentPosition).toHaveBeenCalled();
-        });
+        button = screen.getByRole('button');
+        expect(button).toHaveClass('active');
     });
 });

@@ -25,8 +25,9 @@ export const useSearchLogic = () => {
     accuracy: locationAccuracy,
     error: locationError,
     isActive: isLocationTracking,
+    isLocating,
     startTracking,
-    stopTracking
+    stopTracking,
   } = useGeolocation();
 
   const { data: buildingFeatures, loading: buildingsLoading, error: buildingsError } = useBuildingsData();
@@ -157,9 +158,11 @@ export const useSearchLogic = () => {
     if (active) {
       logger.debug('Starting location tracking');
       startTracking();
+      setLocationActive(true);
     } else {
       logger.debug('Stopping location tracking');
       stopTracking();
+      setLocationActive(false);
     }
   }, [startTracking, stopTracking]);
 
@@ -227,6 +230,7 @@ export const useSearchLogic = () => {
     locationAccuracy,
     locationError,
     isLocationTracking,
+    isLocating,
 
     // Data
     buildingFeatures,

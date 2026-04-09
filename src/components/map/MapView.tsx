@@ -96,6 +96,7 @@ export const MapView = () => {
         locationAccuracy,
         locationError,
         isLocationTracking,
+        isLocating,
 
         // Data
         filteredBuildings,
@@ -173,7 +174,7 @@ export const MapView = () => {
                 onToggleCollapse={handlePanelToggle}
                 locationActive={locationActive}
                 onLocationToggle={handleLocationToggle}
-                isLocationTracking={isLocationTracking}
+                isLocating={isLocating}
                 locationError={locationError}
             />
 

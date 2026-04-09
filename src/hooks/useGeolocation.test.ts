@@ -10,7 +10,6 @@ describe('useGeolocation', () => {
     };
 
     beforeEach(() => {
-        // Mock geolocation API
         mockGeolocation = {
             getCurrentPosition: vi.fn(),
             watchPosition: vi.fn(),
@@ -22,7 +21,6 @@ describe('useGeolocation', () => {
             value: mockGeolocation,
         });
 
-        // Mock permissions API
         Object.defineProperty(global.navigator, 'permissions', {
             writable: true,
             value: {
@@ -38,17 +36,33 @@ describe('useGeolocation', () => {
         expect(result.current.accuracy).toBeNull();
         expect(result.current.error).toBeNull();
         expect(result.current.isActive).toBe(false);
+        expect(result.current.isLocating).toBe(false);
     });
 
     it('should start tracking when startTracking is called', async () => {
         const watchId = 123;
-        mockGeolocation.watchPosition.mockReturnValue(watchId);
+        // Mock a successful position response so isActive gets set
+        const mockPosition: GeolocationPosition = {
+            coords: {
+                latitude: -32.93,
+                longitude: -60.67,
+                accuracy: 50,
+                altitude: null,
+                altitudeAccuracy: null,
+                heading: null,
+                speed: null,
+            },
+            timestamp: Date.now(),
+        };
+        mockGeolocation.watchPosition.mockImplementation((success) => {
+            success(mockPosition);
+            return watchId;
+        });
 
         const { result } = renderHook(() => useGeolocation());
 
         await act(async () => {
             result.current.startTracking();
-            // Wait for async operations
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
@@ -82,12 +96,12 @@ describe('useGeolocation', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(result.current.position).toEqual([40.7128, -74.006]);
+        expect(result.current.position).toEqual([-74.006, 40.7128]);
         expect(result.current.accuracy).toBe(10);
         expect(result.current.error).toBeNull();
     });
 
-    it('should handle geolocation errors', async () => {
+    it('should handle geolocation errors with structured error info', async () => {
         const mockError: GeolocationPositionError = {
             code: 1,
             message: 'User denied geolocation',
@@ -96,7 +110,7 @@ describe('useGeolocation', () => {
             TIMEOUT: 3,
         };
 
-        mockGeolocation.watchPosition.mockImplementation((success, error) => {
+        mockGeolocation.watchPosition.mockImplementation((_success, error) => {
             error(mockError);
             return 123;
         });
@@ -108,8 +122,59 @@ describe('useGeolocation', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(result.current.error).toBe('User denied geolocation');
+        expect(result.current.error).not.toBeNull();
+        expect(result.current.error?.type).toBe('permission-denied');
+        expect(result.current.error?.message).toBeTruthy();
         expect(result.current.position).toBeNull();
+        expect(result.current.isActive).toBe(false);
+    });
+
+    it('should handle POSITION_UNAVAILABLE as gps-disabled', async () => {
+        const mockError: GeolocationPositionError = {
+            code: 2,
+            message: 'Position unavailable',
+            PERMISSION_DENIED: 1,
+            POSITION_UNAVAILABLE: 2,
+            TIMEOUT: 3,
+        };
+
+        mockGeolocation.watchPosition.mockImplementation((_success, error) => {
+            error(mockError);
+            return 123;
+        });
+
+        const { result } = renderHook(() => useGeolocation());
+
+        await act(async () => {
+            result.current.startTracking();
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        expect(result.current.error?.type).toBe('gps-disabled');
+    });
+
+    it('should handle TIMEOUT error type', async () => {
+        const mockError: GeolocationPositionError = {
+            code: 3,
+            message: 'Timeout',
+            PERMISSION_DENIED: 1,
+            POSITION_UNAVAILABLE: 2,
+            TIMEOUT: 3,
+        };
+
+        mockGeolocation.watchPosition.mockImplementation((_success, error) => {
+            error(mockError);
+            return 123;
+        });
+
+        const { result } = renderHook(() => useGeolocation());
+
+        await act(async () => {
+            result.current.startTracking();
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        expect(result.current.error?.type).toBe('timeout');
     });
 
     it('should stop tracking when stopTracking is called', async () => {
@@ -145,10 +210,11 @@ describe('useGeolocation', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(result.current.error).toBe('Geolocation is not supported by your browser');
+        expect(result.current.error).not.toBeNull();
+        expect(result.current.error?.type).toBe('unavailable');
     });
 
-    it('should handle permission denied', async () => {
+    it('should handle permission denied from Permissions API', async () => {
         Object.defineProperty(global.navigator, 'permissions', {
             writable: true,
             value: {
@@ -163,7 +229,8 @@ describe('useGeolocation', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(result.current.error).toContain('Location permission was denied');
+        expect(result.current.error).not.toBeNull();
+        expect(result.current.error?.type).toBe('permission-denied');
     });
 
     it('should cleanup on unmount', async () => {
@@ -180,5 +247,65 @@ describe('useGeolocation', () => {
         unmount();
 
         expect(mockGeolocation.clearWatch).toHaveBeenCalledWith(watchId);
+    });
+
+    it('should dismiss errors with dismissError', async () => {
+        Object.defineProperty(global.navigator, 'geolocation', {
+            writable: true,
+            value: undefined,
+        });
+
+        const { result } = renderHook(() => useGeolocation());
+
+        await act(async () => {
+            result.current.startTracking();
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        expect(result.current.error).not.toBeNull();
+
+        act(() => {
+            result.current.dismissError();
+        });
+
+        expect(result.current.error).toBeNull();
+    });
+
+    it('should not start tracking if already active', async () => {
+        const mockPosition: GeolocationPosition = {
+            coords: {
+                latitude: -32.93,
+                longitude: -60.67,
+                accuracy: 50,
+                altitude: null,
+                altitudeAccuracy: null,
+                heading: null,
+                speed: null,
+            },
+            timestamp: Date.now(),
+        };
+        mockGeolocation.watchPosition.mockImplementation((success) => {
+            success(mockPosition);
+            return 123;
+        });
+
+        const { result } = renderHook(() => useGeolocation());
+
+        // First call: activates tracking
+        await act(async () => {
+            result.current.startTracking();
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        expect(result.current.isActive).toBe(true);
+        const callCount = mockGeolocation.watchPosition.mock.calls.length;
+
+        // Second call: should be a no-op since already active
+        await act(async () => {
+            result.current.startTracking();
+            await new Promise(resolve => setTimeout(resolve, 0));
+        });
+
+        expect(mockGeolocation.watchPosition.mock.calls.length).toBe(callCount);
     });
 });
