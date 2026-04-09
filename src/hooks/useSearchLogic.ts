@@ -79,17 +79,12 @@ export const useSearchLogic = () => {
     logger.debug('useSearchLogic: Current state', { appliedQuery, appliedType });
 
     // If there's an applied query and the type is changing, clear the results
+    // but keep the input text so the user can re-search in the new type
     if (appliedQuery && type !== searchType) {
       logger.debug('useSearchLogic: Clearing applied query due to type change');
       setAppliedQuery("");
       setAppliedType(null);
       setAppliedRevision((prev) => prev + 1);
-    }
-
-    // Also clear the input text when switching types
-    if (type !== searchType) {
-      logger.debug('useSearchLogic: Clearing search query input due to type change');
-      setSearchQuery("");
     }
 
     setSearchType(type);
@@ -115,11 +110,9 @@ export const useSearchLogic = () => {
     setAppliedType(searchType);
     setAppliedRevision((prev) => prev + 1);
 
-    // Clear the input after applying the search (results remain visible)
-    setSearchQuery("");
-
-    // Note: Panel collapse is handled by the useEffect that watches for results
-    // This way the panel stays open if there are no results (0 matches)
+    // Note: We intentionally keep searchQuery intact so the user can
+    // edit and re-search without retyping. Panel collapse is handled
+    // by the useEffect that watches for results — stays open if 0 matches.
   }, [normalizedSearchQuery, searchType]);
 
   const handleClear = useCallback(() => {

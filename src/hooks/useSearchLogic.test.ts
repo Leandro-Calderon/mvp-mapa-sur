@@ -173,6 +173,40 @@ describe('useSearchLogic', () => {
         expect(result.current.appliedType).toBeNull();
     });
 
+    it('should preserve input text after submitting search', () => {
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleQueryChange('86');
+        });
+
+        act(() => {
+            result.current.handleSubmit();
+        });
+
+        // Applied query should be set
+        expect(result.current.appliedQuery).toBe('86');
+        // Input text should REMAIN so user can edit and re-search
+        expect(result.current.searchQuery).toBe('86');
+    });
+
+    it('should preserve input text when changing search type', () => {
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleQueryChange('Pública');
+        });
+
+        act(() => {
+            result.current.handleTypeChange('calle');
+        });
+
+        // Type should change
+        expect(result.current.searchType).toBe('calle');
+        // Input text should REMAIN for the user to submit in the new type
+        expect(result.current.searchQuery).toBe('Pública');
+    });
+
     it('should toggle show all layers', () => {
         const { result } = renderHook(() => useSearchLogic());
 
