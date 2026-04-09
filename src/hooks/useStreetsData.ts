@@ -1,10 +1,7 @@
 import { useDataService } from './useDataService';
-import { createDataService } from '../services/OfflineDataService';
-
-// Create a singleton instance of offline data service
-const dataService = createDataService();
+import { getDataService } from '../services/OfflineDataService';
 
 export const useStreetsData = () => {
-  const { streets } = useDataService(dataService);
+  const { streets } = useDataService(getDataService());
   return streets;
 };

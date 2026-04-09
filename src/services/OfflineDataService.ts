@@ -254,9 +254,27 @@ export class OfflineDataService implements DataService {
   }
 }
 
-// Factory function to create the appropriate service based on context
+// Module-level singleton — ONE instance shared across the entire app
+// This prevents multiple OfflineDataService instances from triggering
+// duplicate data loads (IndexedDB reads + network fetches)
+let _singleton: OfflineDataService | null = null;
+
+export const getDataService = (): OfflineDataService => {
+  if (!_singleton) {
+    _singleton = new OfflineDataService();
+  }
+  return _singleton;
+};
+
+// Factory function kept for backwards compatibility (tests, etc.)
+// Prefer getDataService() for production code
 export const createDataService = (): DataService => {
-  return new OfflineDataService();
+  return getDataService();
+};
+
+// Reset singleton (useful for testing)
+export const _resetDataServiceSingleton = (): void => {
+  _singleton = null;
 };
 
 // Export the enhanced service for direct use

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, memo, useEffect } from "react";
+import { useCallback, useRef, useState, memo, useEffect, useMemo } from "react";
 import Map, {
   Source,
   Layer,
@@ -363,9 +363,15 @@ export const MapContainer = memo(({
     prevShowAllLayersRef.current = showAllLayers;
   }, [showAllLayers, filteredBuildings, filteredStreets]);
 
-  // Prepare GeoJSON data
-  const buildingsGeoJSON = buildingsToGeoJSON(filteredBuildings);
-  const streetsGeoJSON = streetsToGeoJSON(filteredStreets);
+  // Prepare GeoJSON data — memoized to avoid recomputing on every render
+  const buildingsGeoJSON = useMemo(
+    () => buildingsToGeoJSON(filteredBuildings),
+    [filteredBuildings]
+  );
+  const streetsGeoJSON = useMemo(
+    () => streetsToGeoJSON(filteredStreets),
+    [filteredStreets]
+  );
 
   // Determine what to show
   const shouldShowBuildings = showAllLayers || filteredBuildings.length > 0;

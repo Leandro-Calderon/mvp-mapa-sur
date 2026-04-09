@@ -10,6 +10,93 @@ export interface EnhancedDataServiceResult<T> extends DataServiceResult<T> {
   lastUpdated?: number;
 }
 
+// ─── Module-level load deduplication ────────────────────────────────────────
+// When multiple hook instances call loadData() concurrently (e.g. MapView +
+// useBuildingsData + useStreetsData all mounting at the same time), we
+// deduplicate the actual data fetch so it only happens once.
+
+type DataKey = 'buildings' | 'streets';
+
+interface CachedLoadResult {
+  data: BuildingFeature[] | StreetFeature[];
+  fromCache: boolean;
+  isStale: boolean;
+  lastUpdated?: number;
+}
+
+// In-flight load promises keyed by data type
+const inflightLoads = new Map<DataKey, Promise<CachedLoadResult>>();
+
+// Cached results — used to hydrate late-mounting hooks instantly
+const cachedResults = new Map<DataKey, CachedLoadResult>();
+
+// Subscribers notified when a load completes (so late hooks get updated)
+const subscribers = new Map<DataKey, Set<(result: CachedLoadResult) => void>>();
+
+function subscribeTo(key: DataKey, cb: (result: CachedLoadResult) => void): () => void {
+  if (!subscribers.has(key)) subscribers.set(key, new Set());
+  subscribers.get(key)!.add(cb);
+  return () => { subscribers.get(key)?.delete(cb); };
+}
+
+function notifyAll(key: DataKey, result: CachedLoadResult): void {
+  cachedResults.set(key, result);
+  subscribers.get(key)?.forEach(cb => cb(result));
+}
+
+/**
+ * Deduplicated data loader. Only the FIRST call actually fetches;
+ * concurrent calls piggyback on the same promise. Completed results
+ * are cached for instant hydration of late-mounting hooks.
+ */
+async function dedupLoad(
+  key: DataKey,
+  loader: () => Promise<OfflineDataServiceResult<BuildingFeature[] | StreetFeature[]>>,
+  forceRefresh: boolean,
+): Promise<CachedLoadResult> {
+  // On force refresh, clear cached result so we fetch fresh
+  if (forceRefresh) {
+    cachedResults.delete(key);
+  }
+
+  // Return cached result immediately if available
+  if (cachedResults.has(key)) {
+    return cachedResults.get(key)!;
+  }
+
+  // Piggyback on in-flight load if one exists
+  if (inflightLoads.has(key)) {
+    return inflightLoads.get(key)!;
+  }
+
+  // Start a new load
+  const promise = loader().then((result): CachedLoadResult => ({
+    data: result.data,
+    fromCache: result.fromCache,
+    isStale: result.isStale,
+    lastUpdated: result.lastUpdated,
+  }));
+
+  inflightLoads.set(key, promise);
+
+  try {
+    const loadResult = await promise;
+    notifyAll(key, loadResult);
+    return loadResult;
+  } catch (error) {
+    // Remove cache so next attempt retries
+    cachedResults.delete(key);
+    throw error;
+  } finally {
+    inflightLoads.delete(key);
+  }
+}
+
+function clearAllCache(): void {
+  cachedResults.delete('buildings');
+  cachedResults.delete('streets');
+}
+
 // Helper to schedule background refresh with requestIdleCallback
 const scheduleBackgroundRefresh = (callback: () => void) => {
   if ('requestIdleCallback' in window) {
@@ -105,10 +192,12 @@ export const useDataService = (service: DataService) => {
   const refreshScheduledRef = useRef(false);
 
   const loadData = useCallback(async (forceRefresh = false) => {
+    if (forceRefresh) {
+      clearAllCache();
+    }
+
     const isOnline = connectionService.isOnline();
     const preferOffline = connectionService.shouldUseOfflineFirst();
-
-    // Check service capabilities once
     const hasBuildingsMetadata = 'loadBuildingsWithMetadata' in service;
     const hasStreetsMetadata = 'loadStreetsWithMetadata' in service;
 
@@ -122,7 +211,7 @@ export const useDataService = (service: DataService) => {
       }
     };
 
-    // Load buildings and streets in parallel
+    // Load buildings and streets in parallel — deduplicated at module level
     await Promise.all([
       loadDataType<BuildingFeature>(
         {
@@ -150,6 +239,64 @@ export const useDataService = (service: DataService) => {
       )
     ]);
   }, [service]);
+
+  // Subscribe to module-level deduplicated results
+  // This allows late-mounting hooks to get data that was already loaded
+  useEffect(() => {
+    // Check if we already have cached results to hydrate immediately
+    const buildingsCached = cachedResults.get('buildings');
+    const streetsCached = cachedResults.get('streets');
+
+    if (buildingsCached) {
+      setBuildingsResult({
+        data: buildingsCached.data as BuildingFeature[],
+        loading: false,
+        error: null,
+        fromCache: buildingsCached.fromCache,
+        isStale: buildingsCached.isStale,
+        lastUpdated: buildingsCached.lastUpdated,
+      });
+    }
+
+    if (streetsCached) {
+      setStreetsResult({
+        data: streetsCached.data as StreetFeature[],
+        loading: false,
+        error: null,
+        fromCache: streetsCached.fromCache,
+        isStale: streetsCached.isStale,
+        lastUpdated: streetsCached.lastUpdated,
+      });
+    }
+
+    // Subscribe to future updates from other hook instances
+    const unsubBuildings = subscribeTo('buildings', (result) => {
+      setBuildingsResult({
+        data: result.data as BuildingFeature[],
+        loading: false,
+        error: null,
+        fromCache: result.fromCache,
+        isStale: result.isStale,
+        lastUpdated: result.lastUpdated,
+      });
+    });
+
+    const unsubStreets = subscribeTo('streets', (result) => {
+      setStreetsResult({
+        data: result.data as StreetFeature[],
+        loading: false,
+        error: null,
+        fromCache: result.fromCache,
+        isStale: result.isStale,
+        lastUpdated: result.lastUpdated,
+      });
+    });
+
+    return () => {
+      unsubBuildings();
+      unsubStreets();
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;

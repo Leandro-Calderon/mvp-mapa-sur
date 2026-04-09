@@ -6,7 +6,7 @@ import { DataStatusNotification } from "../DataStatusNotification";
 import { FonaviLegend } from "../FonaviLegend";
 import { useSearchLogic } from "../../hooks/useSearchLogic";
 import { useDataService } from "../../hooks/useDataService";
-import { createDataService, type OfflineDataService } from "../../services/OfflineDataService";
+import { getDataService } from "../../services/OfflineDataService";
 import { logger } from "../../utils/logger";
 import styles from "./MapView.module.css";
 
@@ -45,8 +45,8 @@ const MapLoadingFallback = () => (
 );
 
 export const MapView = () => {
-    // Initialize offline data service for cache info
-    const [offlineService] = useState<OfflineDataService>(() => createDataService() as OfflineDataService);
+    // Use the shared singleton data service — same instance as useBuildingsData/useStreetsData
+    const offlineService = getDataService();
     const [cacheInfo, setCacheInfo] = useState<{
         buildings: boolean;
         streets: boolean;
