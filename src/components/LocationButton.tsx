@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import "./LocationButton.css";
 import { GpsDisabledModal } from "./GpsDisabledModal";
 import type { GpsErrorInfo } from "../hooks/useGeolocation";
 import { logger } from "../utils/logger";
+import styles from "./LocationButton.module.css";
 
 interface LocationButtonProps {
   onToggle: (active: boolean) => void;
@@ -19,7 +19,6 @@ export const LocationButton = ({
 }: LocationButtonProps) => {
   const [showGpsModal, setShowGpsModal] = useState(false);
 
-  // Show modal when a GPS error arrives that requires user intervention
   useEffect(() => {
     if (error && (error.type === 'gps-disabled' || error.type === 'permission-denied')) {
       setShowGpsModal(true);
@@ -37,10 +36,10 @@ export const LocationButton = ({
   };
 
   const buttonClassName = [
-    "location-btn",
-    isActive ? "active" : "idle",
-    isLocating && !isActive ? "loading" : "",
-    error && !isActive ? "error" : "",
+    styles.locationBtn!,
+    isActive ? styles.active! : styles.idle!,
+    isLocating && !isActive ? styles.loading! : "",
+    error && !isActive ? styles.error! : "",
   ].filter(Boolean).join(" ");
 
   return (
@@ -63,7 +62,7 @@ export const LocationButton = ({
               : "Activar seguimiento de ubicación"
         }
       >
-        <div className="location-icon">📍</div>
+        <div className={styles.locationIcon!}>📍</div>
       </button>
 
       <GpsDisabledModal

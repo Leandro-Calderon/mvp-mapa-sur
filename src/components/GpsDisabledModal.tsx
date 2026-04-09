@@ -1,6 +1,6 @@
 import React from "react";
 import type { GpsErrorType } from "../hooks/useGeolocation";
-import "./GpsDisabledModal.css";
+import styles from "./GpsDisabledModal.module.css";
 
 interface GpsDisabledModalProps {
   isOpen: boolean;
@@ -16,14 +16,10 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
 
   const getTitle = () => {
     switch (errorType) {
-      case 'permission-denied':
-        return 'Permiso Denegado';
-      case 'gps-disabled':
-        return 'GPS Desactivado';
-      case 'timeout':
-        return 'Ubicación no Disponible';
-      default:
-        return 'Error de Ubicación';
+      case 'permission-denied': return 'Permiso Denegado';
+      case 'gps-disabled': return 'GPS Desactivado';
+      case 'timeout': return 'Ubicación no Disponible';
+      default: return 'Error de Ubicación';
     }
   };
 
@@ -44,7 +40,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
     if (errorType === 'permission-denied') {
       if (isAndroid) {
         return (
-          <div className="instructions">
+          <div className={styles.instructions!}>
             <p>Para habilitar el permiso en Android:</p>
             <ol>
               <li>Ve a <strong>Configuración</strong> de tu dispositivo</li>
@@ -58,7 +54,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
       }
       if (isIOS) {
         return (
-          <div className="instructions">
+          <div className={styles.instructions!}>
             <p>Para habilitar el permiso en iOS:</p>
             <ol>
               <li>Ve a <strong>Configuración</strong></li>
@@ -71,7 +67,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
         );
       }
       return (
-        <div className="instructions">
+        <div className={styles.instructions!}>
           <p>Para habilitar el permiso en tu navegador:</p>
           <ol>
             <li>Buscá el ícono de ubicación <strong>📍</strong> o candado en la barra de direcciones</li>
@@ -83,10 +79,9 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
       );
     }
 
-    // GPS disabled instructions
     if (isAndroid) {
       return (
-        <div className="instructions">
+        <div className={styles.instructions!}>
           <p>Para activar el GPS en tu dispositivo Android:</p>
           <ol>
             <li>Ve a <strong>Configuración</strong> de tu dispositivo</li>
@@ -99,7 +94,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
     }
     if (isIOS) {
       return (
-        <div className="instructions">
+        <div className={styles.instructions!}>
           <p>Para activar el GPS en tu dispositivo iOS:</p>
           <ol>
             <li>Ve a <strong>Configuración</strong></li>
@@ -113,7 +108,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
       );
     }
     return (
-      <div className="instructions">
+      <div className={styles.instructions!}>
         <p>Para activar el GPS en tu navegador:</p>
         <ol>
           <li>Buscá el ícono de ubicación o candado en la barra de direcciones</li>
@@ -126,19 +121,19 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
   };
 
   return (
-    <div className="gps-modal-overlay" onClick={onClose}>
-      <div className="gps-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="gps-modal-header">
-          <div className="gps-icon">📍</div>
+    <div className={styles.gpsModalOverlay!} onClick={onClose}>
+      <div className={styles.gpsModalContent!} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.gpsModalHeader!}>
+          <div className={styles.gpsIcon!}>📍</div>
           <h2>{getTitle()}</h2>
         </div>
 
-        <div className="gps-modal-body">
-          <p className="gps-message">{getIntro()}</p>
+        <div className={styles.gpsModalBody!}>
+          <p className={styles.gpsMessage!}>{getIntro()}</p>
           {getInstructions()}
 
-          <div className="gps-modal-footer">
-            <button className="gps-modal-button primary" onClick={onClose}>
+          <div className={styles.gpsModalFooter!}>
+            <button className={`${styles.gpsModalButton!} ${styles.primary!}`} onClick={onClose}>
               Entendido
             </button>
           </div>

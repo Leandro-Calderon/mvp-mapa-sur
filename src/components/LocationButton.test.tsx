@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LocationButton } from './LocationButton';
 import type { GpsErrorInfo } from '../hooks/useGeolocation';
+import styles from './LocationButton.module.css';
 
 // Mock GpsDisabledModal
 vi.mock('./GpsDisabledModal', () => ({
@@ -47,20 +48,16 @@ describe('LocationButton', () => {
         render(<LocationButton {...defaultProps} />);
 
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('idle');
-        expect(button).not.toHaveClass('active');
+        expect(button.className).toContain(styles.idle);
+        expect(button.className).not.toContain(styles.active);
     });
 
     it('should show active state when isActive is true', () => {
-        const props = {
-            ...defaultProps,
-            isActive: true,
-        };
-
+        const props = { ...defaultProps, isActive: true };
         render(<LocationButton {...props} />);
 
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('active');
+        expect(button.className).toContain(styles.active);
     });
 
     it('should show error state when error is provided', () => {
@@ -72,16 +69,12 @@ describe('LocationButton', () => {
         render(<LocationButton {...props} />);
 
         const button = screen.getByRole('button', { name: /gps error/i });
-        expect(button).toHaveClass('error');
+        expect(button.className).toContain(styles.error);
     });
 
     it('should call onToggle with false when active button is clicked', () => {
         const onToggle = vi.fn();
-        const props = {
-            ...defaultProps,
-            onToggle,
-            isActive: true,
-        };
+        const props = { ...defaultProps, onToggle, isActive: true };
 
         render(<LocationButton {...props} />);
 
@@ -151,29 +144,22 @@ describe('LocationButton', () => {
     });
 
     it('should show loading class when isLocating is true and not active', () => {
-        const props = {
-            ...defaultProps,
-            isLocating: true,
-        };
+        const props = { ...defaultProps, isLocating: true };
 
         render(<LocationButton {...props} />);
 
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('loading');
+        expect(button.className).toContain(styles.loading);
     });
 
     it('should not show loading class when active', () => {
-        const props = {
-            ...defaultProps,
-            isActive: true,
-            isLocating: true,
-        };
+        const props = { ...defaultProps, isActive: true, isLocating: true };
 
         render(<LocationButton {...props} />);
 
         const button = screen.getByRole('button');
-        expect(button).not.toHaveClass('loading');
-        expect(button).toHaveClass('active');
+        expect(button.className).not.toContain(styles.loading);
+        expect(button.className).toContain(styles.active);
     });
 
     it('should display error message in aria-label when error is present', () => {
@@ -189,10 +175,7 @@ describe('LocationButton', () => {
     });
 
     it('should display correct aria-label for active state', () => {
-        const props = {
-            ...defaultProps,
-            isActive: true,
-        };
+        const props = { ...defaultProps, isActive: true };
 
         render(<LocationButton {...props} />);
 
@@ -223,11 +206,11 @@ describe('LocationButton', () => {
         const { rerender } = render(<LocationButton {...defaultProps} />);
 
         let button = screen.getByRole('button');
-        expect(button).toHaveClass('idle');
+        expect(button.className).toContain(styles.idle);
 
         rerender(<LocationButton {...defaultProps} isActive={true} />);
 
         button = screen.getByRole('button');
-        expect(button).toHaveClass('active');
+        expect(button.className).toContain(styles.active);
     });
 });

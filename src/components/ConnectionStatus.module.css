@@ -1,5 +1,5 @@
 /* ─── Unified status bar (connection + data) ────────────── */
-.connection-status {
+.connectionStatus {
   position: fixed;
   bottom: 12px;
   left: 12px;
@@ -15,49 +15,49 @@
 }
 
 /* ─── Variants ──────────────────────────────────────────── */
-.connection-status.success {
+.success {
   background: rgba(240, 253, 244, 0.92);
   border: 1px solid #86efac;
   color: #166534;
 }
 
-.connection-status.info {
+.info {
   background: rgba(239, 246, 255, 0.92);
   border: 1px solid #93c5fd;
   color: #1e40af;
 }
 
-.connection-status.warning {
+.warning {
   background: rgba(255, 251, 235, 0.92);
   border: 1px solid #fcd34d;
   color: #92400e;
   animation: csSlideIn 0.3s ease-out, csPulse 3s ease-in-out infinite 2s;
 }
 
-.connection-status.error {
+.error {
   background: rgba(254, 242, 242, 0.92);
   border: 1px solid #fca5a5;
   color: #991b1b;
 }
 
 /* ─── Row: icon + text + type ───────────────────────────── */
-.cs-row {
+.csRow {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.cs-icon {
+.csIcon {
   font-size: 15px;
   line-height: 1;
   flex-shrink: 0;
 }
 
-.cs-text {
+.csText {
   font-weight: 600;
 }
 
-.cs-type {
+.csType {
   color: inherit;
   opacity: 0.6;
   font-size: 11px;
@@ -65,7 +65,7 @@
 }
 
 /* ─── Detail message ───────────────────────────────────── */
-.cs-detail {
+.csDetail {
   margin-top: 6px;
   padding-top: 6px;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
@@ -78,7 +78,7 @@
 }
 
 /* ─── Refresh button ───────────────────────────────────── */
-.cs-refresh {
+.csRefresh {
   background: rgba(0, 0, 0, 0.08);
   border: none;
   border-radius: 5px;
@@ -90,32 +90,32 @@
   transition: background 0.15s;
 }
 
-.cs-refresh:hover:not(:disabled) {
+.csRefresh:hover:not(:disabled) {
   background: rgba(0, 0, 0, 0.14);
 }
 
-.cs-refresh:disabled {
+.csRefresh:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* ─── Cache indicators ─────────────────────────────────── */
-.cs-cache {
+.csCache {
   display: flex;
   gap: 8px;
   margin-top: 6px;
   font-size: 11px;
 }
 
-.cs-ok {
+.csOk {
   opacity: 0.7;
 }
 
-.cs-missing {
+.csMissing {
   opacity: 0.4;
 }
 
-.cs-sync {
+.csSync {
   margin-left: auto;
   opacity: 0.5;
   font-style: italic;
@@ -140,7 +140,7 @@
 
 /* ─── Responsive ────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .connection-status {
+  .connectionStatus {
     bottom: 8px;
     left: 8px;
     max-width: 240px;
@@ -148,5 +148,5 @@
     font-size: 11px;
   }
 
-  .cs-icon { font-size: 13px; }
+  .csIcon { font-size: 13px; }
 }

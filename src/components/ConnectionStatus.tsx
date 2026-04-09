@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { EnhancedDataServiceResult } from "../hooks/useDataService";
 import { useConnectionStatus } from "../hooks/useConnectionStatus";
-import "./ConnectionStatus.css";
+import styles from "./ConnectionStatus.module.css";
 
 interface ConnectionStatusProps {
   buildings: EnhancedDataServiceResult<any[]>;
@@ -29,17 +29,14 @@ export const ConnectionStatus = ({
   const hasStaleData = buildings.isStale || streets.isStale;
   const hasCacheData = buildings.fromCache || streets.fromCache;
 
-  // Auto-hide after 4 seconds on initial mount
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
       setHasBeenHidden(true);
     }, 4000);
-
     return () => clearTimeout(timer);
   }, []);
 
-  // Show again when connection status changes
   useEffect(() => {
     if (!hasBeenHidden) return undefined;
 
@@ -61,9 +58,6 @@ export const ConnectionStatus = ({
 
     return undefined;
   }, [isOnline, previousOnlineStatus, hasBeenHidden, isShowingForStatusChange]);
-
-  // ─── Determine what to show ────────────────────────────────
-  // Priority: loading > errors > offline > stale > online
 
   const getNetworkIcon = () => {
     if (isOffline) return "📴";
@@ -110,26 +104,30 @@ export const ConnectionStatus = ({
     lastSync: buildings.lastUpdated ?? streets.lastUpdated,
   };
 
-  // Don't render if loading or if everything is fine and already hidden
   if (isLoading) return null;
 
+  const type = getType();
+  const typeClass = type === "error" ? styles.error!
+    : type === "warning" ? styles.warning!
+    : type === "info" ? styles.info!
+    : styles.success!;
+
   return isVisible ? (
-    <div className={`connection-status ${getType()}`}>
-      <div className="cs-row">
-        <span className="cs-icon">{getNetworkIcon()}</span>
-        <span className="cs-text">{getNetworkText()}</span>
+    <div className={`${styles.connectionStatus!} ${typeClass}`}>
+      <div className={styles.csRow!}>
+        <span className={styles.csIcon!}>{getNetworkIcon()}</span>
+        <span className={styles.csText!}>{getNetworkText()}</span>
         {effectiveType && (
-          <span className="cs-type">({effectiveType})</span>
+          <span className={styles.csType!}>({effectiveType})</span>
         )}
       </div>
 
-      {/* Data status — replaces old DataStatusNotification */}
       {hasErrors && (
-        <div className="cs-detail">
+        <div className={styles.csDetail!}>
           Error al cargar datos. Verificá tu conexión.
           {onRefresh && (
             <button
-              className="cs-refresh"
+              className={styles.csRefresh!}
               onClick={onRefresh}
               disabled={isLoading}
             >
@@ -140,11 +138,11 @@ export const ConnectionStatus = ({
       )}
 
       {hasStaleData && hasCacheData && !hasErrors && (
-        <div className="cs-detail">
+        <div className={styles.csDetail!}>
           Datos desactualizados — usando caché
           {onRefresh && (
             <button
-              className="cs-refresh"
+              className={styles.csRefresh!}
               onClick={onRefresh}
               disabled={isLoading}
             >
@@ -155,19 +153,18 @@ export const ConnectionStatus = ({
       )}
 
       {!hasErrors && !hasStaleData && hasCacheData && (
-        <div className="cs-detail">Usando datos guardados localmente</div>
+        <div className={styles.csDetail!}>Usando datos guardados localmente</div>
       )}
 
-      {/* Cache indicators */}
-      <div className="cs-cache">
-        <span className={cacheInfo.buildings ? "cs-ok" : "cs-missing"}>
+      <div className={styles.csCache!}>
+        <span className={cacheInfo.buildings ? styles.csOk! : styles.csMissing!}>
           🏢 {cacheInfo.buildings ? "✓" : "…"}
         </span>
-        <span className={cacheInfo.streets ? "cs-ok" : "cs-missing"}>
+        <span className={cacheInfo.streets ? styles.csOk! : styles.csMissing!}>
           🛣️ {cacheInfo.streets ? "✓" : "…"}
         </span>
         {cacheInfo.lastSync && (
-          <span className="cs-sync">{formatLastSync(cacheInfo.lastSync)}</span>
+          <span className={styles.csSync!}>{formatLastSync(cacheInfo.lastSync)}</span>
         )}
       </div>
     </div>

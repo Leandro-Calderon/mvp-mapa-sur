@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import "./SearchPanel.css";
+import styles from "./SearchPanel.module.css";
 import { logger } from "../utils/logger";
 
 export type SearchType = "edificio" | "departamento" | "calle" | "plan";
@@ -82,7 +82,6 @@ export const SearchPanel = ({
     if (e.key === "Enter") {
       e.preventDefault();
       logger.debug('SearchPanel: Enter key pressed, calling onSubmit');
-      // Blur the input to dismiss the mobile keyboard
       inputRef.current?.blur();
       onSubmit();
     }
@@ -93,11 +92,8 @@ export const SearchPanel = ({
   };
 
   const handleShowAllClick = () => {
-    // Blur input to dismiss mobile keyboard
     inputRef.current?.blur();
-    // Collapse the panel for better map visibility
     onToggleCollapse(true);
-    // Toggle the show all layers state
     onShowAllToggle();
   };
 
@@ -106,26 +102,25 @@ export const SearchPanel = ({
   };
 
   const panelClassName = [
-    "search-panel",
-    _collapsed ? "collapsed" : "",
-    isIdle ? "idle" : "",
+    styles.searchPanel!,
+    _collapsed ? styles.collapsed! : "",
+    isIdle ? styles.idle! : "",
   ].filter(Boolean).join(" ");
 
   return (
     <div className={panelClassName}>
-      <div className="search-header" onClick={togglePanel}>
-        <div className="search-icon">
-          <span className="search-icon-graphic">🔍</span>
+      <div className={styles.searchHeader!} onClick={togglePanel}>
+        <div className={styles.searchIcon!}>
+          <span className={styles.searchIconGraphic!}>🔍</span>
         </div>
-        <div className="search-input-preview">{previewText}</div>
-        <div className="collapse-icon">▼</div>
+        <div className={styles.searchInputPreview!}>{previewText}</div>
+        <div className={styles.collapseIcon!}>▼</div>
       </div>
 
-      <div className="search-content-wrapper">
-        <div className="search-content">
-          {/* Search indicator */}
+      <div className={styles.searchContentWrapper!}>
+        <div className={styles.searchContent!}>
           {trimmedAppliedQuery && (
-            <div className="search-indicator active">
+            <div className={`${styles.searchIndicator!} ${styles.active!}`}>
               <span>✓</span>
               <span>
                 {searchResults === 1
@@ -136,66 +131,63 @@ export const SearchPanel = ({
           )}
 
           {trimmedAppliedQuery && searchResults === 0 && (
-            <div className="search-feedback warning">
+            <div className={`${styles.searchFeedback!} ${styles.warning!}`}>
               No encontramos coincidencias para tu búsqueda. Revisa los datos ingresados.
             </div>
           )}
 
-          {/* Search type selector - Row 2: Edificio | Departamento */}
-          <div className="search-type-row">
+          <div className={styles.searchTypeRow!}>
             <button
-              className={`type-btn type-btn-row ${_type === "edificio" ? "active" : ""}`}
+              className={`${styles.typeBtn!} ${styles.typeBtnRow!} ${_type === "edificio" ? styles.active! : ""}`}
               onClick={() => handleTypeSelect("edificio")}
             >
               🏢 Edificio
             </button>
             <button
-              className={`type-btn type-btn-row ${_type === "departamento" ? "active" : ""}`}
+              className={`${styles.typeBtn!} ${styles.typeBtnRow!} ${_type === "departamento" ? styles.active! : ""}`}
               onClick={() => handleTypeSelect("departamento")}
             >
               🚪 Departamento
             </button>
           </div>
 
-          {/* Search type selector - Row 3: Calle | Plan */}
-          <div className="search-type-row">
+          <div className={styles.searchTypeRow!}>
             <button
-              className={`type-btn type-btn-row ${_type === "calle" ? "active" : ""}`}
+              className={`${styles.typeBtn!} ${styles.typeBtnRow!} ${_type === "calle" ? styles.active! : ""}`}
               onClick={() => handleTypeSelect("calle")}
             >
               🛣️ Calle
             </button>
             <button
-              className={`type-btn type-btn-row ${_type === "plan" ? "active" : ""}`}
+              className={`${styles.typeBtn!} ${styles.typeBtnRow!} ${_type === "plan" ? styles.active! : ""}`}
               onClick={() => handleTypeSelect("plan")}
             >
               📋 Plan
             </button>
           </div>
 
-          {/* Row 4: Input | Ver Todo */}
-          <div className="search-input-row">
-            <div className="search-input-group">
+          <div className={styles.searchInputRow!}>
+            <div className={styles.searchInputGroup!}>
               <input
                 ref={inputRef}
                 type="text"
-                className="search-input"
+                className={styles.searchInput!}
                 placeholder={placeholders[_type]}
                 value={_query}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
               />
               {(_query || trimmedAppliedQuery) && (
-                <button className="clear-btn" onClick={clearSearch}>
+                <button className={styles.clearBtn!} onClick={clearSearch}>
                   ×
                 </button>
               )}
             </div>
             <button
-              className={`layer-btn layer-btn-row ${showAllLayers ? "active" : ""}`}
+              className={`${styles.layerBtn!} ${styles.layerBtnRow!} ${showAllLayers ? styles.active! : ""}`}
               onClick={handleShowAllClick}
             >
-              <span className="layer-icon">👁️</span>
+              <span className={styles.layerIcon!}>👁️</span>
               <span>Ver Todo</span>
             </button>
           </div>

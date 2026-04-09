@@ -67,9 +67,6 @@ export const useSearchLogic = () => {
   const streetResults = filteredStreets.length;
   const totalResults = buildingResults + streetResults;
 
-  const shouldShowBuildings = showBuildings && buildingResults > 0;
-  const shouldShowStreets = showStreets && streetResults > 0;
-
   const handleQueryChange = useCallback((query: string) => {
     setSearchQuery(query);
   }, []);
@@ -123,22 +120,6 @@ export const useSearchLogic = () => {
     setShowStreets(false);
     setAppliedRevision((prev) => prev + 1);
   }, []);
-
-  const handleLayerToggle = useCallback((layer: "calles" | "todo") => {
-    if (layer === "calles") {
-      if (streetResults === 0) {
-        return;
-      }
-      setShowStreets((prev) => !prev);
-      return;
-    }
-
-    if (buildingResults === 0) {
-      return;
-    }
-
-    setShowBuildings((prev) => !prev);
-  }, [buildingResults, streetResults]);
 
   const handleShowAllToggle = useCallback(() => {
     logger.debug('useSearchLogic: handleShowAllToggle called', { currentValue: showAllLayers });
@@ -215,8 +196,6 @@ export const useSearchLogic = () => {
     appliedType,
     appliedRevision,
     panelCollapsed,
-    showBuildings,
-    showStreets,
     showAllLayers,
     locationActive,
     userPosition,
@@ -233,8 +212,6 @@ export const useSearchLogic = () => {
     buildingResults,
     streetResults,
     totalResults,
-    shouldShowBuildings,
-    shouldShowStreets,
 
     // Loading states
     buildingsLoading,
@@ -247,7 +224,6 @@ export const useSearchLogic = () => {
     handleTypeChange,
     handleSubmit,
     handleClear,
-    handleLayerToggle,
     handleShowAllToggle,
     handleLocationToggle,
     handlePanelToggle,

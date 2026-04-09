@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SearchPanel, SearchType } from './SearchPanel';
+import styles from './SearchPanel.module.css';
 
 describe('SearchPanel', () => {
     const defaultProps = {
@@ -74,7 +75,6 @@ describe('SearchPanel', () => {
         const edificioButton = screen.getByText('🏢 Edificio');
         fireEvent.click(edificioButton);
 
-        // Should not be called since 'edificio' is already selected
         expect(defaultProps.onTypeChange).not.toHaveBeenCalled();
     });
 
@@ -118,10 +118,7 @@ describe('SearchPanel', () => {
     });
 
     it('should show clear button when there is a query', () => {
-        const props = {
-            ...defaultProps,
-            searchQuery: 'Torre 5',
-        };
+        const props = { ...defaultProps, searchQuery: 'Torre 5' };
 
         render(<SearchPanel {...props} />);
 
@@ -130,10 +127,7 @@ describe('SearchPanel', () => {
     });
 
     it('should call onClear when clear button is clicked', () => {
-        const props = {
-            ...defaultProps,
-            searchQuery: 'Torre 5',
-        };
+        const props = { ...defaultProps, searchQuery: 'Torre 5' };
 
         render(<SearchPanel {...props} />);
 
@@ -153,31 +147,27 @@ describe('SearchPanel', () => {
     });
 
     it('should apply active class to "Ver Todo" when showAllLayers is true', () => {
-        const props = {
-            ...defaultProps,
-            showAllLayers: true,
-        };
+        const props = { ...defaultProps, showAllLayers: true };
 
         render(<SearchPanel {...props} />);
 
         const verTodoButton = screen.getByText('Ver Todo').closest('button');
-        expect(verTodoButton).toHaveClass('active');
+        expect(verTodoButton?.className).toContain(styles.active);
     });
 
     it('should toggle panel collapsed state', () => {
         render(<SearchPanel {...defaultProps} />);
 
-        const header = screen.getByText('🔍').closest('.search-header');
+        // The header is the parent of the search icon
+        const searchIcon = screen.getByText('🔍');
+        const header = searchIcon.closest('div')?.parentElement;
         fireEvent.click(header!);
 
         expect(defaultProps.onToggleCollapse).toHaveBeenCalledWith(true);
     });
 
     it('should show correct placeholder for departamento type', () => {
-        const props = {
-            ...defaultProps,
-            searchType: 'departamento' as SearchType,
-        };
+        const props = { ...defaultProps, searchType: 'departamento' as SearchType };
 
         render(<SearchPanel {...props} />);
 
@@ -185,10 +175,7 @@ describe('SearchPanel', () => {
     });
 
     it('should show correct placeholder for calle type', () => {
-        const props = {
-            ...defaultProps,
-            searchType: 'calle' as SearchType,
-        };
+        const props = { ...defaultProps, searchType: 'calle' as SearchType };
 
         render(<SearchPanel {...props} />);
 
@@ -196,10 +183,7 @@ describe('SearchPanel', () => {
     });
 
     it('should show correct placeholder for plan type', () => {
-        const props = {
-            ...defaultProps,
-            searchType: 'plan' as SearchType,
-        };
+        const props = { ...defaultProps, searchType: 'plan' as SearchType };
 
         render(<SearchPanel {...props} />);
 
@@ -207,34 +191,29 @@ describe('SearchPanel', () => {
     });
 
     it('should apply collapsed class when collapsed prop is true', () => {
-        const props = {
-            ...defaultProps,
-            collapsed: true,
-        };
+        const props = { ...defaultProps, collapsed: true };
 
         render(<SearchPanel {...props} />);
 
-        const panel = screen.getByText('🔍').closest('.search-panel');
-        expect(panel).toHaveClass('collapsed');
+        // The panel div is the outermost container — find it via the search icon
+        const panel = screen.getByText('🔍').closest('div')?.parentElement?.parentElement;
+        expect(panel?.className).toContain(styles.collapsed);
     });
 
     it('should apply idle class when no query is present', () => {
         render(<SearchPanel {...defaultProps} />);
 
-        const panel = screen.getByText('🔍').closest('.search-panel');
-        expect(panel).toHaveClass('idle');
+        const panel = screen.getByText('🔍').closest('div')?.parentElement?.parentElement;
+        expect(panel?.className).toContain(styles.idle);
     });
 
     it('should highlight active search type button', () => {
-        const props = {
-            ...defaultProps,
-            searchType: 'departamento' as SearchType,
-        };
+        const props = { ...defaultProps, searchType: 'departamento' as SearchType };
 
         render(<SearchPanel {...props} />);
 
         const departamentoButton = screen.getByText('🚪 Departamento').closest('button');
-        expect(departamentoButton).toHaveClass('active');
+        expect(departamentoButton?.className).toContain(styles.active);
     });
 
     it('should show preview text for active search', () => {

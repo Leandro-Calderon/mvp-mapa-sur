@@ -11,14 +11,14 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: "auto", // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
       manifest: {
-        name: "mvp-mapa-sur",
-        short_name: "mapa",
+        name: "Mapa FONAVI Sur",
+        short_name: "FONAVI",
         start_url: "/mvp-mapa-sur",
         scope: "/mvp-mapa-sur",
         id: "/mvp-mapa-sur/",
         lang: "es",
         description:
-          "mapa para marcar la geolocalizacion de edificios o viviendas para llegar más rapido",
+          "Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe",
         theme_color: "#ffffff",
         background_color: "#ffffff",
         display: "standalone",

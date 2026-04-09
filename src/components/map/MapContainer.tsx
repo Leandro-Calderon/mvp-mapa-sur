@@ -21,49 +21,6 @@ import { logger } from "../../utils/logger";
 import { MapPopupContent } from "./MapPopup";
 
 // Layer paint configurations
-const CLUSTER_LAYER_PAINT = {
-  'circle-color': [
-    'step',
-    ['get', 'point_count'],
-    '#51bbd6',   // < 10 points
-    10,
-    '#f1f075',  // 10-29 points
-    30,
-    '#f28cb1'   // >= 30 points
-  ],
-  'circle-radius': [
-    'step',
-    ['get', 'point_count'],
-    20,    // < 10 points
-    10,
-    30,   // 10-29 points
-    30,
-    40    // >= 30 points
-  ],
-  'circle-stroke-width': 2,
-  'circle-stroke-color': '#fff',
-} as const;
-
-const CLUSTER_COUNT_LAYOUT = {
-  'text-field': '{point_count_abbreviated}',
-  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-  'text-size': 14,
-} as const;
-
-const UNCLUSTERED_POINT_PAINT = {
-  'circle-color': [
-    'match',
-    ['get', 'tipo'],
-    'Bloque', '#FF6B6B',
-    'Torre', '#4ECDC4',
-    'Departamento', '#45B7D1',
-    '#95A5A6' // default
-  ],
-  'circle-radius': 8,
-  'circle-stroke-width': 2,
-  'circle-stroke-color': '#fff',
-} as const;
-
 const STREET_LINE_PAINT = {
   'line-color': '#00bcd4',
   'line-width': 5,
@@ -348,11 +305,12 @@ export const MapContainer = memo(({
     }
   }, [filteredBuildings, filteredStreets, searchRevision]);
 
-  // Trigger search navigation when revision changes
-  if (searchRevision !== lastSearchRevisionRef.current) {
-    // Use setTimeout to avoid calling during render
-    setTimeout(handleSearchNavigation, 0);
-  }
+  // Trigger search navigation when revision changes — useEffect to avoid side effects during render
+  useEffect(() => {
+    if (searchRevision !== 0 && searchRevision !== lastSearchRevisionRef.current) {
+      handleSearchNavigation();
+    }
+  }, [searchRevision, handleSearchNavigation]);
 
   // FitBounds when showAllLayers is activated - using useRef to track previous state
   const prevShowAllLayersRef = useRef(showAllLayers);
@@ -361,7 +319,7 @@ export const MapContainer = memo(({
     if (showAllLayers && !prevShowAllLayersRef.current) {
       const map = mapRef.current?.getMap();
       if (map && filteredBuildings.length > 0) {
-        console.log('[MapContainer] FitBounds for Ver Todo - all buildings');
+        logger.debug('MapContainer: FitBounds for Ver Todo');
 
         const bounds = new maplibregl.LngLatBounds();
 
