@@ -447,7 +447,7 @@ export const MapContainer = memo(({
       onLoad={handleMapLoad}
       onMove={handleMove}
       onClick={handleMapClick}
-      interactiveLayerIds={['clusters', 'unclustered-point', 'street-lines', 'street-fills']}
+      interactiveLayerIds={['unclustered-point', 'street-lines', 'street-fills']}
     >
       {/* Hash sync */}
       <MapHashSync />
