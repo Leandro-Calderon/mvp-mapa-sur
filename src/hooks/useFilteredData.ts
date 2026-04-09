@@ -51,7 +51,19 @@ export const useFilteredData = (data: BuildingFeature[], filters: Filters) => {
       return [];
     }
 
-    return data.filter(filterItem);
+    const filtered = data.filter(filterItem);
+
+    // Deduplicate by coordinates — buildings at the exact same location
+    // are likely data errors. Keep the first occurrence.
+    const seen = new Set<string>();
+    return filtered.filter((item) => {
+      const coords = item.geometry?.coordinates;
+      if (!coords) return false;
+      const key = JSON.stringify(coords);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   }, [data, filterItem]);
 };
 
