@@ -87,6 +87,36 @@ interface MapContainerProps {
   onMapClick?: () => void;
 }
 
+/**
+ * Generate a circular polygon GeoJSON Feature in real-world meters.
+ * Used for the GPS accuracy circle — renders correctly at any zoom level
+ * because it's real coordinates, not pixel-based.
+ */
+const createAccuracyCircle = (
+  center: [number, number],
+  radiusMeters: number,
+  segments = 64,
+): GeoJSON.Feature<GeoJSON.Polygon> => {
+  const [lng, lat] = center;
+  const coordinates: [number, number][] = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * 2 * Math.PI;
+    const dLat = (radiusMeters * Math.cos(angle)) / 111_320;
+    const dLng = (radiusMeters * Math.sin(angle)) / (111_320 * Math.cos((lat * Math.PI) / 180));
+    coordinates.push([lng + dLng, lat + dLat]);
+  }
+
+  return {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [coordinates],
+    },
+  };
+};
+
 // Convert BuildingFeature[] to GeoJSON FeatureCollection
 const buildingsToGeoJSON = (buildings: BuildingFeature[]) => ({
   type: 'FeatureCollection' as const,
@@ -392,6 +422,15 @@ export const MapContainer = memo(({
     }],
   } : null;
 
+  // Accuracy circle polygon — real coordinates that scale with zoom
+  const accuracyCircleGeoJSON = useMemo(() => {
+    if (!userPosition || !locationAccuracy) return null;
+    return {
+      type: 'FeatureCollection' as const,
+      features: [createAccuracyCircle(userPosition, locationAccuracy)],
+    };
+  }, [userPosition, locationAccuracy]);
+
   return (
     <Map
       ref={mapRef}
@@ -483,32 +522,34 @@ export const MapContainer = memo(({
 
       {/* User location */}
       {userLocationGeoJSON && isLocationTracking && (
-        <Source id="user-location" type="geojson" data={userLocationGeoJSON}>
-          {/* Accuracy circle */}
-          {locationAccuracy && (
-            <Layer
-              id="user-location-accuracy"
-              type="circle"
-              paint={{
-                'circle-radius': ['/', locationAccuracy, 2],
-                'circle-color': 'rgba(37, 99, 235, 0.15)',
-                'circle-stroke-color': 'rgba(37, 99, 235, 0.3)',
-                'circle-stroke-width': 1,
-              }}
-            />
+        <>
+          {/* Accuracy circle — polygon in real meters */}
+          {accuracyCircleGeoJSON && (
+            <Source id="user-accuracy" type="geojson" data={accuracyCircleGeoJSON}>
+              <Layer
+                id="user-location-accuracy"
+                type="fill"
+                paint={{
+                  'fill-color': 'rgba(37, 99, 235, 0.15)',
+                  'fill-outline-color': 'rgba(37, 99, 235, 0.3)',
+                }}
+              />
+            </Source>
           )}
           {/* User dot */}
-          <Layer
-            id="user-location-dot"
-            type="circle"
-            paint={{
-              'circle-radius': 8,
-              'circle-color': '#2563eb',
-              'circle-stroke-width': 3,
-              'circle-stroke-color': '#fff',
-            }}
-          />
-        </Source>
+          <Source id="user-location" type="geojson" data={userLocationGeoJSON}>
+            <Layer
+              id="user-location-dot"
+              type="circle"
+              paint={{
+                'circle-radius': 8,
+                'circle-color': '#2563eb',
+                'circle-stroke-width': 3,
+                'circle-stroke-color': '#fff',
+              }}
+            />
+          </Source>
+        </>
       )}
 
       {/* Popup */}
