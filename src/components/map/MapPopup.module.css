@@ -1,0 +1,133 @@
+.popup {
+  min-width: 180px;
+  padding: 10px 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2933;
+}
+
+/* ─── Header ───────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.typeBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.typeBloque { background-color: #FF6B6B; }
+.typeTorre { background-color: #4ECDC4; }
+.typeDepartamento { background-color: #45B7D1; }
+.typeDefault { background-color: #95A5A6; }
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+/* ─── Details ──────────────────────────────────────────── */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detailLabel {
+  font-weight: 500;
+  color: #718096;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.coordinates {
+  font-size: 11px;
+  color: #a0aec0;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* ─── Actions ──────────────────────────────────────────── */
+.actions {
+  display: flex;
+  gap: 4px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 8px;
+}
+
+.actionBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border: none;
+  border-radius: 6px;
+  background: #f7fafc;
+  color: #4a5568;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.actionBtn:hover {
+  background: #edf2f7;
+  color: #2d3748;
+}
+
+.actionBtn:active {
+  background: #e2e8f0;
+}
+
+.actionIcon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.actionLabel {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.copied {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+/* ─── Street popup ─────────────────────────────────────── */
+.streetName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2933;
+  margin: 0 0 4px 0;
+}
+
+.streetType {
+  font-size: 12px;
+  color: #718096;
+  margin-bottom: 8px;
+}

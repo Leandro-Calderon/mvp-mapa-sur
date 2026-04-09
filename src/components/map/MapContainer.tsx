@@ -18,6 +18,7 @@ import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LngLatArray, MapStyleId, PopupInfo } from "../../types/map";
 import type { GpsErrorInfo } from "../../hooks/useGeolocation";
 import { logger } from "../../utils/logger";
+import { MapPopupContent } from "./MapPopup";
 
 // Layer paint configurations
 const CLUSTER_LAYER_PAINT = {
@@ -561,37 +562,7 @@ export const MapContainer = memo(({
           onClose={() => setPopupInfo(null)}
           closeOnClick={false}
         >
-          <div style={{ padding: '8px', textAlign: 'center' }}>
-            {popupInfo.layerId === 'unclustered-point' ? (
-              <>
-                <h4 style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '16px',
-                  color: popupInfo.properties.tipo === 'Bloque' ? '#FF6B6B'
-                    : popupInfo.properties.tipo === 'Torre' ? '#4ECDC4'
-                      : '#45B7D1'
-                }}>
-                  {String(popupInfo.properties.tipo)}
-                </h4>
-                {popupInfo.properties.nombre && (
-                  <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                    <strong>Número:</strong> {String(popupInfo.properties.nombre)}
-                  </p>
-                )}
-                {popupInfo.properties.plan && (
-                  <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                    <strong>Plan:</strong> {String(popupInfo.properties.plan)}
-                  </p>
-                )}
-              </>
-            ) : (
-              <>
-                <strong>{String(popupInfo.properties.nombre)}</strong>
-                <br />
-                Tipo: {String(popupInfo.properties.tipo)}
-              </>
-            )}
-          </div>
+          <MapPopupContent popupInfo={popupInfo} />
         </Popup>
       )}
     </Map>
