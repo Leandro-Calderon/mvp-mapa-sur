@@ -1307,7 +1307,7 @@
       "id": "165",
       "type": "Feature",
       "properties": {
-        "id": "87",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 72.0,
         "plan": ""
@@ -1321,7 +1321,7 @@
       "id": "166",
       "type": "Feature",
       "properties": {
-        "id": "88",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 69.0,
         "plan": ""
@@ -1335,7 +1335,7 @@
       "id": "167",
       "type": "Feature",
       "properties": {
-        "id": "89",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 71.0,
         "plan": ""
@@ -1349,7 +1349,7 @@
       "id": "168",
       "type": "Feature",
       "properties": {
-        "id": "90",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 70.0,
         "plan": ""
@@ -1363,7 +1363,7 @@
       "id": "169",
       "type": "Feature",
       "properties": {
-        "id": "91",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 68.0,
         "plan": ""
@@ -1377,7 +1377,7 @@
       "id": "170",
       "type": "Feature",
       "properties": {
-        "id": "92",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 65.0,
         "plan": ""
@@ -1391,7 +1391,7 @@
       "id": "171",
       "type": "Feature",
       "properties": {
-        "id": "93",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 12.0,
         "plan": ""
@@ -1405,7 +1405,7 @@
       "id": "172",
       "type": "Feature",
       "properties": {
-        "id": "94",
+        "id": null,
         "tipo": "Bloque",
         "nombre": 10.0,
         "plan": ""
