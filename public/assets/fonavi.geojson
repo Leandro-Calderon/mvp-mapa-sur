@@ -1307,10 +1307,10 @@
       "id": "165",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "87",
         "tipo": "Bloque",
         "nombre": 72.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1321,10 +1321,10 @@
       "id": "166",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "88",
         "tipo": "Bloque",
         "nombre": 69.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1335,10 +1335,10 @@
       "id": "167",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "89",
         "tipo": "Bloque",
         "nombre": 71.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1349,10 +1349,10 @@
       "id": "168",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "90",
         "tipo": "Bloque",
         "nombre": 70.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1363,10 +1363,10 @@
       "id": "169",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "91",
         "tipo": "Bloque",
         "nombre": 68.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1377,10 +1377,10 @@
       "id": "170",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "92",
         "tipo": "Bloque",
         "nombre": 65.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1391,10 +1391,10 @@
       "id": "171",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "93",
         "tipo": "Bloque",
         "nombre": 12.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
@@ -1405,10 +1405,10 @@
       "id": "172",
       "type": "Feature",
       "properties": {
-        "id": null,
+        "id": "94",
         "tipo": "Bloque",
         "nombre": 10.0,
-        "plan": null
+        "plan": ""
       },
       "geometry": {
         "type": "Point",
