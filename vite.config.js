@@ -1,79 +1,79 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { VitePWA } from "vite-plugin-pwa";
-import viteCompression from "vite-plugin-compression";
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import viteCompression from 'vite-plugin-compression';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: "/mvp-mapa-sur/",
+  base: '/mvp-mapa-sur/',
   plugins: [
     react(),
     VitePWA({
-      registerType: "prompt",
-      injectRegister: "auto", // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
+      registerType: 'prompt',
+      injectRegister: 'auto', // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
       manifest: {
-        name: "Mapa FONAVI Sur",
-        short_name: "FONAVI",
-        start_url: "/mvp-mapa-sur",
-        scope: "/mvp-mapa-sur",
-        id: "/mvp-mapa-sur/",
-        lang: "es",
+        name: 'Mapa FONAVI Sur',
+        short_name: 'FONAVI',
+        start_url: '/mvp-mapa-sur/',
+        scope: '/mvp-mapa-sur/',
+        id: '/mvp-mapa-sur/',
+        lang: 'es',
         description:
-          "Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "standalone",
-        orientation: "portrait",
+          'Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        orientation: 'portrait',
         icons: [
           {
-            src: "./icons/pwa-64x64.png",
-            sizes: "64x64",
-            type: "any maskable",
+            src: './icons/pwa-64x64.png',
+            sizes: '64x64',
+            type: 'any maskable',
           },
           {
-            src: "./icons/pwa-144x144.png",
-            sizes: "144x144",
-            purpose: "any",
+            src: './icons/pwa-144x144.png',
+            sizes: '144x144',
+            purpose: 'any',
           },
           {
-            src: "./icons/pwa-192x192.png",
-            sizes: "192x192",
-            type: "any maskable",
+            src: './icons/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'any maskable',
           },
           {
-            src: "./icons/pwa-512x512.png",
-            sizes: "512x512",
-            type: "any maskable",
+            src: './icons/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'any maskable',
           },
         ],
         screenshots: [
           {
-            src: "./screenshots/screenshot-desktop.png",
-            sizes: "1280x720",
-            type: "image/png",
-            form_factor: "wide",
+            src: './screenshots/screenshot-desktop.png',
+            sizes: '1280x720',
+            type: 'image/png',
+            form_factor: 'wide',
           },
           {
-            src: "./screenshots/screenshot-mobile.png",
-            sizes: "720x1280",
-            type: "image/png",
-            form_factor: "narrow",
+            src: './screenshots/screenshot-mobile.png',
+            sizes: '720x1280',
+            type: 'image/png',
+            form_factor: 'narrow',
           },
         ],
       },
 
       includeAssets: [
-        "favicon.svg",
-        "favicon.ico",
-        "robots.txt",
-        "apple-touch-icon.png",
-        "manifest.webmanifest"
+        'favicon.svg',
+        'favicon.ico',
+        'robots.txt',
+        'apple-touch-icon.png',
+        'manifest.webmanifest',
       ],
 
       workbox: {
-        globDirectory: "dist",
+        globDirectory: 'dist',
         sourcemap: false, // Desactivado para producción
-        globPatterns: ["**/*.{js,css,html,geojson}"],
-        globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
+        globPatterns: ['**/*.{js,css,html,geojson}'],
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
         // skipWaiting: true → el nuevo SW se activa inmediatamente al instalarse.
         // Esto es necesario para que el precache nuevo esté disponible.
         skipWaiting: true,
@@ -87,20 +87,21 @@ export default defineConfig({
         // 2. App detecta needRefresh → muestra banner
         // 3. Usuario acepta → updateServiceWorker(true) → reload
         // 4. El reload carga la página bajo el SW nuevo → todo consistente
-        clientsClaim: false,
+        clientsClaim: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
-        navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
-        navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"
+        navigateFallback: '/mvp-mapa-sur/index.html', // Ruta fallback en caso de que no se encuentre una ruta
+        navigateFallbackAllowlist: [/^\/mvp-mapa-sur\/.*/], // Permitir la ruta "/mapaDPVyU/"
         runtimeCaching: [
           // ─── Map tiles ──────────────────────────────────────────────────────
           // StaleWhileRevalidate: sirve desde caché (instantáneo) y actualiza
           // en background. Esto permite que los tiles se "auto-reparen" si se
           // corrompen, a diferencia de CacheFirst que los congela por siempre.
           {
-            urlPattern: /^https:\/\/(tiles\.openfreemap\.org|server\.arcgisonline\.com)\/.*/i,
-            handler: "StaleWhileRevalidate",
+            urlPattern:
+              /^https:\/\/(tiles\.openfreemap\.org|server\.arcgisonline\.com)\/.*/i,
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: "osm-tiles",
+              cacheName: 'osm-tiles',
               expiration: {
                 maxEntries: 2000, // Suficiente para cubrir un área urbana completa
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días — no 365
@@ -110,9 +111,9 @@ export default defineConfig({
                 statuses: [200], // Solo 200 — status 0 (opaque) es peligroso
               },
               fetchOptions: {
-                credentials: "omit",
-                mode: "cors",
-                cache: "default"
+                credentials: 'omit',
+                mode: 'cors',
+                cache: 'default',
               },
             },
           },
@@ -120,10 +121,11 @@ export default defineConfig({
           // CacheFirst es seguro para recursos estáticos que no cambian:
           // fuentes PBF y sprites. Si se corrompen, el usuario recarga.
           {
-            urlPattern: /^https:\/\/(tiles\.openfreemap\.org\/(fonts|sprites)|demotiles\.maplibre\.org\/font)\/.*/i,
-            handler: "CacheFirst",
+            urlPattern:
+              /^https:\/\/(tiles\.openfreemap\.org\/(fonts|sprites)|demotiles\.maplibre\.org\/font)\/.*/i,
+            handler: 'CacheFirst',
             options: {
-              cacheName: "map-glyphs-sprites",
+              cacheName: 'map-glyphs-sprites',
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 90 * 24 * 60 * 60, // 90 días
@@ -133,17 +135,17 @@ export default defineConfig({
                 statuses: [200],
               },
               fetchOptions: {
-                credentials: "omit",
-                mode: "cors",
+                credentials: 'omit',
+                mode: 'cors',
               },
             },
           },
           // ─── GeoJSON data files ──────────────────────────────────────────────
           {
             urlPattern: /.*\/assets\/.*\.geojson$/i,
-            handler: "StaleWhileRevalidate",
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: "geojson-cache",
+              cacheName: 'geojson-cache',
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
@@ -153,9 +155,9 @@ export default defineConfig({
                 statuses: [200],
               },
               fetchOptions: {
-                credentials: "same-origin",
-                mode: "cors",
-                cache: "no-cache"
+                credentials: 'same-origin',
+                mode: 'cors',
+                cache: 'no-cache',
               },
             },
           },
@@ -164,8 +166,8 @@ export default defineConfig({
 
       devOptions: {
         enabled: true,
-        navigateFallback: "index.html",
-        type: "module",
+        navigateFallback: 'index.html',
+        type: 'module',
         suppressWarnings: true,
       },
     }),
@@ -178,7 +180,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: "dist",
+    outDir: 'dist',
     sourcemap: false, // Desactivado para producción - ahorra ~139 KiB
     target: 'es2020', // Navegadores modernos - elimina polyfills legacy (~12 KiB)
     minify: 'terser',
@@ -191,21 +193,21 @@ export default defineConfig({
         dead_code: true, // Eliminar código muerto
         unused: true, // Eliminar variables no usadas
         pure_funcs: ['console.log', 'console.debug', 'console.info'],
-        passes: 2 // Múltiples pasadas de compresión
+        passes: 2, // Múltiples pasadas de compresión
       },
       mangle: {
-        safari10: false // No necesitamos soporte Safari 10
-      }
+        safari10: false, // No necesitamos soporte Safari 10
+      },
     },
     rollupOptions: {
       output: {
         // Code splitting mejorado para mejor caching y carga paralela
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'maplibre': ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
+          maplibre: ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
           'react-map-gl-vendor': ['react-map-gl'], // Separar react-map-gl
-        }
-      }
+        },
+      },
     },
     chunkSizeWarningLimit: 500, // Advertir si chunks > 500KB
   },
@@ -215,7 +217,7 @@ export default defineConfig({
   preview: {
     headers: {
       // Cache headers para mejorar Lighthouse score
-      'Cache-Control': 'public, max-age=31536000, immutable'
-    }
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
   },
 });
