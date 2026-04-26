@@ -72,7 +72,7 @@ export default defineConfig({
       workbox: {
         globDirectory: "dist",
         sourcemap: false, // Desactivado para producción
-        globPatterns: ["**/*.{js,css,html}"],
+        globPatterns: ["**/*.{js,css,html,geojson}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         skipWaiting: true,
         cleanupOutdatedCaches: true,
@@ -81,26 +81,53 @@ export default defineConfig({
         navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
         navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"
         runtimeCaching: [
+          // ─── Map tiles ──────────────────────────────────────────────────────
+          // StaleWhileRevalidate: sirve desde caché (instantáneo) y actualiza
+          // en background. Esto permite que los tiles se "auto-reparen" si se
+          // corrompen, a diferencia de CacheFirst que los congela por siempre.
           {
-            urlPattern: /^https:\/\/\w+\.tile\.openstreetmap\.org\/.*/i,
-            handler: "CacheFirst",
+            urlPattern: /^https:\/\/(tiles\.openfreemap\.org|server\.arcgisonline\.com)\/.*/i,
+            handler: "StaleWhileRevalidate",
             options: {
               cacheName: "osm-tiles",
               expiration: {
-                maxEntries: 800,
-                maxAgeSeconds: 365 * 24 * 60 * 60,
-                purgeOnQuotaError: true, // Borrar si se excede el almacenamiento
+                maxEntries: 2000, // Suficiente para cubrir un área urbana completa
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días — no 365
+                purgeOnQuotaError: true,
               },
               cacheableResponse: {
-                statuses: [0, 200],
+                statuses: [200], // Solo 200 — status 0 (opaque) es peligroso
               },
               fetchOptions: {
-                credentials: "omit", // Don't send credentials to tile servers
+                credentials: "omit",
                 mode: "cors",
                 cache: "default"
               },
             },
           },
+          // ─── Map glyphs & sprites ────────────────────────────────────────────
+          // CacheFirst es seguro para recursos estáticos que no cambian:
+          // fuentes PBF y sprites. Si se corrompen, el usuario recarga.
+          {
+            urlPattern: /^https:\/\/(tiles\.openfreemap\.org\/(fonts|sprites)|demotiles\.maplibre\.org\/font)\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "map-glyphs-sprites",
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 días
+                purgeOnQuotaError: true,
+              },
+              cacheableResponse: {
+                statuses: [200],
+              },
+              fetchOptions: {
+                credentials: "omit",
+                mode: "cors",
+              },
+            },
+          },
+          // ─── GeoJSON data files ──────────────────────────────────────────────
           {
             urlPattern: /.*\/assets\/.*\.geojson$/i,
             handler: "StaleWhileRevalidate",
@@ -112,7 +139,7 @@ export default defineConfig({
                 purgeOnQuotaError: true,
               },
               cacheableResponse: {
-                statuses: [0, 200],
+                statuses: [200],
               },
               fetchOptions: {
                 credentials: "same-origin",
