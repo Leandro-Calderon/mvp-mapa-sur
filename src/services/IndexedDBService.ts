@@ -14,6 +14,9 @@ export interface SyncStatus {
   pendingUpdates: string[];
 }
 
+/** Maximum time to wait for IndexedDB to open before giving up */
+const INIT_TIMEOUT_MS = 5000;
+
 class IndexedDBService {
   private readonly DB_NAME = 'MapaSurDB';
   private readonly DB_VERSION = 1;
@@ -22,34 +25,108 @@ class IndexedDBService {
 
   private db: IDBDatabase | null = null;
 
+  /**
+   * In-flight init promise — prevents multiple concurrent init() calls
+   * from opening the database multiple times.
+   * If two methods call init() simultaneously, the second one piggybacks
+   * on the first one's promise instead of opening a second connection.
+   */
+  private initPromise: Promise<void> | null = null;
+
   async init(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    // Already initialized
+    if (this.db) return;
+
+    // Piggyback on in-flight init
+    if (this.initPromise) return this.initPromise;
+
+    this.initPromise = this._initInternal();
+
+    try {
+      await this.initPromise;
+    } catch (error) {
+      // Reset so a future call can retry
+      this.initPromise = null;
+      throw error;
+    }
+  }
+
+  private _initInternal(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      // Timeout: if IndexedDB hangs (e.g. blocked by another tab),
+      // we don't want the entire app to freeze forever.
+      const timeoutId = setTimeout(() => {
+        reject(new Error(
+          `IndexedDB init timed out after ${INIT_TIMEOUT_MS}ms. ` +
+          'Another tab may be blocking the database upgrade. ' +
+          'Close other tabs and reload.'
+        ));
+      }, INIT_TIMEOUT_MS);
+
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
       request.onerror = () => {
+        clearTimeout(timeoutId);
         reject(new Error(`Failed to open IndexedDB: ${request.error?.message}`));
       };
 
       request.onsuccess = () => {
+        clearTimeout(timeoutId);
         this.db = request.result;
+
+        // Handle unexpected database close (e.g. storage pressure)
+        this.db.onclose = () => {
+          this.db = null;
+          this.initPromise = null;
+        };
+
+        // Handle version change from another tab
+        this.db.onversionchange = () => {
+          this.db?.close();
+          this.db = null;
+          this.initPromise = null;
+        };
+
         resolve();
       };
 
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        const transaction = (event.target as IDBOpenDBRequest).transaction!;
 
-        // Create cache store
-        if (!db.objectStoreNames.contains(this.STORE_NAME)) {
-          const cacheStore = db.createObjectStore(this.STORE_NAME, { keyPath: 'id' });
-          cacheStore.createIndex('timestamp', 'timestamp', { unique: false });
-          cacheStore.createIndex('version', 'version', { unique: false });
-        }
+        try {
+          // Create cache store
+          if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+            const cacheStore = db.createObjectStore(this.STORE_NAME, { keyPath: 'id' });
+            cacheStore.createIndex('timestamp', 'timestamp', { unique: false });
+            cacheStore.createIndex('version', 'version', { unique: false });
+          }
 
-        // Create sync status store
-        if (!db.objectStoreNames.contains(this.SYNC_STORE_NAME)) {
-          const syncStore = db.createObjectStore(this.SYNC_STORE_NAME, { keyPath: 'id' });
-          syncStore.createIndex('lastSync', 'lastSync', { unique: false });
+          // Create sync status store
+          if (!db.objectStoreNames.contains(this.SYNC_STORE_NAME)) {
+            const syncStore = db.createObjectStore(this.SYNC_STORE_NAME, { keyPath: 'id' });
+            syncStore.createIndex('lastSync', 'lastSync', { unique: false });
+          }
+        } catch (err) {
+          // If schema creation fails (quota, corruption), abort the transaction
+          // and reject the promise — don't let it hang forever.
+          transaction.abort();
+          clearTimeout(timeoutId);
+          reject(new Error(
+            `IndexedDB schema migration failed: ${err instanceof Error ? err.message : String(err)}`
+          ));
         }
+      };
+
+      // Handle blocked state: another tab has the database open with an
+      // older version and hasn't closed it yet. We reject immediately
+      // rather than hanging — the user will need to close other tabs.
+      request.onblocked = () => {
+        clearTimeout(timeoutId);
+        reject(new Error(
+          'IndexedDB upgrade blocked — another tab may be using an older ' +
+          'version of the database. Close other tabs and reload.'
+        ));
       };
     });
   }
