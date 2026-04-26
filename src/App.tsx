@@ -11,12 +11,23 @@ function App(): React.JSX.Element {
   const initialMapState = getInitialMapState();
   const {
     needRefresh: [needRefresh],
-
     updateServiceWorker,
-  } = useRegisterSW();
+  } = useRegisterSW({
+    onRegisteredSW(_swUrl, registration) {
+      // Poll for SW updates every 60 minutes while the tab is open.
+      // This ensures the "new version" banner appears promptly after
+      // a deploy, even if the user keeps the tab open for hours.
+      if (registration) {
+        setInterval(() => registration.update(), 60 * 60 * 1000);
+      }
+    },
+  });
 
-  const handleUpdate = () => {
-    updateServiceWorker(true);
+  const handleUpdate = async () => {
+    // updateServiceWorker(true) sends SKIP_WAITING to the SW,
+    // then reloads the page. Since clientsClaim is disabled, the
+    // reload is what actually activates the new SW for this page.
+    await updateServiceWorker(true);
   };
 
   return (
