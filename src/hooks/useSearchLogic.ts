@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useBuildingsData } from './useBuildingsData';
 import { useStreetsData } from './useStreetsData';
 import { useFilteredData } from './useFilteredData';
@@ -19,6 +19,16 @@ export const useSearchLogic = () => {
   const [showAllLayers, setShowAllLayers] = useState(false);
   const [appliedRevision, setAppliedRevision] = useState(0);
   const [locationActive, setLocationActive] = useState(false);
+
+  // Refs for stable callbacks — avoid recreating callbacks on every state change
+  const showAllLayersRef = useRef(showAllLayers);
+  showAllLayersRef.current = showAllLayers;
+  const searchTypeRef = useRef(searchType);
+  searchTypeRef.current = searchType;
+  const appliedQueryRef = useRef(appliedQuery);
+  appliedQueryRef.current = appliedQuery;
+  const appliedTypeRef = useRef(appliedType);
+  appliedTypeRef.current = appliedType;
 
   const {
     position: userPosition,
@@ -72,12 +82,12 @@ export const useSearchLogic = () => {
   }, []);
 
   const handleTypeChange = useCallback((type: SearchType) => {
-    logger.debug('useSearchLogic: Type changed', { from: searchType, to: type });
-    logger.debug('useSearchLogic: Current state', { appliedQuery, appliedType });
+    logger.debug('useSearchLogic: Type changed', { from: searchTypeRef.current, to: type });
+    logger.debug('useSearchLogic: Current state', { appliedQuery: appliedQueryRef.current, appliedType: appliedTypeRef.current });
 
     // If there's an applied query and the type is changing, clear the results
     // but keep the input text so the user can re-search in the new type
-    if (appliedQuery && type !== searchType) {
+    if (appliedQueryRef.current && type !== searchTypeRef.current) {
       logger.debug('useSearchLogic: Clearing applied query due to type change');
       setAppliedQuery("");
       setAppliedType(null);
@@ -85,11 +95,15 @@ export const useSearchLogic = () => {
     }
 
     setSearchType(type);
-  }, [searchType, appliedQuery, appliedType]);
+  }, []);
+
+  // Ref for normalized search query (derived from state)
+  const normalizedSearchQueryRef = useRef(normalizedSearchQuery);
+  normalizedSearchQueryRef.current = normalizedSearchQuery;
 
   const handleSubmit = useCallback(() => {
-    const trimmed = normalizedSearchQuery;
-    logger.debug('useSearchLogic: handleSubmit called', { query: trimmed, type: searchType });
+    const trimmed = normalizedSearchQueryRef.current;
+    logger.debug('useSearchLogic: handleSubmit called', { query: trimmed, type: searchTypeRef.current });
 
     if (!trimmed) {
       logger.debug('useSearchLogic: Empty query, clearing filters');
@@ -98,19 +112,19 @@ export const useSearchLogic = () => {
       return;
     }
 
-    logger.debug('useSearchLogic: Applying filters', { query: trimmed, type: searchType });
+    logger.debug('useSearchLogic: Applying filters', { query: trimmed, type: searchTypeRef.current });
 
     // Deactivate "Ver Todo" mode - search and show all are mutually exclusive
     setShowAllLayers(false);
 
     setAppliedQuery(trimmed);
-    setAppliedType(searchType);
+    setAppliedType(searchTypeRef.current);
     setAppliedRevision((prev) => prev + 1);
 
     // Note: We intentionally keep searchQuery intact so the user can
     // edit and re-search without retyping. Panel collapse is handled
     // by the useEffect that watches for results — stays open if 0 matches.
-  }, [normalizedSearchQuery, searchType]);
+  }, []);
 
   const handleClear = useCallback(() => {
     setSearchQuery("");
@@ -122,9 +136,9 @@ export const useSearchLogic = () => {
   }, []);
 
   const handleShowAllToggle = useCallback(() => {
-    logger.debug('useSearchLogic: handleShowAllToggle called', { currentValue: showAllLayers });
+    logger.debug('useSearchLogic: handleShowAllToggle called', { currentValue: showAllLayersRef.current });
     setShowAllLayers((prev) => !prev);
-  }, [showAllLayers]);
+  }, []);
 
   const handleLocationToggle = useCallback((active: boolean) => {
     logger.debug('useSearchLogic: handleLocationToggle called', { active });
