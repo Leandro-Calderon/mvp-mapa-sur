@@ -74,9 +74,20 @@ export default defineConfig({
         sourcemap: false, // Desactivado para producción
         globPatterns: ["**/*.{js,css,html}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
+        // skipWaiting: true → el nuevo SW se activa inmediatamente al instalarse.
+        // Esto es necesario para que el precache nuevo esté disponible.
         skipWaiting: true,
         cleanupOutdatedCaches: true,
-        clientsClaim: true,
+        // clientsClaim: false → el SW activado NO toma control de las páginas
+        // ya abiertas. La página actual sigue siendo controlada por el SW viejo
+        // hasta que el usuario hace reload. Esto previene el race condition:
+        // HTML viejo (ya en el tab) + SW nuevo (con assets nuevos) = pantalla blanca.
+        // El flujo correcto con registerType: "prompt" es:
+        // 1. Nuevo SW se instala → skipWaiting lo activa
+        // 2. App detecta needRefresh → muestra banner
+        // 3. Usuario acepta → updateServiceWorker(true) → reload
+        // 4. El reload carga la página bajo el SW nuevo → todo consistente
+        clientsClaim: false,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
         navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"
