@@ -18,7 +18,7 @@ Esta PWA fue desarrollada utilizando tecnologías de código abierto:
 
 - **Vite PWA:** Generación de la Progressive Web App.
 - **React con TypeScript:** Desarrollo de la interfaz de usuario.
-- **Leaflet:** Biblioteca para mapas interactivos.
+- **MapLibre GL** Biblioteca para visualizar mapas interactivos en aplicaciones web.
 - **OpenStreetMap:** Fuente de datos para la cartografía base.
 - **KoboToolBox:** Formulario para relevar georeferencias de puntos de interes desde el terreno.
 - **QGIS:** Herramienta para la creación y edición de datos geoespaciales.
@@ -31,18 +31,18 @@ Para clonar y ejecutar este proyecto localmente, sigue estos pasos:
 
 1. **Clona el repositorio:**
 
-    ```bash
-    git clone https://github.com/Leandro-Calderon/mvp-mapa-sur.git
-    cd mvp-mapa-sur
-    ```
+   ```bash
+   git clone https://github.com/Leandro-Calderon/mvp-mapa-sur.git
+   cd mvp-mapa-sur
+   ```
 
 2. **Instala las dependencias:**
 
-    Se recomienda usar `pnpm` como gestor de paquetes.
+   Se recomienda usar `pnpm` como gestor de paquetes.
 
-    ```bash
-    pnpm install
-    ```
+   ```bash
+   pnpm install
+   ```
 
 ## Uso
 
@@ -50,19 +50,19 @@ Una vez instaladas las dependencias, puedes ejecutar la aplicación en modo de d
 
 - **Modo de Desarrollo:**
 
-    ```bash
-    pnpm dev
-    ```
+  ```bash
+  pnpm dev
+  ```
 
-    Abre [http://localhost:5173](http://localhost:5173) en tu navegador para ver la aplicación.
+  Abre [http://localhost:5173](http://localhost:5173) en tu navegador para ver la aplicación.
 
 - **Compilación (Build):**
 
-    ```bash
-    pnpm build
-    ```
+  ```bash
+  pnpm build
+  ```
 
-    Este comando genera los archivos estáticos de la aplicación en el directorio `dist/`.
+  Este comando genera los archivos estáticos de la aplicación en el directorio `dist/`.
 
 ## Contribuciones
 
