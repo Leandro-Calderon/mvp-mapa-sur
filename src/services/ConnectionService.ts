@@ -8,6 +8,19 @@ export interface ConnectionStatus {
 
 type ConnectionListener = (status: ConnectionStatus) => void;
 
+// Network Information API types — not in standard TS lib yet
+interface NetworkInformation extends EventTarget {
+  effectiveType?: string;
+  downlink?: number;
+  rtt?: number;
+  saveData?: boolean;
+  addEventListener(type: 'change', listener: () => void): void;
+}
+
+type NavigatorWithConnection = Navigator & {
+  connection?: NetworkInformation;
+};
+
 class ConnectionService {
   private listeners: Set<ConnectionListener> = new Set();
   private currentStatus: ConnectionStatus = {
@@ -25,8 +38,8 @@ class ConnectionService {
 
     // Listen for network information changes if available
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-      connection.addEventListener('change', this.handleConnectionChange.bind(this));
+      const connection = (navigator as NavigatorWithConnection).connection;
+      connection?.addEventListener('change', this.handleConnectionChange.bind(this));
     }
 
     // Initial status
@@ -45,14 +58,16 @@ class ConnectionService {
 
     // Add network information if available
     if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-      this.currentStatus = {
-        ...this.currentStatus,
-        effectiveType: connection.effectiveType,
-        downlink: connection.downlink,
-        rtt: connection.rtt,
-        saveData: connection.saveData
-      };
+      const connection = (navigator as NavigatorWithConnection).connection;
+      if (connection) {
+        this.currentStatus = {
+          ...this.currentStatus,
+          effectiveType: connection.effectiveType,
+          downlink: connection.downlink,
+          rtt: connection.rtt,
+          saveData: connection.saveData
+        };
+      }
     }
   }
 
@@ -127,7 +142,7 @@ class ConnectionService {
   public getNetworkQuality(): 'slow' | 'medium' | 'fast' | 'unknown' {
     if (!this.isOnline()) return 'unknown';
 
-    const connection = (navigator as any).connection;
+    const connection = (navigator as NavigatorWithConnection).connection;
     if (!connection) return 'unknown';
 
     const { effectiveType, downlink } = connection;
