@@ -118,6 +118,7 @@ export const MapContainer = memo(({
   const mapRef = useRef<MapRef>(null);
   const [mapStyle, setMapStyle] = useState<MapStyleId>(DEFAULT_STYLE);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
+  const [tileError, setTileError] = useState(false);
   const lastSearchRevisionRef = useRef(0);
   const lastUserPositionRef = useRef<string | null>(null);
 
@@ -156,8 +157,25 @@ export const MapContainer = memo(({
       const map = mapRef.current.getMap();
       setMapReference(map);
       logger.debug('MapContainer: Map loaded and reference set');
+
+      // Listen for tile load errors — show subtle indicator when offline
+      map.on('error', (e: maplibregl.ErrorEvent) => {
+        const err = e.error;
+        // Tile-related errors (network failure, CORS, etc.)
+        if (err?.status === 404 || err?.status === 0 || err?.name === 'AbortError') {
+          setTileError(true);
+          logger.warn('MapContainer: Tile load error', err);
+        }
+      });
+
+      // Clear error indicator when tiles load successfully
+      map.on('sourcedata', (e: maplibregl.SourceDataType) => {
+        if (tileError && e.isSourceLoaded && e.source.type === 'raster' || e.source.type === 'vector') {
+          setTileError(false);
+        }
+      });
     }
-  }, [setMapReference]);
+  }, [setMapReference, tileError]);
 
   // Handle view state change
   const handleMove = useCallback((evt: ViewStateChangeEvent) => {
@@ -415,6 +433,29 @@ export const MapContainer = memo(({
         currentStyle={mapStyle}
         onStyleChange={setMapStyle}
       />
+
+      {/* Tile error indicator — shown when map tiles fail to load */}
+      {tileError && (
+        <div className="maplibregl-ctrl maplibregl-ctrl-group"
+          style={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 10px',
+            background: 'rgba(255,255,255,0.9)',
+            borderRadius: 4,
+            fontSize: 12,
+            color: '#b45309',
+            pointerEvents: 'none',
+          }}
+        >
+          ⚠️ Sin conexión — mapa parcial
+        </div>
+      )}
 
       {/* Buildings layer (no clustering - colors by type) */}
       {shouldShowBuildings && filteredBuildings.length > 0 && (
