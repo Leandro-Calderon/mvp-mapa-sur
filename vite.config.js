@@ -13,9 +13,9 @@ export default defineConfig({
       manifest: {
         name: 'Mapa FONAVI Sur',
         short_name: 'FONAVI',
-        start_url: '/mvp-mapa-sur/',
-        scope: '/mvp-mapa-sur/',
-        id: '/mvp-mapa-sur/',
+        start_url: './',
+        scope: './',
+        id: './',
         lang: 'es',
         description:
           'Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe',
@@ -89,8 +89,8 @@ export default defineConfig({
         // 4. El reload carga la página bajo el SW nuevo → todo consistente
         clientsClaim: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
-        navigateFallback: '/mvp-mapa-sur/index.html', // Ruta fallback en caso de que no se encuentre una ruta
-        navigateFallbackAllowlist: [/^\/mvp-mapa-sur\/.*/], // Permitir la ruta "/mapaDPVyU/"
+        navigateFallback: './index.html', // Ruta fallback en caso de que no se encuentre una ruta
+        navigateFallbackAllowlist: [/^\/.*/],
         runtimeCaching: [
           // ─── Map tiles ──────────────────────────────────────────────────────
           // StaleWhileRevalidate: sirve desde caché (instantáneo) y actualiza
