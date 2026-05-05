@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Rotonda de Giacomo",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-60.5018741, -33.165911],
+          [-60.5015076, -33.1664066]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Publica Tucuman",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-61.334347, -33.794958],
+          [-61.334682, -33.79386]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Maria Elena Walsh",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-61.334347, -33.794958],
+          [-61.334682, -33.79386]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Pasaje Sobral",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-61.334347, -33.794958],
+          [-61.334682, -33.79386]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Pasaje Sobral",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-61.334347, -33.794958],
+          [-61.334682, -33.79386]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Pasaje Matienzo",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-61.334347, -33.794958],
+          [-61.334682, -33.79386]
+        ]
+      }
+    }
+  ]
+}

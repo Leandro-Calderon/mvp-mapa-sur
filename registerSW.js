@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/mvp-mapa-sur/sw.js', { scope: '/mvp-mapa-sur/' })})}
