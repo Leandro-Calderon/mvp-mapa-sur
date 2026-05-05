@@ -1,79 +1,79 @@
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
-import viteCompression from 'vite-plugin-compression';
-import { VitePWA } from 'vite-plugin-pwa';
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import viteCompression from "vite-plugin-compression";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  base: '/mvp-mapa-sur/',
+  base: "/mvp-mapa-sur/",
   plugins: [
     react(),
     VitePWA({
-      registerType: 'prompt',
-      injectRegister: 'auto', // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
+      registerType: "prompt",
+      injectRegister: "auto", // Cambia esta configuración para asegurarte de que el SW se registre automáticamente en el lugar correcto
       manifest: {
-        name: 'Mapa FONAVI Sur',
-        short_name: 'FONAVI',
-        start_url: './',
-        scope: './',
-        id: './',
-        lang: 'es',
+        name: "Mapa FONAVI Sur",
+        short_name: "FONAVI",
+        start_url: "/mvp-mapa-sur",
+        scope: "/mvp-mapa-sur",
+        id: "/mvp-mapa-sur/",
+        lang: "es",
         description:
-          'Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
-        orientation: 'portrait',
+          "Mapa georeferenciado de edificios FONAVI y calles en Rosario, Santa Fe",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait",
         icons: [
           {
-            src: './icons/pwa-64x64.png',
-            sizes: '64x64',
-            type: 'any maskable',
+            src: "./icons/pwa-64x64.png",
+            sizes: "64x64",
+            type: "any maskable",
           },
           {
-            src: './icons/pwa-144x144.png',
-            sizes: '144x144',
-            purpose: 'any',
+            src: "./icons/pwa-144x144.png",
+            sizes: "144x144",
+            purpose: "any",
           },
           {
-            src: './icons/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'any maskable',
+            src: "./icons/pwa-192x192.png",
+            sizes: "192x192",
+            type: "any maskable",
           },
           {
-            src: './icons/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'any maskable',
+            src: "./icons/pwa-512x512.png",
+            sizes: "512x512",
+            type: "any maskable",
           },
         ],
         screenshots: [
           {
-            src: './screenshots/screenshot-desktop.png',
-            sizes: '1280x720',
-            type: 'image/png',
-            form_factor: 'wide',
+            src: "./screenshots/screenshot-desktop.png",
+            sizes: "1280x720",
+            type: "image/png",
+            form_factor: "wide",
           },
           {
-            src: './screenshots/screenshot-mobile.png',
-            sizes: '720x1280',
-            type: 'image/png',
-            form_factor: 'narrow',
+            src: "./screenshots/screenshot-mobile.png",
+            sizes: "720x1280",
+            type: "image/png",
+            form_factor: "narrow",
           },
         ],
       },
 
       includeAssets: [
-        'favicon.svg',
-        'favicon.ico',
-        'robots.txt',
-        'apple-touch-icon.png',
-        'manifest.webmanifest',
+        "favicon.svg",
+        "favicon.ico",
+        "robots.txt",
+        "apple-touch-icon.png",
+        "manifest.webmanifest",
       ],
 
       workbox: {
-        globDirectory: 'dist',
+        globDirectory: "dist",
         sourcemap: false, // Desactivado para producción
-        globPatterns: ['**/*.{js,css,html,geojson}'],
-        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+        globPatterns: ["**/*.{js,css,html,geojson}"],
+        globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
         // skipWaiting: true → el nuevo SW se activa inmediatamente al instalarse.
         // Esto es necesario para que el precache nuevo esté disponible.
         skipWaiting: true,
@@ -89,8 +89,8 @@ export default defineConfig({
         // 4. El reload carga la página bajo el SW nuevo → todo consistente
         clientsClaim: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
-        navigateFallback: './index.html', // Ruta fallback en caso de que no se encuentre una ruta
-        navigateFallbackAllowlist: [/^\/.*/],
+        navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
+        navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//],
         runtimeCaching: [
           // ─── Map tiles ──────────────────────────────────────────────────────
           // StaleWhileRevalidate: sirve desde caché (instantáneo) y actualiza
@@ -99,9 +99,9 @@ export default defineConfig({
           {
             urlPattern:
               /^https:\/\/(tiles\.openfreemap\.org|server\.arcgisonline\.com)\/.*/i,
-            handler: 'StaleWhileRevalidate',
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'osm-tiles',
+              cacheName: "osm-tiles",
               expiration: {
                 maxEntries: 2000, // Suficiente para cubrir un área urbana completa
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días — no 365
@@ -111,9 +111,9 @@ export default defineConfig({
                 statuses: [200], // Solo 200 — status 0 (opaque) es peligroso
               },
               fetchOptions: {
-                credentials: 'omit',
-                mode: 'cors',
-                cache: 'default',
+                credentials: "omit",
+                mode: "cors",
+                cache: "default",
               },
             },
           },
@@ -123,9 +123,9 @@ export default defineConfig({
           {
             urlPattern:
               /^https:\/\/(tiles\.openfreemap\.org\/(fonts|sprites)|demotiles\.maplibre\.org\/font)\/.*/i,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'map-glyphs-sprites',
+              cacheName: "map-glyphs-sprites",
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 90 * 24 * 60 * 60, // 90 días
@@ -135,17 +135,17 @@ export default defineConfig({
                 statuses: [200],
               },
               fetchOptions: {
-                credentials: 'omit',
-                mode: 'cors',
+                credentials: "omit",
+                mode: "cors",
               },
             },
           },
           // ─── GeoJSON data files ──────────────────────────────────────────────
           {
             urlPattern: /.*\/assets\/.*\.geojson$/i,
-            handler: 'StaleWhileRevalidate',
+            handler: "StaleWhileRevalidate",
             options: {
-              cacheName: 'geojson-cache',
+              cacheName: "geojson-cache",
               expiration: {
                 maxEntries: 10,
                 maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
@@ -155,9 +155,9 @@ export default defineConfig({
                 statuses: [200],
               },
               fetchOptions: {
-                credentials: 'same-origin',
-                mode: 'cors',
-                cache: 'no-cache',
+                credentials: "same-origin",
+                mode: "cors",
+                cache: "no-cache",
               },
             },
           },
@@ -165,25 +165,25 @@ export default defineConfig({
       },
 
       devOptions: {
-        enabled: true,
-        navigateFallback: 'index.html',
-        type: 'module',
+        enabled: process.env.NODE_ENV === "production", // Solo activar SW si estás probando build real
+        navigateFallback: "index.html",
+        type: "module",
         suppressWarnings: true,
       },
     }),
     // Pre-generar archivos .br (Brotli) para mejor compresión que gzip (~20% mejor)
     viteCompression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
+      algorithm: "brotliCompress",
+      ext: ".br",
       threshold: 10240, // Solo comprimir archivos > 10KB
       deleteOriginFile: false, // Mantener originales para fallback
     }),
   ],
   build: {
-    outDir: 'dist',
+    outDir: "dist",
     sourcemap: false, // Desactivado para producción - ahorra ~139 KiB
-    target: 'es2020', // Navegadores modernos - elimina polyfills legacy (~12 KiB)
-    minify: 'terser',
+    target: "es2020", // Navegadores modernos - elimina polyfills legacy (~12 KiB)
+    minify: "terser",
     cssCodeSplit: true, // Habilitar CSS code splitting para cargar MapLibre CSS bajo demanda
     modulePreload: { polyfill: false }, // Deshabilitar polyfill de modulepreload (navegadores modernos no lo necesitan)
     terserOptions: {
@@ -192,7 +192,7 @@ export default defineConfig({
         drop_debugger: true,
         dead_code: true, // Eliminar código muerto
         unused: true, // Eliminar variables no usadas
-        pure_funcs: ['console.log', 'console.debug', 'console.info'],
+        pure_funcs: ["console.log", "console.debug", "console.info"],
         passes: 2, // Múltiples pasadas de compresión
       },
       mangle: {
@@ -203,9 +203,9 @@ export default defineConfig({
       output: {
         // Code splitting mejorado para mejor caching y carga paralela
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          maplibre: ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
-          'react-map-gl-vendor': ['react-map-gl'], // Separar react-map-gl
+          "react-vendor": ["react", "react-dom"],
+          maplibre: ["maplibre-gl"], // Separar MapLibre (~750KB) para carga diferida
+          "react-map-gl-vendor": ["react-map-gl"], // Separar react-map-gl
         },
       },
     },
@@ -217,7 +217,7 @@ export default defineConfig({
   preview: {
     headers: {
       // Cache headers para mejorar Lighthouse score
-      'Cache-Control': 'public, max-age=31536000, immutable',
+      "Cache-Control": "public, max-age=31536000, immutable",
     },
   },
 });
