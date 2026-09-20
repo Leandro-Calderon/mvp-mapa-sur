@@ -82,13 +82,39 @@ export default defineConfig({
         navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/\w+\.tile\.openstreetmap\.org\/.*/i,
+            // Estilos y TileJSON de OpenFreeMap: son punteros mutables (el
+            // TileJSON apunta a la versión vigente del planeta), así que se
+            // sirven al instante desde cache y se refrescan en segundo plano
+            urlPattern: /^https:\/\/tiles\.openfreemap\.org\/(styles\/[^/]+|planet)$/,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "openfreemap-styles",
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días
+                purgeOnQuotaError: true,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+              fetchOptions: {
+                credentials: "omit",
+                mode: "cors",
+                cache: "default"
+              },
+            },
+          },
+          {
+            // Teselas vectoriales (.pbf), glifos, sprites y raster de baja
+            // zoom de OpenFreeMap: sus URLs son versionadas/inmutables, por
+            // lo que CacheFirst es seguro y da soporte offline real
+            urlPattern: /^https:\/\/tiles\.openfreemap\.org\/(planet\/.+\.pbf|fonts\/.+\.pbf|sprites\/.+|natural_earth\/.+\.png)$/,
             handler: "CacheFirst",
             options: {
-              cacheName: "osm-tiles",
+              cacheName: "openfreemap-tiles",
               expiration: {
-                maxEntries: 800,
-                maxAgeSeconds: 365 * 24 * 60 * 60,
+                maxEntries: 2500,
+                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 días
                 purgeOnQuotaError: true, // Borrar si se excede el almacenamiento
               },
               cacheableResponse: {
@@ -96,6 +122,27 @@ export default defineConfig({
               },
               fetchOptions: {
                 credentials: "omit", // Don't send credentials to tile servers
+                mode: "cors",
+                cache: "default"
+              },
+            },
+          },
+          {
+            // Teselas satelitales raster (Esri World Imagery)
+            urlPattern: /^https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/World_Imagery\/MapServer\/tile\/.+/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "esri-satellite-tiles",
+              expiration: {
+                maxEntries: 1500,
+                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 días
+                purgeOnQuotaError: true,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+              fetchOptions: {
+                credentials: "omit",
                 mode: "cors",
                 cache: "default"
               },
