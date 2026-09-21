@@ -219,7 +219,7 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
           'maplibre': ['maplibre-gl'], // Separar MapLibre (~750KB) para carga diferida
-          'react-map-gl-vendor': ['react-map-gl'], // Separar react-map-gl
+          'react-map-gl-vendor': ['react-map-gl/maplibre'], // Separar react-map-gl
         }
       }
     },
