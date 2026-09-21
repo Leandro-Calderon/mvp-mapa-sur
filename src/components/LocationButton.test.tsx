@@ -142,6 +142,7 @@ describe('LocationButton', () => {
                 toJSON: () => ({}),
             },
             timestamp: Date.now(),
+            toJSON: () => ({}),
         };
 
         mockGeolocation.getCurrentPosition.mockImplementation((success) => {

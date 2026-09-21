@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { DataService, DataServiceResult } from '../services/DataService';
 import type { BuildingFeature, StreetFeature } from '../types/geojson';
-import type { OfflineDataServiceResult } from '../services/OfflineDataService';
+import type { OfflineDataServiceResult, OfflineDataOptions } from '../services/OfflineDataService';
 import { connectionService } from '../services/ConnectionService';
 
 export interface EnhancedDataServiceResult<T> extends DataServiceResult<T> {
@@ -37,12 +38,21 @@ interface DataLoaderConfig<T> {
 }
 
 // Generic function to load data with either metadata or basic service
+// Optional metadata-aware loaders exposed by services like OfflineDataService
+interface BuildingsMetadataService {
+  loadBuildingsWithMetadata: (options: OfflineDataOptions) => Promise<OfflineDataServiceResult<BuildingFeature[]>>;
+}
+
+interface StreetsMetadataService {
+  loadStreetsWithMetadata: (options: OfflineDataOptions) => Promise<OfflineDataServiceResult<StreetFeature[]>>;
+}
+
 async function loadDataType<T>(
   config: DataLoaderConfig<T>,
   forceRefresh: boolean,
   preferOffline: boolean,
   isOnline: boolean,
-  setResult: React.Dispatch<React.SetStateAction<EnhancedDataServiceResult<T[]>>>,
+  setResult: Dispatch<SetStateAction<EnhancedDataServiceResult<T[]>>>,
   onStaleData?: () => void
 ): Promise<void> {
   try {
@@ -126,7 +136,7 @@ export const useDataService = (service: DataService) => {
     await Promise.all([
       loadDataType<BuildingFeature>(
         {
-          loadWithMetadata: (opts) => (service as any).loadBuildingsWithMetadata(opts),
+          loadWithMetadata: (opts) => (service as DataService & BuildingsMetadataService).loadBuildingsWithMetadata(opts),
           loadBasic: () => service.loadBuildings(),
           hasMetadata: hasBuildingsMetadata
         },
@@ -138,7 +148,7 @@ export const useDataService = (service: DataService) => {
       ),
       loadDataType<StreetFeature>(
         {
-          loadWithMetadata: (opts) => (service as any).loadStreetsWithMetadata(opts),
+          loadWithMetadata: (opts) => (service as DataService & StreetsMetadataService).loadStreetsWithMetadata(opts),
           loadBasic: () => service.loadStreets(),
           hasMetadata: hasStreetsMetadata
         },

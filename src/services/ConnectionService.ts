@@ -8,6 +8,19 @@ export interface ConnectionStatus {
 
 type ConnectionListener = (status: ConnectionStatus) => void;
 
+// Minimal shape of the experimental Network Information API (navigator.connection)
+interface NetworkInformationLike extends EventTarget {
+  effectiveType?: string;
+  downlink?: number;
+  rtt?: number;
+  saveData?: boolean;
+}
+
+const getNetworkInformation = (): NetworkInformationLike | undefined =>
+  'connection' in navigator
+    ? (navigator as Navigator & { connection?: NetworkInformationLike }).connection
+    : undefined;
+
 class ConnectionService {
   private listeners: Set<ConnectionListener> = new Set();
   private currentStatus: ConnectionStatus = {
@@ -24,8 +37,8 @@ class ConnectionService {
     window.addEventListener('offline', this.handleConnectionChange.bind(this));
 
     // Listen for network information changes if available
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+    const connection = getNetworkInformation();
+    if (connection) {
       connection.addEventListener('change', this.handleConnectionChange.bind(this));
     }
 
@@ -44,8 +57,8 @@ class ConnectionService {
     };
 
     // Add network information if available
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
+    const connection = getNetworkInformation();
+    if (connection) {
       this.currentStatus = {
         ...this.currentStatus,
         effectiveType: connection.effectiveType,
@@ -100,7 +113,7 @@ class ConnectionService {
     }
 
     return new Promise((resolve) => {
-      let timeoutId: NodeJS.Timeout;
+      let timeoutId: ReturnType<typeof setTimeout>;
       let unsubscribe: (() => void) | null = null;
 
       const cleanup = () => {
@@ -127,16 +140,17 @@ class ConnectionService {
   public getNetworkQuality(): 'slow' | 'medium' | 'fast' | 'unknown' {
     if (!this.isOnline()) return 'unknown';
 
-    const connection = (navigator as any).connection;
+    const connection = getNetworkInformation();
     if (!connection) return 'unknown';
 
-    const { effectiveType, downlink } = connection;
+    const { effectiveType } = connection;
+    const downlink = connection.downlink;
 
-    if (effectiveType === 'slow-2g' || effectiveType === '2g' || downlink < 0.1) {
+    if (effectiveType === 'slow-2g' || effectiveType === '2g' || (downlink !== undefined && downlink < 0.1)) {
       return 'slow';
-    } else if (effectiveType === '3g' || downlink < 1) {
+    } else if (effectiveType === '3g' || (downlink !== undefined && downlink < 1)) {
       return 'medium';
-    } else if (effectiveType === '4g' || downlink >= 1) {
+    } else if (effectiveType === '4g' || (downlink !== undefined && downlink >= 1)) {
       return 'fast';
     }
 

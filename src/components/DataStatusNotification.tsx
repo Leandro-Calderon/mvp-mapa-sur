@@ -1,10 +1,11 @@
 import React from 'react';
 import type { EnhancedDataServiceResult } from '../hooks/useDataService';
+import type { BuildingFeature, StreetFeature } from '../types/geojson';
 import './DataStatusNotification.css';
 
 interface DataStatusNotificationProps {
-  buildings: EnhancedDataServiceResult<any[]>;
-  streets: EnhancedDataServiceResult<any[]>;
+  buildings: EnhancedDataServiceResult<BuildingFeature[]>;
+  streets: EnhancedDataServiceResult<StreetFeature[]>;
   onRefresh?: () => void;
 }
 

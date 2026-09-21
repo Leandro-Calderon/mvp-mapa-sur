@@ -7,7 +7,7 @@ export class ErrorService {
     /**
      * Report an error with optional context
      */
-    static report(error: Error, context?: Record<string, any>): void {
+    static report(error: Error, context?: Record<string, unknown>): void {
         logger.error(error.message, { error, context });
 
         // Future: Send to error tracking service in production
@@ -37,16 +37,17 @@ export class ErrorService {
     /**
      * Wrap a function with error handling
      */
-    static wrap<T extends (...args: any[]) => any>(
+    static wrap<T extends (...args: never[]) => unknown>(
         fn: T,
         context?: string
     ): (...args: Parameters<T>) => ReturnType<T> | void {
         return (...args: Parameters<T>) => {
             try {
-                return fn(...args);
+                return fn(...args) as ReturnType<T>;
             } catch (error) {
                 const err = error instanceof Error ? error : new Error(String(error));
                 this.report(err, { context, args });
+                return;
             }
         };
     }

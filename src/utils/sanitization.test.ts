@@ -22,8 +22,9 @@ describe('sanitizeInput', () => {
     });
 
     it('should handle non-string input', () => {
-        expect(sanitizeInput(123 as any)).toBe('');
-        expect(sanitizeInput(null as any)).toBe('');
+        // Deliberately pass non-string values to exercise the typeof guard
+        expect(sanitizeInput(123 as unknown as string)).toBe('');
+        expect(sanitizeInput(null as unknown as string)).toBe('');
     });
 });
 

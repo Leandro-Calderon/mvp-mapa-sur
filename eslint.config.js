@@ -79,4 +79,11 @@ export default [
       "react/display-name": "off",
     },
   },
+  // Config files that execute in Node.js, not in the browser
+  {
+    files: ["vitest.config.ts", "vite.config.js", "eslint.config.js"],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+    },
+  },
 ];

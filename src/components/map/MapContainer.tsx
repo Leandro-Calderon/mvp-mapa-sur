@@ -8,7 +8,7 @@ import Map, {
   type MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import maplibregl from "maplibre-gl";
-import type { GeoJSONSource, CirclePaint, SymbolLayout } from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
@@ -192,6 +192,7 @@ export const MapContainer = memo(({
     }
 
     const feature = features[0];
+    if (!feature) return;
     const layerId = feature.layer?.id;
 
     logger.debug('MapContainer: Feature clicked', { layerId, properties: feature.properties });
@@ -279,12 +280,16 @@ export const MapContainer = memo(({
 
       if (type === 'LineString') {
         (coordinates as number[][]).forEach(([lng, lat]) => {
-          bounds.extend([lng, lat]);
+          if (typeof lng === 'number' && typeof lat === 'number') {
+            bounds.extend([lng, lat]);
+          }
         });
       } else if (type === 'MultiLineString' || type === 'Polygon') {
         (coordinates as number[][][]).forEach((line) => {
           line.forEach(([lng, lat]) => {
-            bounds.extend([lng, lat]);
+            if (typeof lng === 'number' && typeof lat === 'number') {
+              bounds.extend([lng, lat]);
+            }
           });
         });
       }
@@ -336,10 +341,18 @@ export const MapContainer = memo(({
         filteredStreets.forEach((street) => {
           const { type, coordinates } = street.geometry;
           if (type === 'LineString') {
-            (coordinates as number[][]).forEach(([lng, lat]) => bounds.extend([lng, lat]));
+            (coordinates as number[][]).forEach(([lng, lat]) => {
+              if (typeof lng === 'number' && typeof lat === 'number') {
+                bounds.extend([lng, lat]);
+              }
+            });
           } else if (type === 'MultiLineString' || type === 'Polygon') {
             (coordinates as number[][][]).forEach((line) => {
-              line.forEach(([lng, lat]) => bounds.extend([lng, lat]));
+              line.forEach(([lng, lat]) => {
+                if (typeof lng === 'number' && typeof lat === 'number') {
+                  bounds.extend([lng, lat]);
+                }
+              });
             });
           }
         });
