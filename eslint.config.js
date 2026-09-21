@@ -1,6 +1,7 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 
@@ -28,11 +29,19 @@ export default [
         version: "detect",
       },
     },
-    plugins: {
-      react: pluginReact,
-    },
     ...pluginJs.configs.recommended,
     ...pluginReact.configs.flat.recommended,
+    // pluginReact's flat config supplies its own `plugins` and `rules` keys,
+    // which replace earlier keys wholesale, so react-hooks is re-registered
+    // after the spreads (flat-config entry for eslint-plugin-react-hooks v5).
+    plugins: {
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+    },
+    rules: {
+      ...pluginReact.configs.flat.recommended.rules,
+      ...pluginReactHooks.configs["recommended-latest"].rules,
+    },
   },
   // TypeScript files
   {
@@ -56,10 +65,12 @@ export default [
     plugins: {
       "@typescript-eslint": tseslint,
       react: pluginReact,
+      "react-hooks": pluginReactHooks,
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
       ...pluginReact.configs.flat.recommended.rules,
+      ...pluginReactHooks.configs["recommended-latest"].rules,
       // TypeScript specific rules
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
