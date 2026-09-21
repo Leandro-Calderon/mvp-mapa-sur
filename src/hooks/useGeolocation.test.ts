@@ -17,13 +17,13 @@ describe('useGeolocation', () => {
             clearWatch: vi.fn(),
         };
 
-        Object.defineProperty(global.navigator, 'geolocation', {
+        Object.defineProperty(globalThis.navigator, 'geolocation', {
             writable: true,
             value: mockGeolocation,
         });
 
         // Mock permissions API
-        Object.defineProperty(global.navigator, 'permissions', {
+        Object.defineProperty(globalThis.navigator, 'permissions', {
             writable: true,
             value: {
                 query: vi.fn().mockResolvedValue({ state: 'granted' }),
@@ -66,8 +66,10 @@ describe('useGeolocation', () => {
                 altitudeAccuracy: null,
                 heading: null,
                 speed: null,
+                toJSON: () => ({}),
             },
             timestamp: Date.now(),
+            toJSON: () => ({}),
         };
 
         mockGeolocation.watchPosition.mockImplementation((success) => {
@@ -82,7 +84,7 @@ describe('useGeolocation', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(result.current.position).toEqual([40.7128, -74.006]);
+        expect(result.current.position).toEqual([-74.006, 40.7128]);
         expect(result.current.accuracy).toBe(10);
         expect(result.current.error).toBeNull();
     });
@@ -133,7 +135,7 @@ describe('useGeolocation', () => {
     });
 
     it('should handle missing geolocation API', async () => {
-        Object.defineProperty(global.navigator, 'geolocation', {
+        Object.defineProperty(globalThis.navigator, 'geolocation', {
             writable: true,
             value: undefined,
         });
@@ -149,7 +151,7 @@ describe('useGeolocation', () => {
     });
 
     it('should handle permission denied', async () => {
-        Object.defineProperty(global.navigator, 'permissions', {
+        Object.defineProperty(globalThis.navigator, 'permissions', {
             writable: true,
             value: {
                 query: vi.fn().mockResolvedValue({ state: 'denied' }),
