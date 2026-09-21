@@ -74,9 +74,10 @@ export default defineConfig({
         sourcemap: false, // Desactivado para producción
         globPatterns: ["**/*.{js,css,html}"],
         globIgnores: ["**/node_modules/**/*", "sw.js", "workbox-*.js"],
-        skipWaiting: true,
+        // Sin skipWaiting/clientsClaim: con registerType "prompt", el nuevo
+        // Service Worker queda esperando hasta que el usuario acepte el
+        // banner de actualización antes de activarse.
         cleanupOutdatedCaches: true,
-        clientsClaim: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
         navigateFallback: "/mvp-mapa-sur/index.html", // Ruta fallback en caso de que no se encuentre una ruta
         navigateFallbackAllowlist: [/^\/mvp-mapa-sur\//], // Permitir la ruta "/mapaDPVyU/"

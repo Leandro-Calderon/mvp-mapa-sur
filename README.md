@@ -18,10 +18,9 @@ Esta PWA fue desarrollada utilizando tecnologías de código abierto:
 
 - **Vite PWA:** Generación de la Progressive Web App.
 - **React con TypeScript:** Desarrollo de la interfaz de usuario.
-- **Leaflet:** Biblioteca para mapas interactivos.
-- **OpenStreetMap:** Fuente de datos para la cartografía base.
-- **KoboToolBox:** Formulario para relevar georeferencias de puntos de interes desde el terreno.
-- **QGIS:** Herramienta para la creación y edición de datos geoespaciales.
+- **MapLibre GL + react-map-gl:** Biblioteca para mapas interactivos.
+- **OpenStreetMap / OpenFreeMap:** Cartografía base (estilos vectoriales de OpenFreeMap sobre datos de OpenStreetMap, más imágenes satelitales de Esri World Imagery).
+- **KoboToolBox y QGIS:** Pipeline de relevamiento y producción de los datos geoespaciales (relevamiento de georeferencias en terreno y creación/edición de los datasets; no son dependencias de la app en runtime).
 - **Git:** Sistema de control de versiones.
 - **GNU/Linux:** Entorno de desarrollo.
 
@@ -63,6 +62,18 @@ Una vez instaladas las dependencias, puedes ejecutar la aplicación en modo de d
     ```
 
     Este comando genera los archivos estáticos de la aplicación en el directorio `dist/`.
+
+### Comandos
+
+```bash
+pnpm dev        # Servidor de desarrollo
+pnpm build      # Compilación de producción (dist/)
+pnpm test       # Suite de tests
+pnpm lint       # ESLint
+pnpm typecheck  # Verificación de tipos de TypeScript
+```
+
+La integración continua (CI) ejecuta lint, typecheck y tests en cada PR, y gatea el deploy a GitHub Pages.
 
 ## Contribuciones
 

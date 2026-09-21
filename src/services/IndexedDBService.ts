@@ -183,7 +183,18 @@ class IndexedDBService {
       };
 
       request.onsuccess = () => {
-        resolve(request.result || null);
+        // Only expose the declared SyncStatus fields; the internal
+        // id: 'main' row key stays private to this service.
+        const row = request.result;
+        resolve(
+          row
+            ? {
+                lastSync: row.lastSync,
+                isOnline: row.isOnline,
+                pendingUpdates: row.pendingUpdates,
+              }
+            : null
+        );
       };
     });
   }

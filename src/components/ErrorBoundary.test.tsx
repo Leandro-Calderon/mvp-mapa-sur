@@ -211,10 +211,9 @@ describe('ErrorBoundary', () => {
         expect(container.querySelector('h2')).toHaveTextContent('Algo salió mal');
     });
 
-    it.skip('should handle async errors in development mode', () => {
-        // SKIPPED: Este test tiene una assertion incorrecta
-        // Error boundaries SÍ capturan errores en useEffect en React 18+
-        // El componente mostrará el error UI, no el contenido normal
+    it('should handle async errors in development mode', () => {
+        // React 18 error boundaries DO catch errors thrown in useEffect:
+        // the error UI renders instead of the normal content.
         const AsyncErrorComponent = () => {
             React.useEffect(() => {
                 throw new Error('Async error');
@@ -228,6 +227,7 @@ describe('ErrorBoundary', () => {
             </ErrorBoundary>
         );
 
-        expect(screen.getByText('Component')).toBeInTheDocument();
+        expect(screen.getByText('Algo salió mal')).toBeInTheDocument();
+        expect(screen.queryByText('Component')).not.toBeInTheDocument();
     });
 });

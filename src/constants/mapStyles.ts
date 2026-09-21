@@ -36,5 +36,5 @@ export const AVAILABLE_STYLES = Object.values(MAP_STYLES);
 export const MAP_ATTRIBUTIONS = {
     liberty: '© <a href="https://openfreemap.org">OpenFreeMap</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     dark: '© <a href="https://openfreemap.org">OpenFreeMap</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    satellite: '© <a href="https://www.ign.gob.ar">IGN Argentina</a>',
+    satellite: '© <a href="https://www.esri.com/">Esri</a>, Maxar, Earthstar Geographics',
 };

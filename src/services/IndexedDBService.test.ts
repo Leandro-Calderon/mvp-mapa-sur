@@ -158,9 +158,10 @@ describe('IndexedDBService', () => {
         const loaded = await indexedDBService.getSyncStatus();
 
         expect(loaded).toMatchObject(status);
-        // The raw stored record is returned as-is, including the internal
-        // 'id' row key used by the sync_status object store.
-        expect(loaded).toHaveProperty('id', 'main');
+        // getSyncStatus must not leak the internal 'id' row key: the
+        // returned object carries exactly the three SyncStatus fields.
+        expect(loaded).not.toHaveProperty('id');
+        expect(Object.keys(loaded ?? {}).sort()).toEqual(['isOnline', 'lastSync', 'pendingUpdates']);
     });
 
     it('should return null sync status when none was saved', async () => {
