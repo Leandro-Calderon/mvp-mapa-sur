@@ -17,6 +17,13 @@ export interface OfflineDataServiceResult<T> {
   lastUpdated?: number;
 }
 
+// Result of a (possibly conditional) network fetch: either the server
+// confirmed the cached copy is current (304 Not Modified), or it returned
+// a fresh payload together with its ETag.
+type NetworkFetchResult<T> =
+  | { notModified: true; etag?: string }
+  | { notModified: false; data: T; etag?: string };
+
 export class OfflineDataService implements DataService {
   private readonly buildingsPath = 'assets/fonavi.geojson';
   private readonly streetsPath = 'assets/calles.geojson';
@@ -50,7 +57,8 @@ export class OfflineDataService implements DataService {
       const isCacheFresh = hasCachedData &&
         (Date.now() - cachedEntry.timestamp) < maxCacheAge;
 
-      // If we should use offline first and have cached data, return it
+      // Offline-first (slow network or preferOffline) with cached data:
+      // serve the cache immediately; staleness is reported by age only
       if (shouldUseOfflineFirst && hasCachedData && !forceRefresh) {
         return {
           data: cachedEntry.data,
@@ -60,21 +68,24 @@ export class OfflineDataService implements DataService {
         };
       }
 
-      // If we're online and either forcing refresh or cache is stale/missing, fetch from network
-      if (isOnline && (forceRefresh || !hasCachedData || !isCacheFresh)) {
+      // Online with forced refresh or no cached data: plain network fetch.
+      // Store the real ETag from the response so later revalidations can
+      // send If-None-Match
+      if (isOnline && (forceRefresh || !hasCachedData)) {
         try {
-          const freshData = await this.fetchFromNetwork<T>(resourceUrl);
+          const response = await this.fetchFromNetwork<T>(resourceUrl);
+
+          // No conditional request was sent, so a 304 would be a protocol
+          // violation; treat it like any other unexpected status
+          if (response.notModified) {
+            throw new Error(`Unexpected 304 response without If-None-Match for ${resourceUrl}`);
+          }
 
           // Save to cache
-          await indexedDBService.saveData(
-            cacheKey,
-            freshData as BuildingFeature[] | StreetFeature[],
-            '1.0.0', // You could make this dynamic based on response headers
-            new Date().toISOString()
-          );
+          await indexedDBService.saveData(cacheKey, response.data, '1.0.0', response.etag);
 
           return {
-            data: freshData,
+            data: response.data,
             fromCache: false,
             isStale: false,
             lastUpdated: Date.now()
@@ -82,12 +93,13 @@ export class OfflineDataService implements DataService {
         } catch (networkError) {
           logger.warn(`Network request failed for ${cacheKey}`, networkError);
 
-          // If network fails and we have cached data, return it even if stale
+          // If network fails and we have cached data, return it;
+          // staleness is determined by age, not by the failure itself
           if (hasCachedData) {
             return {
               data: cachedEntry.data,
               fromCache: true,
-              isStale: true,
+              isStale: !isCacheFresh,
               lastUpdated: cachedEntry.timestamp
             };
           }
@@ -96,7 +108,59 @@ export class OfflineDataService implements DataService {
         }
       }
 
-      // If we're offline or prefer offline and have cached data, return it
+      // Online with cached data (no forceRefresh): revalidate with a
+      // conditional request. The freshness TTL no longer gates network
+      // contact; a 304 confirms the cache is current at zero payload cost
+      if (isOnline && hasCachedData && !forceRefresh) {
+        try {
+          const response = await this.fetchFromNetwork<T>(resourceUrl, cachedEntry.etag);
+
+          if (response.notModified) {
+            // Cache confirmed current: re-save the entry (same data) to bump
+            // its timestamp, keeping or renewing the stored ETag
+            await indexedDBService.saveData(
+              cacheKey,
+              cachedEntry.data,
+              cachedEntry.version,
+              response.etag ?? cachedEntry.etag
+            );
+
+            return {
+              data: cachedEntry.data,
+              fromCache: true,
+              isStale: false,
+              lastUpdated: Date.now()
+            };
+          }
+
+          await indexedDBService.saveData(
+            cacheKey,
+            response.data,
+            cachedEntry.version,
+            response.etag
+          );
+
+          return {
+            data: response.data,
+            fromCache: false,
+            isStale: false,
+            lastUpdated: Date.now()
+          };
+        } catch (networkError) {
+          logger.warn(`Revalidation request failed for ${cacheKey}`, networkError);
+
+          // Revalidation failed: fall back to the cache, stale only by age
+          return {
+            data: cachedEntry.data,
+            fromCache: true,
+            isStale: !isCacheFresh,
+            lastUpdated: cachedEntry.timestamp
+          };
+        }
+      }
+
+      // Remaining fall-through with cached data (reachable when forceRefresh
+      // is requested while offline): serve the cache, stale by age
       if (hasCachedData) {
         return {
           data: cachedEntry.data,
@@ -115,28 +179,55 @@ export class OfflineDataService implements DataService {
     }
   }
 
-  private async fetchFromNetwork<T extends BuildingFeature[] | StreetFeature[]>(resourceUrl: string): Promise<T> {
-    const response = await fetch(resourceUrl, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
-    });
+  private async fetchFromNetwork<T extends BuildingFeature[] | StreetFeature[]>(
+    resourceUrl: string,
+    etag?: string
+  ): Promise<NetworkFetchResult<T>> {
+    const headers: Record<string, string> = {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    };
+
+    // Conditional request: only revalidate when we hold an ETag
+    if (etag) {
+      headers['If-None-Match'] = etag;
+    }
+
+    const response = await fetch(resourceUrl, { headers });
+
+    if (response.status === 304) {
+      return { notModified: true, etag: response.headers.get('etag') ?? undefined };
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to fetch ${resourceUrl}: ${response.status} ${response.statusText}`);
     }
 
-    const geojson = await response.json();
+    const geojson: unknown = await response.json();
+    return {
+      notModified: false,
+      data: this.parseGeojsonResponse<T>(geojson, resourceUrl),
+      etag: response.headers.get('etag') ?? undefined
+    };
+  }
 
-    // Handle both direct arrays and GeoJSON FeatureCollection format
+  // Handle both direct arrays and GeoJSON FeatureCollection format
+  private parseGeojsonResponse<T extends BuildingFeature[] | StreetFeature[]>(
+    geojson: unknown,
+    resourceUrl: string
+  ): T {
     if (Array.isArray(geojson)) {
       return geojson as T;
-    } else if (geojson.features && Array.isArray(geojson.features)) {
-      return geojson.features as T;
-    } else {
-      throw new Error(`Invalid data format from ${resourceUrl}`);
     }
+
+    if (
+      typeof geojson === 'object' && geojson !== null &&
+      Array.isArray((geojson as { features?: unknown }).features)
+    ) {
+      return (geojson as { features: T }).features;
+    }
+
+    throw new Error(`Invalid data format from ${resourceUrl}`);
   }
 
   async loadBuildings(options: OfflineDataOptions = {}): Promise<BuildingFeature[]> {

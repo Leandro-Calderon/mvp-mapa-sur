@@ -149,13 +149,19 @@ export default defineConfig({
             },
           },
           {
+            // Datos GeoJSON (edificios/calles): NetworkFirst para que, con
+            // conexión, la red siempre gane (datos nuevos apenas se deploya;
+            // gracias al ETag la revalidación es sólo headers vía 304). Si la
+            // red no responde en 5 segundos o estamos offline, se sirve desde
+            // la cache del SW como fallback offline (hasta 30 días)
             urlPattern: /.*\/assets\/.*\.geojson$/i,
-            handler: "StaleWhileRevalidate",
+            handler: "NetworkFirst",
             options: {
               cacheName: "geojson-cache",
+              networkTimeoutSeconds: 5, // Caer a la cache del SW si la red se cuelga
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 días de fallback offline
                 purgeOnQuotaError: true,
               },
               cacheableResponse: {
@@ -164,7 +170,7 @@ export default defineConfig({
               fetchOptions: {
                 credentials: "same-origin",
                 mode: "cors",
-                cache: "no-cache"
+                cache: "no-cache" // La capa HTTP del navegador también revalida por ETag
               },
             },
           },
