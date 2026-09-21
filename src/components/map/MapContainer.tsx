@@ -4,7 +4,6 @@ import Map, {
   type ViewStateChangeEvent,
   type MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import type { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
@@ -102,7 +101,7 @@ export const MapContainer = memo(({
   }, [setMapState]);
 
   // Unified click handler for all map interactions
-  const handleMapClick = useCallback(async (evt: MapLayerMouseEvent) => {
+  const handleMapClick = useCallback((evt: MapLayerMouseEvent) => {
     const features = evt.features;
 
     // No features clicked - empty area
@@ -118,28 +117,6 @@ export const MapContainer = memo(({
     const layerId = feature.layer?.id;
 
     logger.debug('MapContainer: Feature clicked', { layerId, properties: feature.properties });
-
-    // Handle cluster click - zoom in
-    if (layerId === 'clusters' && feature.properties?.cluster) {
-      const map = mapRef.current?.getMap();
-      if (map) {
-        const clusterId = feature.properties.cluster_id as number;
-        const source = map.getSource('fonavi-buildings') as GeoJSONSource;
-        const geometry = feature.geometry as { type: 'Point'; coordinates: number[] };
-        const coordinates = geometry.coordinates.slice() as [number, number];
-        try {
-          const zoom = await source.getClusterExpansionZoom(clusterId);
-          map.easeTo({
-            center: coordinates,
-            zoom: zoom ?? 14,
-            duration: 500,
-          });
-        } catch (err) {
-          logger.error('MapContainer: Error getting cluster expansion zoom', err);
-        }
-      }
-      return;
-    }
 
     // Handle building (unclustered point) click
     if (layerId === 'unclustered-point') {
@@ -172,9 +149,9 @@ export const MapContainer = memo(({
     logger.debug('MapContainer: Unknown layer clicked', { layerId });
   }, [onMapClick]);
 
-  // Determine what to show
-  const shouldShowBuildings = showAllLayers || filteredBuildings.length > 0;
-  const shouldShowStreets = showAllLayers || filteredStreets.length > 0;
+  // Data layers render on data presence only: "Ver Todo" (showAllLayers)
+  // bypasses filtering upstream, so the full dataset already arrives in the
+  // arrays; empty lists render nothing regardless of that flag.
 
   return (
     <Map
@@ -191,7 +168,7 @@ export const MapContainer = memo(({
       onLoad={handleMapLoad}
       onMove={handleMove}
       onClick={handleMapClick}
-      interactiveLayerIds={['clusters', 'unclustered-point', 'street-lines', 'street-fills']}
+      interactiveLayerIds={['unclustered-point', 'street-lines', 'street-fills']}
     >
       {/* Hash sync */}
       <MapHashSync />
@@ -203,12 +180,12 @@ export const MapContainer = memo(({
       />
 
       {/* Buildings layer (no clustering - colors by type) */}
-      {shouldShowBuildings && filteredBuildings.length > 0 && (
+      {filteredBuildings.length > 0 && (
         <BuildingsLayer buildings={filteredBuildings} />
       )}
 
       {/* Streets layer */}
-      {shouldShowStreets && filteredStreets.length > 0 && (
+      {filteredStreets.length > 0 && (
         <StreetsLayer streets={filteredStreets} />
       )}
 

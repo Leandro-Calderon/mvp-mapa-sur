@@ -377,7 +377,6 @@ describe('MapContainer', () => {
 
         const props = mapMocks.lastMapProps.current;
         expect(props?.interactiveLayerIds).toEqual([
-            'clusters',
             'unclustered-point',
             'street-lines',
             'street-fills',
