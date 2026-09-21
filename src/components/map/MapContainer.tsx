@@ -1,35 +1,21 @@
 import { useCallback, useRef, useState, memo, useEffect } from "react";
 import Map, {
-  Source,
-  Layer,
-  Popup,
   type MapRef,
   type ViewStateChangeEvent,
   type MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import maplibregl from "maplibre-gl";
 import type { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapContext } from "../../context/MapContext";
 import { MapHashSync } from "./MapHashSync";
 import { StyleSelector } from "./StyleSelector";
+import { BuildingsLayer, StreetsLayer, UserLocationLayer } from "./mapLayers";
+import { MapPopup } from "./MapPopup";
+import { useMapNavigation } from "./useMapNavigation";
 import { MAP_STYLES, DEFAULT_STYLE } from "../../constants/mapStyles";
 import type { BuildingFeature, StreetFeature } from "../../types/geojson";
 import type { LngLatArray, MapStyleId, PopupInfo } from "../../types/map";
 import { logger } from "../../utils/logger";
-
-// Layer paint configurations
-const STREET_LINE_PAINT = {
-  'line-color': '#00bcd4',
-  'line-width': 5,
-  'line-opacity': 0.9,
-} as const;
-
-const STREET_FILL_PAINT = {
-  'fill-color': '#3388ff',
-  'fill-opacity': 0.4,
-  'fill-outline-color': '#0066cc',
-} as const;
 
 interface MapContainerProps {
   filteredBuildings: BuildingFeature[];
@@ -43,41 +29,12 @@ interface MapContainerProps {
   onMapClick?: () => void;
 }
 
-// Convert BuildingFeature[] to GeoJSON FeatureCollection
-const buildingsToGeoJSON = (buildings: BuildingFeature[]) => ({
-  type: 'FeatureCollection' as const,
-  features: buildings.map((b, idx) => ({
-    type: 'Feature' as const,
-    id: idx,
-    geometry: b.geometry,
-    properties: {
-      ...b.properties,
-      _id: idx,
-    },
-  })),
-});
-
-// Convert StreetFeature[] to GeoJSON FeatureCollection
-const streetsToGeoJSON = (streets: StreetFeature[]) => ({
-  type: 'FeatureCollection' as const,
-  features: streets.map((s, idx) => ({
-    type: 'Feature' as const,
-    id: idx,
-    geometry: s.geometry,
-    properties: {
-      ...s.properties,
-      _id: idx,
-    },
-  })),
-});
-
 export const MapContainer = memo(({
   filteredBuildings,
   filteredStreets,
   showAllLayers,
   userPosition,
   locationAccuracy,
-  locationError,
   isLocationTracking,
   searchRevision,
   onMapClick,
@@ -86,7 +43,6 @@ export const MapContainer = memo(({
   const mapRef = useRef<MapRef>(null);
   const [mapStyle, setMapStyle] = useState<MapStyleId>(DEFAULT_STYLE);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
-  const lastSearchRevisionRef = useRef(0);
   const lastUserPositionRef = useRef<string | null>(null);
 
   // FlyTo user position when location tracking starts
@@ -116,6 +72,15 @@ export const MapContainer = memo(({
 
     lastUserPositionRef.current = positionKey;
   }, [userPosition, isLocationTracking]);
+
+  // Search results navigation + showAllLayers fitBounds (shared bounds builder)
+  useMapNavigation({
+    mapRef,
+    filteredBuildings,
+    filteredStreets,
+    searchRevision,
+    showAllLayers,
+  });
 
   // Handle map load
   const handleMapLoad = useCallback(() => {
@@ -207,145 +172,9 @@ export const MapContainer = memo(({
     logger.debug('MapContainer: Unknown layer clicked', { layerId });
   }, [onMapClick]);
 
-  // Handle search results navigation
-  const handleSearchNavigation = useCallback(() => {
-    if (searchRevision === 0 || searchRevision === lastSearchRevisionRef.current) {
-      return;
-    }
-
-    const totalResults = filteredBuildings.length + filteredStreets.length;
-    if (totalResults === 0) return;
-
-    lastSearchRevisionRef.current = searchRevision;
-    const map = mapRef.current?.getMap();
-    if (!map) return;
-
-    logger.debug('MapContainer: Navigating to search results', { totalResults, searchRevision });
-
-    // Build bounds from all results
-    const bounds = new maplibregl.LngLatBounds();
-
-    // Add building coordinates
-    filteredBuildings.forEach((building) => {
-      const [lng, lat] = building.geometry.coordinates;
-      bounds.extend([lng, lat]);
-    });
-
-    // Add street coordinates
-    filteredStreets.forEach((street) => {
-      const { type, coordinates } = street.geometry;
-
-      if (type === 'LineString') {
-        (coordinates as number[][]).forEach(([lng, lat]) => {
-          if (typeof lng === 'number' && typeof lat === 'number') {
-            bounds.extend([lng, lat]);
-          }
-        });
-      } else if (type === 'MultiLineString' || type === 'Polygon') {
-        (coordinates as number[][][]).forEach((line) => {
-          line.forEach(([lng, lat]) => {
-            if (typeof lng === 'number' && typeof lat === 'number') {
-              bounds.extend([lng, lat]);
-            }
-          });
-        });
-      }
-    });
-
-    if (bounds.isEmpty()) {
-      logger.warn('MapContainer: Empty bounds, skipping navigation');
-      return;
-    }
-
-    // Single result: flyTo with high zoom
-    if (totalResults === 1) {
-      const center = bounds.getCenter();
-      map.flyTo({ center, zoom: 17, duration: 1500 });
-    } else {
-      // Multiple results: fitBounds
-      map.fitBounds(bounds, {
-        padding: 50,
-        duration: 1500,
-        maxZoom: 17,
-      });
-    }
-  }, [filteredBuildings, filteredStreets, searchRevision]);
-
-  // Trigger search navigation when revision changes
-  if (searchRevision !== lastSearchRevisionRef.current) {
-    // Use setTimeout to avoid calling during render
-    setTimeout(handleSearchNavigation, 0);
-  }
-
-  // FitBounds when showAllLayers is activated - using useRef to track previous state
-  const prevShowAllLayersRef = useRef(showAllLayers);
-  useEffect(() => {
-    // Only trigger when showAllLayers changes from false to true
-    if (showAllLayers && !prevShowAllLayersRef.current) {
-      const map = mapRef.current?.getMap();
-      if (map && filteredBuildings.length > 0) {
-        console.log('[MapContainer] FitBounds for Ver Todo - all buildings');
-
-        const bounds = new maplibregl.LngLatBounds();
-
-        // Add all building coordinates
-        filteredBuildings.forEach((building) => {
-          const [lng, lat] = building.geometry.coordinates;
-          bounds.extend([lng, lat]);
-        });
-
-        // Add street coordinates if any
-        filteredStreets.forEach((street) => {
-          const { type, coordinates } = street.geometry;
-          if (type === 'LineString') {
-            (coordinates as number[][]).forEach(([lng, lat]) => {
-              if (typeof lng === 'number' && typeof lat === 'number') {
-                bounds.extend([lng, lat]);
-              }
-            });
-          } else if (type === 'MultiLineString' || type === 'Polygon') {
-            (coordinates as number[][][]).forEach((line) => {
-              line.forEach(([lng, lat]) => {
-                if (typeof lng === 'number' && typeof lat === 'number') {
-                  bounds.extend([lng, lat]);
-                }
-              });
-            });
-          }
-        });
-
-        map.fitBounds(bounds, {
-          padding: 50,
-          duration: 1500,
-          maxZoom: 14, // Lower zoom to see all clusters
-        });
-      }
-    }
-    prevShowAllLayersRef.current = showAllLayers;
-  }, [showAllLayers, filteredBuildings, filteredStreets]);
-
-  // Prepare GeoJSON data
-  const buildingsGeoJSON = buildingsToGeoJSON(filteredBuildings);
-  const streetsGeoJSON = streetsToGeoJSON(filteredStreets);
-
   // Determine what to show
   const shouldShowBuildings = showAllLayers || filteredBuildings.length > 0;
   const shouldShowStreets = showAllLayers || filteredStreets.length > 0;
-
-  // Prepare user location GeoJSON
-  const userLocationGeoJSON = userPosition ? {
-    type: 'FeatureCollection' as const,
-    features: [{
-      type: 'Feature' as const,
-      geometry: {
-        type: 'Point' as const,
-        coordinates: userPosition,
-      },
-      properties: {
-        accuracy: locationAccuracy,
-      },
-    }],
-  } : null;
 
   return (
     <Map
@@ -375,138 +204,24 @@ export const MapContainer = memo(({
 
       {/* Buildings layer (no clustering - colors by type) */}
       {shouldShowBuildings && filteredBuildings.length > 0 && (
-        <Source
-          id="fonavi-buildings"
-          type="geojson"
-          data={buildingsGeoJSON}
-        >
-          {/* Points colored by building type */}
-          <Layer
-            id="unclustered-point"
-            type="circle"
-            paint={{
-              'circle-color': [
-                'match',
-                ['get', 'tipo'],
-                'Bloque', '#FF6B6B',      // Red for Bloque
-                'Torre', '#4ECDC4',        // Turquoise for Torre
-                'Departamento', '#45B7D1', // Light blue for Departamento
-                '#95A5A6'                  // Gray default
-              ],
-              'circle-radius': 10,
-              'circle-stroke-width': 2,
-              'circle-stroke-color': '#fff',
-            }}
-          />
-        </Source>
+        <BuildingsLayer buildings={filteredBuildings} />
       )}
 
       {/* Streets layer */}
       {shouldShowStreets && filteredStreets.length > 0 && (
-        <Source id="streets" type="geojson" data={streetsGeoJSON}>
-          {/* Line geometries */}
-          <Layer
-            id="street-lines"
-            type="line"
-            filter={['any',
-              ['==', ['geometry-type'], 'LineString'],
-              ['==', ['geometry-type'], 'MultiLineString']
-            ]}
-            paint={STREET_LINE_PAINT}
-          />
-
-          {/* Polygon fills */}
-          <Layer
-            id="street-fills"
-            type="fill"
-            filter={['==', ['geometry-type'], 'Polygon']}
-            paint={STREET_FILL_PAINT}
-          />
-
-          {/* Polygon outlines */}
-          <Layer
-            id="street-outlines"
-            type="line"
-            filter={['==', ['geometry-type'], 'Polygon']}
-            paint={{
-              'line-color': '#0066cc',
-              'line-width': 3,
-            }}
-          />
-        </Source>
+        <StreetsLayer streets={filteredStreets} />
       )}
 
       {/* User location */}
-      {userLocationGeoJSON && isLocationTracking && (
-        <Source id="user-location" type="geojson" data={userLocationGeoJSON}>
-          {/* Accuracy circle */}
-          {locationAccuracy && (
-            <Layer
-              id="user-location-accuracy"
-              type="circle"
-              paint={{
-                'circle-radius': ['/', locationAccuracy, 2],
-                'circle-color': 'rgba(37, 99, 235, 0.15)',
-                'circle-stroke-color': 'rgba(37, 99, 235, 0.3)',
-                'circle-stroke-width': 1,
-              }}
-            />
-          )}
-          {/* User dot */}
-          <Layer
-            id="user-location-dot"
-            type="circle"
-            paint={{
-              'circle-radius': 8,
-              'circle-color': '#2563eb',
-              'circle-stroke-width': 3,
-              'circle-stroke-color': '#fff',
-            }}
-          />
-        </Source>
-      )}
+      <UserLocationLayer
+        userPosition={userPosition}
+        locationAccuracy={locationAccuracy}
+        isLocationTracking={isLocationTracking}
+      />
 
       {/* Popup */}
       {popupInfo && (
-        <Popup
-          longitude={popupInfo.longitude}
-          latitude={popupInfo.latitude}
-          anchor="bottom"
-          onClose={() => setPopupInfo(null)}
-          closeOnClick={false}
-        >
-          <div style={{ padding: '8px', textAlign: 'center' }}>
-            {popupInfo.layerId === 'unclustered-point' ? (
-              <>
-                <h4 style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '16px',
-                  color: popupInfo.properties.tipo === 'Bloque' ? '#FF6B6B'
-                    : popupInfo.properties.tipo === 'Torre' ? '#4ECDC4'
-                      : '#45B7D1'
-                }}>
-                  {String(popupInfo.properties.tipo)}
-                </h4>
-                {popupInfo.properties.nombre && (
-                  <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                    <strong>Número:</strong> {String(popupInfo.properties.nombre)}
-                  </p>
-                )}
-                {popupInfo.properties.plan && (
-                  <p style={{ margin: '4px 0', fontSize: '14px' }}>
-                    <strong>Plan:</strong> {String(popupInfo.properties.plan)}
-                  </p>
-                )}
-              </>
-            ) : (
-              <>
-                <strong>{String(popupInfo.properties.nombre)}</strong>
-                <br />
-                Tipo: {String(popupInfo.properties.tipo)}
-              </>
-            )}
-          </div>
-        </Popup>
+        <MapPopup popupInfo={popupInfo} onClose={() => setPopupInfo(null)} />
       )}
     </Map>
   );
