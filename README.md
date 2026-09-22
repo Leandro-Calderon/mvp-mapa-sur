@@ -71,9 +71,21 @@ pnpm build      # Compilación de producción (dist/)
 pnpm test       # Suite de tests
 pnpm lint       # ESLint
 pnpm typecheck  # Verificación de tipos de TypeScript
+pnpm test:e2e   # Compila la app y ejecuta el test E2E de humo (Playwright)
 ```
 
 La integración continua (CI) ejecuta lint, typecheck y tests en cada PR, y gatea el deploy a GitHub Pages.
+
+### Tests end-to-end (smoke)
+
+El proyecto incluye una prueba de humo end-to-end con [Playwright](https://playwright.dev/) (Chromium) que verifica el camino crítico de la PWA contra un build de producción servido por `vite preview` bajo la base de GitHub Pages: carga de la aplicación (título y panel de búsqueda), aparición del canvas del mapa (MapLibre), flujo de búsqueda completo (entrada de consulta, envío con Enter y feedback visible de resultados) y presencia del botón de ubicación (GPS, sin clicarlo para no disparar el permiso del sistema).
+
+```bash
+pnpm test:e2e      # Compila la app y ejecuta la suite E2E
+pnpm test:e2e:run  # Ejecuta la suite E2E sobre un dist/ ya compilado
+```
+
+La primera ejecución local requiere instalar el navegador de Playwright: `pnpm exec playwright install chromium`. Los artefactos de ejecución (`playwright-report/`, `test-results/`) están ignorados por git. En CI, el job `e2e` corre en cada PR y push a `main` (con caché de navegadores), y el deploy a GitHub Pages espera tanto la validación como este job.
 
 ## Contribuciones
 

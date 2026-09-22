@@ -52,11 +52,50 @@ jobs:
       - name: Tests
         run: pnpm test -- --run
 
+  e2e:
+    name: End-to-end smoke tests (Playwright)
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm build
+
+      # Browsers are keyed on the lockfile, which pins the @playwright/test
+      # version and therefore the required browser build. The install step
+      # still runs on cache hits (fast no-op download) so the system
+      # dependencies from --with-deps are always present on the runner.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E smoke tests
+        run: pnpm test:e2e:run
+
   deploy:
     name: Build and deploy to GitHub Pages
     # Deploys only on pushes to main; pull requests run validation only
     if: github.event_name == 'push'
-    needs: validate
+    needs: [validate, e2e]
     runs-on: ubuntu-latest
     permissions:
       contents: write

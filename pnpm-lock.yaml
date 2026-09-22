@@ -31,6 +31,9 @@ importers:
       '@eslint/js':
         specifier: ^9.37.0
         version: 9.39.1
+      '@playwright/test':
+        specifier: ^1.63.0
+        version: 1.63.0
       '@sentry/vite-plugin':
         specifier: ^5.4.0
         version: 5.4.0(rollup@4.53.3)
@@ -1001,6 +1004,11 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
@@ -3043,6 +3051,16 @@ packages:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
@@ -4894,6 +4912,10 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
 
+  '@playwright/test@1.63.0':
+    dependencies:
+      playwright: 1.63.0
+
   '@polka/url@1.0.0-next.29': {}
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
@@ -6085,7 +6107,7 @@ snapshots:
       '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5)
       eslint: 7.32.0
       eslint-config-standard-jsx: 8.1.0(eslint-plugin-react@7.37.5(eslint@9.39.1))(eslint@7.32.0)
-      eslint-config-standard-with-typescript: 19.0.1(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@7.32.0))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@7.32.0))(eslint@7.32.0)(typescript@4.9.5)
+      eslint-config-standard-with-typescript: 19.0.1(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@9.39.1))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@9.39.1))(eslint@7.32.0)(typescript@4.9.5)
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)
       eslint-plugin-node: 11.1.0(eslint@7.32.0)
       eslint-plugin-promise: 4.3.1
@@ -6098,12 +6120,12 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-config-standard-with-typescript@19.0.1(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@7.32.0))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@7.32.0))(eslint@7.32.0)(typescript@4.9.5):
+  eslint-config-standard-with-typescript@19.0.1(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@9.39.1))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@9.39.1))(eslint@7.32.0)(typescript@4.9.5):
     dependencies:
       '@typescript-eslint/eslint-plugin': 4.33.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0)(typescript@4.9.5)
       '@typescript-eslint/parser': 4.33.0(eslint@7.32.0)(typescript@4.9.5)
       eslint: 7.32.0
-      eslint-config-standard: 14.1.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@7.32.0))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@7.32.0))(eslint@7.32.0)
+      eslint-config-standard: 14.1.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@9.39.1))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@9.39.1))(eslint@7.32.0)
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)
       eslint-plugin-node: 11.1.0(eslint@7.32.0)
       eslint-plugin-promise: 4.3.1
@@ -6112,7 +6134,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-config-standard@14.1.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@7.32.0))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@7.32.0))(eslint@7.32.0):
+  eslint-config-standard@14.1.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@7.32.0))(eslint-plugin-node@11.1.0(eslint@9.39.1))(eslint-plugin-promise@4.3.1)(eslint-plugin-standard@4.1.0(eslint@9.39.1))(eslint@7.32.0):
     dependencies:
       eslint: 7.32.0
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.49.0(eslint@9.39.1)(typescript@5.9.3))(eslint@9.39.1)
@@ -7179,6 +7201,12 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.3: {}
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   possible-typed-array-names@1.1.0: {}
 

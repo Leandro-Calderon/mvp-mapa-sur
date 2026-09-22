@@ -35,6 +35,10 @@ node_modules
 .DS_Store
 Thumbs.db
 
+# Playwright artifacts
+/playwright-report/
+/test-results/
+
 
 *.tmp
 *.temp
