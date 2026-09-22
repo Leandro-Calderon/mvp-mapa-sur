@@ -1,3 +1,5 @@
+import { logger } from '../utils/logger';
+
 export interface ConnectionStatus {
   isOnline: boolean;
   effectiveType?: string;
@@ -74,7 +76,7 @@ class ConnectionService {
       try {
         listener(this.currentStatus);
       } catch (error) {
-        console.error('Error in connection listener:', error);
+        logger.error('Error in connection listener', error);
       }
     });
   }
@@ -94,7 +96,7 @@ class ConnectionService {
     try {
       listener(this.currentStatus);
     } catch (error) {
-      console.error('Error in new connection listener:', error);
+      logger.error('Error in new connection listener', error);
     }
 
     // Return unsubscribe function

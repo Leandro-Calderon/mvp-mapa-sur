@@ -56,11 +56,23 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
   };
 
   return (
-    <div className="gps-modal-overlay" onClick={onClose}>
-      <div className="gps-modal-content" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="gps-modal-overlay"
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+    >
+      <div
+        className="gps-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gps-modal-title"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="gps-modal-header">
           <div className="gps-icon">📍</div>
-          <h2>GPS Desactivado</h2>
+          <h2 id="gps-modal-title">GPS Desactivado</h2>
         </div>
 
         <div className="gps-modal-body">
@@ -75,6 +87,7 @@ export const GpsDisabledModal: React.FC<GpsDisabledModalProps> = ({ isOpen, onCl
             <button
               className="gps-modal-button primary"
               onClick={onClose}
+              autoFocus
             >
               Entendido
             </button>

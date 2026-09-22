@@ -1,4 +1,5 @@
 import type { MapState, LngLatArray } from "../types/map";
+import { logger } from "../utils/logger";
 
 const DEFAULT_CENTER: LngLatArray = [-60.66904, -32.93968]; // [lng, lat] - Rosario, Santa Fe
 const DEFAULT_ZOOM = 12;
@@ -33,7 +34,7 @@ const parseHash = (hashValue: string): MapState | null => {
     } catch (error) {
         // Log error in development only
         if (import.meta.env.DEV) {
-            console.error("Failed to parse hash:", error);
+            logger.error("Failed to parse hash", error);
         }
     }
 

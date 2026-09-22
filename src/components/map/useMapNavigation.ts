@@ -111,7 +111,7 @@ export const useMapNavigation = ({
     if (showAllLayers && !prevShowAllLayersRef.current) {
       const map = mapRef.current?.getMap();
       if (map && filteredBuildings.length > 0) {
-        console.log('[MapContainer] FitBounds for Ver Todo - all buildings');
+        logger.debug('[MapContainer] FitBounds for Ver Todo - all buildings');
 
         const bounds = calculateResultsBounds(filteredBuildings, filteredStreets);
 

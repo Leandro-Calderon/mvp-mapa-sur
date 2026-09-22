@@ -124,7 +124,7 @@ export const SearchPanel = ({
       <div className="search-content">
         {/* Search indicator */}
         {trimmedAppliedQuery && (
-          <div className="search-indicator active">
+          <div className="search-indicator active" aria-live="polite">
             <span>✓</span>
             <span>
               {searchResults === 1
@@ -135,7 +135,7 @@ export const SearchPanel = ({
         )}
 
         {trimmedAppliedQuery && searchResults === 0 && (
-          <div className="search-feedback warning">
+          <div className="search-feedback warning" aria-live="polite">
             No encontramos coincidencias para tu búsqueda. Revisa los datos ingresados.
           </div>
         )}
@@ -180,6 +180,7 @@ export const SearchPanel = ({
               type="text"
               className="search-input"
               placeholder={placeholders[_type]}
+              aria-label="Buscar"
               value={_query}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}

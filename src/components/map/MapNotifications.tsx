@@ -8,7 +8,7 @@ interface MapNotificationsProps {
 export const MapNotifications = ({ isLoading, hasError }: MapNotificationsProps) => {
   if (isLoading) {
     return (
-      <div className={styles.loadingIndicator}>
+      <div className={styles.loadingIndicator} role="status" aria-live="polite">
         Cargando capas…
       </div>
     );
@@ -16,7 +16,7 @@ export const MapNotifications = ({ isLoading, hasError }: MapNotificationsProps)
 
   if (hasError) {
     return (
-      <div className={styles.errorIndicator}>
+      <div className={styles.errorIndicator} role="alert">
         Error al cargar datos geoespaciales. Intenta recargar la página.
       </div>
     );

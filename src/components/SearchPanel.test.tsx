@@ -248,4 +248,23 @@ describe('SearchPanel', () => {
 
         expect(screen.getByText(/Buscando edificio: Torre 5/i)).toBeInTheDocument();
     });
+
+    it('should expose an accessible search input and live results feedback', () => {
+        const { rerender } = render(<SearchPanel {...defaultProps} />);
+
+        // The query input has an accessible name even without a visible label
+        expect(screen.getByRole('textbox', { name: 'Buscar' })).toBeInTheDocument();
+
+        rerender(
+            <SearchPanel
+                {...defaultProps}
+                appliedQuery="Torre"
+                appliedType="edificio"
+                searchResults={5}
+            />
+        );
+
+        // The results-count feedback is announced to screen readers
+        expect(screen.getByText('5 resultados encontrados').closest('.search-indicator')).toHaveAttribute('aria-live', 'polite');
+    });
 });
