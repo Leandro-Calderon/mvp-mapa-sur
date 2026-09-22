@@ -2,6 +2,16 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import viteCompression from "vite-plugin-compression";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+
+// Subir sourcemaps a Sentry sólo cuando el entorno tiene credenciales
+// completas (CI con secrets configurados). Sin ellas el build queda
+// exactamente como hoy: sin sourcemaps y sin plugin.
+const sentryUploadEnabled = Boolean(
+  process.env.SENTRY_AUTH_TOKEN &&
+    process.env.SENTRY_ORG &&
+    process.env.SENTRY_PROJECT
+);
 
 export default defineConfig({
   base: "/mvp-mapa-sur/",
@@ -192,10 +202,23 @@ export default defineConfig({
       threshold: 10240, // Solo comprimir archivos > 10KB
       deleteOriginFile: false, // Mantener originales para fallback
     }),
+    // Subir sourcemaps a Sentry asociados al release y borrarlos de dist
+    // después del upload (no se publican en GitHub Pages). Debe ir último.
+    ...(sentryUploadEnabled
+      ? [
+          sentryVitePlugin({
+            org: process.env.SENTRY_ORG,
+            project: process.env.SENTRY_PROJECT,
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            release: { name: process.env.VITE_SENTRY_RELEASE },
+            sourcemaps: { filesToDeleteAfterUpload: ["dist/**/*.map"] },
+          }),
+        ]
+      : []),
   ],
   build: {
     outDir: "dist",
-    sourcemap: false, // Desactivado para producción - ahorra ~139 KiB
+    sourcemap: sentryUploadEnabled ? "hidden" : false, // 'hidden' sólo cuando se suben a Sentry
     target: 'es2020', // Navegadores modernos - elimina polyfills legacy (~12 KiB)
     minify: 'terser',
     cssCodeSplit: true, // Habilitar CSS code splitting para cargar MapLibre CSS bajo demanda

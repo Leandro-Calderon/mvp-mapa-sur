@@ -85,6 +85,32 @@ Las contribuciones son bienvenidas. Si deseas colaborar, por favor sigue estos p
 4. Haz push a la rama (`git push origin feature/nueva-funcionalidad`).
 5. Abre un Pull Request.
 
+## Monitoreo de errores (Sentry)
+
+Los errores de producción se reportan a [Sentry](https://sentry.io) de forma opt-in:
+si el build no recibe la variable `VITE_SENTRY_DSN`, la aplicación se comporta
+exactamente igual que antes de esta integración (sin init del SDK ni tráfico de red).
+
+Para activarlo:
+
+1. Crea una cuenta gratuita en Sentry y un proyecto nuevo con plataforma **React**.
+2. Agrega estos secrets del repositorio
+   (Settings → Secrets and variables → Actions):
+   - `SENTRY_DSN`: el DSN del proyecto (Settings → Client Keys).
+   - `SENTRY_AUTH_TOKEN`: un auth token con permisos `org:read` y `project:releases`.
+   - `SENTRY_ORG` y `SENTRY_PROJECT`: los slugs de tu organización y tu proyecto.
+3. Haz push a `main`. El deploy compila con sourcemaps, los sube a Sentry
+   asociados al release `mapa-sur@<versión>+<sha>` y luego los elimina de `dist`,
+   así no se publican en GitHub Pages.
+
+Notas de privacidad:
+
+- El DSN es público por diseño: el SDK corre en el navegador y envía los eventos
+  por HTTPS al ingest de Sentry (no es un secreto de servidor; su uso queda
+  limitado por las cuotas del proyecto).
+- La recolección de datos personales está deshabilitada (`sendDefaultPii: false`),
+  sin tracing ni grabaciones de sesión: sólo se reportan errores.
+
 ## Licencia
 
 Este proyecto está bajo la Licencia [AGPL v3.0.](LICENSE).

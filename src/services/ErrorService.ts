@@ -8,12 +8,10 @@ export class ErrorService {
      * Report an error with optional context
      */
     static report(error: Error, context?: Record<string, unknown>): void {
-        logger.error(error.message, { error, context });
-
-        // Future: Send to error tracking service in production
-        // if (import.meta.env.PROD) {
-        //   Sentry.captureException(error, { extra: context });
-        // }
+        // Single capture path: logger.error is the app's only Sentry
+        // capture point and merges this context into the event extra,
+        // so one report yields exactly one Sentry event.
+        logger.error(error.message, error, context);
     }
 
     /**

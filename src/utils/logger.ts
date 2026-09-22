@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react';
+
 const isDev = import.meta.env.DEV;
 
 export const logger = {
@@ -17,11 +19,19 @@ export const logger = {
     console.warn(`[WARN] ${message}`, data);
   },
 
-  error: (message: string, error?: unknown) => {
+  error: (
+    message: string,
+    error?: unknown,
+    extra?: Record<string, unknown>
+  ) => {
     console.error(`[ERROR] ${message}`, error);
-    // Future: Integrate with Sentry or other error reporting service
-    // if (!isDev) {
-    //   Sentry.captureException(error, { extra: { message } });
-    // }
+    // Single Sentry capture point for the whole app: callers pass extra
+    // context through here. Without a DSN the capture never happens and
+    // the logger behaves as before.
+    if (import.meta.env.VITE_SENTRY_DSN) {
+      Sentry.captureException(error ?? new Error(message), {
+        extra: { message, ...extra },
+      });
+    }
   }
 };

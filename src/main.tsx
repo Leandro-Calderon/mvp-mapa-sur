@@ -1,7 +1,21 @@
+import * as Sentry from "@sentry/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
+
+// Initialize Sentry only when a DSN is configured; without it no SDK code
+// runs (no init, no network) and the app behaves exactly as before.
+const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    sendDefaultPii: false,
+    tracesSampleRate: 0,
+    environment: import.meta.env.VITE_SENTRY_ENV || "production",
+    release: import.meta.env.VITE_SENTRY_RELEASE || undefined,
+  });
+}
 
 // PWA and Notification API debugging
 // console.log('PWA DEBUG: App starting up');

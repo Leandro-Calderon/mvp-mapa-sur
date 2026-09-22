@@ -1,4 +1,5 @@
 import React, { Component, type ReactNode } from 'react';
+import { ErrorService } from '../services/ErrorService';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -22,10 +23,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo): void {
-    // Log error in development
-    if (import.meta.env.DEV) {
-      console.error('ErrorBoundary caught an error:', _error, _errorInfo);
-    }
+    // Route through the centralized error service (console + Sentry when configured)
+    ErrorService.report(_error, { componentStack: _errorInfo?.componentStack });
 
     // Call custom error handler if provided
     this.props.onError?.(_error, _errorInfo);

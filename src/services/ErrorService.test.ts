@@ -1,5 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import * as Sentry from '@sentry/react';
 import { ErrorService } from './ErrorService';
+
+vi.mock('@sentry/react', () => ({
+    init: vi.fn(),
+    captureException: vi.fn(),
+}));
+
+const captureException = vi.mocked(Sentry.captureException);
+const sentryInit = vi.mocked(Sentry.init);
+const DSN = 'https://public@example.ingest.sentry.io/1234567';
 
 describe('ErrorService', () => {
     describe('report', () => {
@@ -9,6 +19,59 @@ describe('ErrorService', () => {
             expect(() => ErrorService.report(error, { context: 'test' })).not.toThrow();
         });
     });
+
+describe('ErrorService Sentry integration', () => {
+    const originalError = console.error;
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        console.error = vi.fn();
+    });
+
+    afterEach(() => {
+        console.error = originalError;
+        vi.unstubAllEnvs();
+    });
+
+    it('should capture the error exactly once with context merged into extra when a DSN is configured', () => {
+        vi.stubEnv('VITE_SENTRY_DSN', DSN);
+        const error = new Error('Service failed');
+        const context = { source: 'cache' };
+
+        ErrorService.report(error, context);
+
+        expect(captureException).toHaveBeenCalledTimes(1);
+        expect(captureException).toHaveBeenCalledWith(error, {
+            extra: { message: 'Service failed', source: 'cache' },
+        });
+    });
+
+    it('should capture the error exactly once with message-only extra when no context is provided', () => {
+        vi.stubEnv('VITE_SENTRY_DSN', DSN);
+        const error = new Error('Service failed');
+
+        ErrorService.report(error);
+
+        expect(captureException).toHaveBeenCalledTimes(1);
+        expect(captureException).toHaveBeenCalledWith(error, {
+            extra: { message: 'Service failed' },
+        });
+    });
+
+    it('should not report to Sentry when no DSN is configured', () => {
+        ErrorService.report(new Error('Service failed'), { source: 'cache' });
+
+        expect(captureException).not.toHaveBeenCalled();
+    });
+
+    it('should never initialize Sentry from the service', () => {
+        vi.stubEnv('VITE_SENTRY_DSN', DSN);
+
+        ErrorService.report(new Error('Service failed'));
+
+        expect(sentryInit).not.toHaveBeenCalled();
+    });
+});
 
     describe('handleAsync', () => {
         it('should return data when promise resolves', async () => {
