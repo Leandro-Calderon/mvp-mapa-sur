@@ -344,6 +344,45 @@ describe('MapContainer', () => {
         });
     });
 
+    it('does not re-fly when the updated position stays under the re-fly threshold', () => {
+        const view = render(
+            <MapProvider initialState={{ center: [-60.5, -33.1], zoom: 13 }}>
+                <MapContainer {...baseProps} userPosition={[-60.7, -33.9]} isLocationTracking={true} />
+            </MapProvider>,
+        );
+        expect(mapMocks.stubMap.flyTo).toHaveBeenCalledTimes(1);
+
+        // ~11 m north: walking-speed update, below the ~50 m planar threshold
+        view.rerender(
+            <MapProvider initialState={{ center: [-60.5, -33.1], zoom: 13 }}>
+                <MapContainer {...baseProps} userPosition={[-60.7, -33.8999]} isLocationTracking={true} />
+            </MapProvider>,
+        );
+        expect(mapMocks.stubMap.flyTo).toHaveBeenCalledTimes(1);
+    });
+
+    it('re-flies when the position jumps beyond the re-fly threshold', () => {
+        const view = render(
+            <MapProvider initialState={{ center: [-60.5, -33.1], zoom: 13 }}>
+                <MapContainer {...baseProps} userPosition={[-60.7, -33.9]} isLocationTracking={true} />
+            </MapProvider>,
+        );
+        expect(mapMocks.stubMap.flyTo).toHaveBeenCalledTimes(1);
+
+        // ~1 km east: coarse seed refined by the accurate watch -> re-fly
+        view.rerender(
+            <MapProvider initialState={{ center: [-60.5, -33.1], zoom: 13 }}>
+                <MapContainer {...baseProps} userPosition={[-60.69, -33.9]} isLocationTracking={true} />
+            </MapProvider>,
+        );
+        expect(mapMocks.stubMap.flyTo).toHaveBeenCalledTimes(2);
+        expect(mapMocks.stubMap.flyTo).toHaveBeenLastCalledWith({
+            center: [-60.69, -33.9],
+            zoom: 17,
+            duration: 1500,
+        });
+    });
+
     it('does not render user location when tracking is off', () => {
         renderMap({ userPosition: [-60.7, -33.9], isLocationTracking: false });
 

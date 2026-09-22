@@ -95,6 +95,7 @@ export const MapView = () => {
         userPosition,
         locationAccuracy,
         locationError,
+        locationErrorKind,
         isLocationTracking,
 
         // Data
@@ -175,6 +176,7 @@ export const MapView = () => {
                 onLocationToggle={handleLocationToggle}
                 isLocationTracking={isLocationTracking}
                 locationError={locationError}
+                locationErrorKind={locationErrorKind}
             />
 
             <DataStatusNotification

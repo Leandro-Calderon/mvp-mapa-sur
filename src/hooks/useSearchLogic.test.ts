@@ -42,6 +42,7 @@ vi.mock('./useGeolocation', () => ({
         position: null,
         accuracy: null,
         error: null,
+        errorKind: null,
         isActive: false,
         startTracking: vi.fn(),
         stopTracking: vi.fn(),
@@ -61,6 +62,9 @@ describe('useSearchLogic', () => {
         expect(result.current.appliedQuery).toBe('');
         expect(result.current.appliedType).toBeNull();
         expect(result.current.totalResults).toBe(0);
+        // The geolocation errorKind is threaded through additively
+        expect(result.current.locationError).toBeNull();
+        expect(result.current.locationErrorKind).toBeNull();
     });
 
     it('should update search query', () => {

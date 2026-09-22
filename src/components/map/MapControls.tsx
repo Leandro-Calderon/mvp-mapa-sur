@@ -1,6 +1,7 @@
 import { SearchPanel } from "../SearchPanel";
 import { LocationButton } from "../LocationButton";
 import type { SearchType } from "../SearchPanel";
+import type { GeolocationErrorKind } from "../../hooks/useGeolocation";
 
 interface MapControlsProps {
   searchQuery: string;
@@ -22,6 +23,7 @@ interface MapControlsProps {
   onLocationToggle: (active: boolean) => void;
   isLocationTracking: boolean;
   locationError: string | null;
+  locationErrorKind?: GeolocationErrorKind;
 }
 
 export const MapControls = ({
@@ -43,7 +45,8 @@ export const MapControls = ({
   locationActive: _active,
   onLocationToggle,
   isLocationTracking,
-  locationError
+  locationError,
+  locationErrorKind
 }: MapControlsProps) => {
   return (
     <>
@@ -70,6 +73,7 @@ export const MapControls = ({
         isTracking={isLocationTracking}
         hasError={!!locationError}
         errorMessage={locationError}
+        errorKind={locationErrorKind}
       />
     </>
   );

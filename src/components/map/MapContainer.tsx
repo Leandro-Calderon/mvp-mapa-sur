@@ -42,34 +42,49 @@ export const MapContainer = memo(({
   const mapRef = useRef<MapRef>(null);
   const [mapStyle, setMapStyle] = useState<MapStyleId>(DEFAULT_STYLE);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
-  const lastUserPositionRef = useRef<string | null>(null);
+  // Last position the map actually flew to (null while not tracking).
+  const lastFlownPositionRef = useRef<LngLatArray | null>(null);
 
-  // FlyTo user position when location tracking starts
+  // FlyTo user position when location tracking starts, and re-fly only when
+  // the position moves meaningfully away from the last flown point. This
+  // covers the coarse-first seed being refined by the accurate watch, while
+  // walking-speed updates stay under the threshold and do not re-fly.
+  //
+  // ~50 m expressed as a planar degree threshold: 0.0005° is ~55 m of
+  // latitude everywhere and ~55 m of longitude at the equator (~46 m at the
+  // app's ~-34° latitudes), so the effective radius stays in the ~45-55 m
+  // band — a good-enough approximation that avoids haversine math.
+  const REFLY_THRESHOLD_DEGREES = 0.0005;
+
   useEffect(() => {
     if (!userPosition || !isLocationTracking) {
       // Reset when tracking stops
       if (!isLocationTracking) {
-        lastUserPositionRef.current = null;
+        lastFlownPositionRef.current = null;
       }
       return;
     }
 
-    const positionKey = `${userPosition[0]},${userPosition[1]}`;
-
-    // Only flyTo if this is a new position (first position after starting tracking)
-    if (lastUserPositionRef.current === null) {
-      const map = mapRef.current?.getMap();
-      if (map) {
-        logger.debug('MapContainer: Flying to user position', userPosition);
-        map.flyTo({
-          center: userPosition,
-          zoom: 17,
-          duration: 1500,
-        });
+    const lastFlown = lastFlownPositionRef.current;
+    if (lastFlown) {
+      const dLng = Math.abs(userPosition[0] - lastFlown[0]);
+      const dLat = Math.abs(userPosition[1] - lastFlown[1]);
+      // Simple planar distance check; see the approximation note above.
+      if (dLng < REFLY_THRESHOLD_DEGREES && dLat < REFLY_THRESHOLD_DEGREES) {
+        return;
       }
     }
 
-    lastUserPositionRef.current = positionKey;
+    const map = mapRef.current?.getMap();
+    if (map) {
+      logger.debug('MapContainer: Flying to user position', userPosition);
+      map.flyTo({
+        center: userPosition,
+        zoom: 17,
+        duration: 1500,
+      });
+      lastFlownPositionRef.current = userPosition;
+    }
   }, [userPosition, isLocationTracking]);
 
   // Search results navigation + showAllLayers fitBounds (shared bounds builder)

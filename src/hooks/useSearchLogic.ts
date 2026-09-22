@@ -24,6 +24,7 @@ export const useSearchLogic = () => {
     position: userPosition,
     accuracy: locationAccuracy,
     error: locationError,
+    errorKind: locationErrorKind,
     isActive: isLocationTracking,
     startTracking,
     stopTracking
@@ -226,6 +227,7 @@ export const useSearchLogic = () => {
     userPosition,
     locationAccuracy,
     locationError,
+    locationErrorKind,
     isLocationTracking,
 
     // Data
