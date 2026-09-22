@@ -123,6 +123,20 @@ Notas de privacidad:
 - La recolección de datos personales está deshabilitada (`sendDefaultPii: false`),
   sin tracing ni grabaciones de sesión: sólo se reportan errores.
 
+## Releases (versionado)
+
+La versión del proyecto vive en el campo `version` de `package.json`. Cada
+release significativo sigue este proceso:
+
+1. Incrementa la versión según [semver](https://semver.org/).
+2. Mueve lo acumulado en `[Unreleased]` a una nueva sección con fecha
+   `[x.y.z]` en `CHANGELOG.md`.
+3. Haz commit del cambio como `chore(release): vx.y.z`.
+4. Etiqueta el release (`git tag vx.y.z`) y haz push con
+   `git push --follow-tags`.
+5. CI compila, despliega a GitHub Pages y etiqueta el release de Sentry
+   automáticamente con esa versión.
+
 ## Licencia
 
 Este proyecto está bajo la Licencia [AGPL v3.0.](LICENSE).
