@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Av. San Martín",
+        "tipo": "avenida"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -60.727577,
+            -32.939855
+          ],
+          [
+            -60.727411,
+            -32.939611
+          ],
+          [
+            -60.727287,
+            -32.939368
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Pellegrini",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -60.637629,
+            -32.957819
+          ],
+          [
+            -60.655789,
+            -32.954718
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "nombre": "Rotonda de Giacomo",
+        "tipo": "calle"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -60.5018741,
+            -33.1659110
+          ],
+          [
+            -60.5015076,
+            -33.1664066
+          ]
+        ]
+      }
+    }
+  ]
+}
