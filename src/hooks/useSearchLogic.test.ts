@@ -177,6 +177,48 @@ describe('useSearchLogic', () => {
         expect(result.current.appliedType).toBeNull();
     });
 
+    it('should keep the typed query when switching search type', () => {
+        // (a) Typed query, not applied yet
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleQueryChange('Torre 5');
+        });
+
+        act(() => {
+            result.current.handleTypeChange('departamento');
+        });
+
+        // The typed input text is preserved across the type switch
+        expect(result.current.searchType).toBe('departamento');
+        expect(result.current.searchQuery).toBe('Torre 5');
+
+        // (b) Typed + applied query
+        act(() => {
+            result.current.handleQueryChange('Edificio 3');
+        });
+
+        act(() => {
+            result.current.handleSubmit();
+        });
+
+        // Type a new query while the previous one is still applied
+        act(() => {
+            result.current.handleQueryChange('Edificio 4');
+        });
+
+        act(() => {
+            result.current.handleTypeChange('calle');
+        });
+
+        // Applied results are cleared (they belong to the old type),
+        // but the typed input text is preserved
+        expect(result.current.searchType).toBe('calle');
+        expect(result.current.appliedQuery).toBe('');
+        expect(result.current.appliedType).toBeNull();
+        expect(result.current.searchQuery).toBe('Edificio 4');
+    });
+
     it('should toggle show all layers', () => {
         const { result } = renderHook(() => useSearchLogic());
 

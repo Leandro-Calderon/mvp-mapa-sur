@@ -86,12 +86,6 @@ export const useSearchLogic = () => {
       setAppliedRevision((prev) => prev + 1);
     }
 
-    // Also clear the input text when switching types
-    if (type !== searchType) {
-      logger.debug('useSearchLogic: Clearing search query input due to type change');
-      setSearchQuery("");
-    }
-
     setSearchType(type);
   }, [searchType, appliedQuery, appliedType]);
 
