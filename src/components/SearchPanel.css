@@ -134,11 +134,6 @@
   flex-shrink: 0;
 }
 
-/* Legacy search input group for non-mobile */
-.search-type-selector {
-  display: none;
-}
-
 .search-input {
   width: 100%;
   padding: 16px 48px 16px 16px;
@@ -180,15 +175,7 @@
   background: #d1d5db;
 }
 
-/* Layer toggle - Legacy for desktop */
-.layer-toggle {
-  display: none;
-  gap: 8px;
-  background: #f3f4f6;
-  padding: 4px;
-  border-radius: 12px;
-}
-
+/* Layer button (Ver Todo) */
 .layer-btn {
   flex: 1;
   padding: 12px;
@@ -299,40 +286,14 @@
 }
 
 
-/* Desktop layout - show original layout on larger screens */
+/* Desktop layout: same controls as mobile, stacked input + Ver Todo */
 @media (min-width: 769px) {
-  .search-type-row {
-    display: none;
-  }
-  
   .search-input-row {
     display: block;
   }
-  
+
   .search-input-group {
     margin-bottom: 16px;
-  }
-  
-  .layer-btn-row {
-    display: none;
-  }
-  
-  .search-type-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  
-  .layer-toggle {
-    display: flex;
-  }
-  
-  .type-btn {
-    flex: initial;
   }
 }
 

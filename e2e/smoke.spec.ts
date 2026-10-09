@@ -13,6 +13,39 @@ import { test, expect } from "@playwright/test";
  * - Data-dependent assertions tolerate a data-status error notification if the
  *   GeoJSON fetch fails; the point is that the pipeline ran visibly.
  */
+/**
+ * Regression for the P0 desktop bug (audit Oct 2025): the >=769px media
+ * query in SearchPanel.css used to hide .search-type-row and .layer-btn-row
+ * (display:none) while styling replacement classes (.search-type-selector /
+ * .layer-toggle) that were never rendered, so desktop users could not change
+ * the search type or use "Ver Todo". Both controls must stay visible and
+ * usable at the desktop viewport (Desktop Chrome: 1280x720).
+ */
+test("desktop viewport: search type buttons and Ver Todo stay visible and usable", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  // Expand the panel the way the UI drives it (starts collapsed).
+  await page.locator(".search-header").click();
+
+  const edificio = page.getByRole("button", { name: /edificio/i });
+  const calle = page.getByRole("button", { name: /calle/i });
+  await expect(edificio).toBeVisible();
+  await expect(calle).toBeVisible();
+
+  const verTodo = page.getByRole("button", { name: /ver todo/i });
+  await expect(verTodo).toBeVisible();
+  await expect(verTodo).toBeEnabled();
+
+  // Changing the search type from the desktop viewport must work end to end:
+  // the input placeholder follows the newly selected type.
+  await calle.click();
+  const input = page.locator("input.search-input");
+  await expect(input).toBeVisible();
+  await expect(input).toHaveAttribute("placeholder", /publica p/i);
+});
+
 test("happy path: app shell, map canvas, search flow and GPS button", async ({
   page,
 }) => {
