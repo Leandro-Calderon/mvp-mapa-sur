@@ -322,6 +322,32 @@
   border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
+/* First-run guidance shown while the panel is idle (no typed or applied query) */
+.search-empty-state {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.search-empty-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.search-empty-hint {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
 
 /* Desktop layout: same controls as mobile, stacked input + Ver Todo */
 @media (min-width: 769px) {

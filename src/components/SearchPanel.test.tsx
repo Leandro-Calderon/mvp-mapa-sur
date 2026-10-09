@@ -227,6 +227,34 @@ describe('SearchPanel', () => {
         expect(panel).toHaveClass('idle');
     });
 
+    it('should show first-run guidance when idle and expanded', () => {
+        render(<SearchPanel {...defaultProps} />);
+
+        expect(screen.getByText(/Buscá en el barrio/i)).toBeInTheDocument();
+        expect(
+            screen.getByText(/Ver Todo/i, { selector: '.search-empty-hint' })
+        ).toBeInTheDocument();
+
+        const note = screen.getByRole('note');
+        expect(note).toHaveClass('search-empty-state');
+    });
+
+    it('should remove first-run guidance once a query is typed', () => {
+        const { rerender } = render(<SearchPanel {...defaultProps} />);
+
+        // Precondition: the guidance is shown before typing
+        expect(screen.getByText(/Buscá en el barrio/i)).toBeInTheDocument();
+
+        const input = screen.getByRole('combobox', { name: 'Buscar' });
+        fireEvent.change(input, { target: { value: '86' } });
+
+        // Controlled input: simulate the parent wiring the new query back in
+        rerender(<SearchPanel {...defaultProps} searchQuery="86" />);
+
+        expect(screen.queryByText(/Buscá en el barrio/i)).not.toBeInTheDocument();
+        expect(screen.queryByRole('note')).not.toBeInTheDocument();
+    });
+
     it('should highlight active search type button', () => {
         const props = {
             ...defaultProps,

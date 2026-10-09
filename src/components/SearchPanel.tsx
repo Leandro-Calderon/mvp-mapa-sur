@@ -202,6 +202,16 @@ export const SearchPanel = ({
           </div>
         )}
 
+        {/* First-run guidance: only while idle (no typed or applied query) */}
+        {isIdle && (
+          <div className="search-empty-state" role="note">
+            <p className="search-empty-title">Buscá en el barrio</p>
+            <p className="search-empty-hint">
+              Elegí un tipo de búsqueda y escribí el nombre o número, o tocá Ver Todo para ver todo el mapa.
+            </p>
+          </div>
+        )}
+
         {/* Search type selector - Row 2: Edificio | Departamento */}
         <div className="search-type-row">
           <button
