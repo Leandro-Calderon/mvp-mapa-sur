@@ -41,7 +41,10 @@ export default defineConfig({
   ],
   webServer: {
     // Runs `vite preview` against an existing dist/ build (see test:e2e:run).
-    command: `pnpm preview --port ${PREVIEW_PORT} --strictPort`,
+    // Spawn vite's CLI directly: launching through the pnpm wrapper leaves an
+    // orphaned vite child on teardown (Linux), which hangs the whole run after
+    // the results are printed — observed locally and on CI (run 37886498196).
+    command: `node node_modules/vite/bin/vite.js preview --port ${PREVIEW_PORT} --strictPort`,
     url: PREVIEW_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
