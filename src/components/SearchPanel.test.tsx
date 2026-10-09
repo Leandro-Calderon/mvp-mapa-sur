@@ -19,6 +19,8 @@ describe('SearchPanel', () => {
         searchResults: 0,
         collapsed: false,
         onToggleCollapse: vi.fn(),
+        suggestions: [] as { value: string }[],
+        onSuggestionSelect: vi.fn(),
     };
 
     beforeEach(() => {
@@ -253,7 +255,8 @@ describe('SearchPanel', () => {
         const { rerender } = render(<SearchPanel {...defaultProps} />);
 
         // The query input has an accessible name even without a visible label
-        expect(screen.getByRole('textbox', { name: 'Buscar' })).toBeInTheDocument();
+        // (explicit role="combobox" replaces the implicit textbox role)
+        expect(screen.getByRole('combobox', { name: 'Buscar' })).toBeInTheDocument();
 
         rerender(
             <SearchPanel
@@ -266,5 +269,124 @@ describe('SearchPanel', () => {
 
         // The results-count feedback is announced to screen readers
         expect(screen.getByText('5 resultados encontrados').closest('.search-indicator')).toHaveAttribute('aria-live', 'polite');
+    });
+
+    describe('suggestions combobox', () => {
+        const suggestionProps = {
+            ...defaultProps,
+            suggestions: [{ value: '86' }, { value: '8' }],
+        };
+
+        it('should render the suggestion listbox when the input is focused and suggestions exist', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+
+            const listbox = screen.getByRole('listbox');
+            expect(listbox).toHaveAttribute('id', 'search-suggestions-listbox');
+            expect(input).toHaveAttribute('aria-controls', 'search-suggestions-listbox');
+            expect(input).toHaveAttribute('aria-expanded', 'true');
+            expect(input).toHaveAttribute('aria-autocomplete', 'list');
+
+            const options = screen.getAllByRole('option');
+            expect(options).toHaveLength(2);
+            expect(options[0]).toHaveTextContent('86');
+            expect(options[1]).toHaveTextContent('8');
+        });
+
+        it('should not render the listbox when there are no suggestions', () => {
+            render(<SearchPanel {...defaultProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+
+            expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+            expect(input).toHaveAttribute('aria-expanded', 'false');
+        });
+
+        it('should highlight the first option on ArrowDown', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+            expect(input).toHaveAttribute('aria-activedescendant', 'suggestion-option-0');
+            expect(screen.getAllByRole('option')[0]).toHaveAttribute('aria-selected', 'true');
+            expect(screen.getAllByRole('option')[1]).toHaveAttribute('aria-selected', 'false');
+        });
+
+        it('should move the highlight up with ArrowUp and unhighlight past the first option', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+            fireEvent.keyDown(input, { key: 'ArrowUp' });
+
+            expect(input).toHaveAttribute('aria-activedescendant', 'suggestion-option-0');
+
+            fireEvent.keyDown(input, { key: 'ArrowUp' });
+
+            expect(input).not.toHaveAttribute('aria-activedescendant');
+            // The list stays open even when nothing is highlighted
+            expect(screen.getByRole('listbox')).toBeInTheDocument();
+        });
+
+        it('should select the highlighted option on Enter without submitting', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+            fireEvent.keyDown(input, { key: 'Enter' });
+
+            expect(defaultProps.onSuggestionSelect).toHaveBeenCalledWith('86');
+            expect(defaultProps.onSubmit).not.toHaveBeenCalled();
+        });
+
+        it('should still submit on Enter when the list is open but nothing is highlighted', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+            fireEvent.keyDown(input, { key: 'Enter' });
+
+            expect(defaultProps.onSubmit).toHaveBeenCalled();
+            expect(defaultProps.onSuggestionSelect).not.toHaveBeenCalled();
+        });
+
+        it('should close the list on Escape without clearing the query', () => {
+            const props = {
+                ...suggestionProps,
+                searchQuery: '8',
+            };
+
+            render(<SearchPanel {...props} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+            expect(input).toHaveAttribute('aria-expanded', 'true');
+
+            fireEvent.keyDown(input, { key: 'Escape' });
+
+            expect(input).toHaveAttribute('aria-expanded', 'false');
+            expect(input).toHaveValue('8');
+            expect(defaultProps.onQueryChange).not.toHaveBeenCalled();
+        });
+
+        it('should call onSuggestionSelect when an option is clicked', () => {
+            render(<SearchPanel {...suggestionProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+
+            const options = screen.getAllByRole('option');
+            const firstOption = options[0];
+            if (!firstOption) throw new Error('expected at least one suggestion option');
+            fireEvent.click(firstOption);
+
+            expect(defaultProps.onSuggestionSelect).toHaveBeenCalledWith('86');
+        });
     });
 });

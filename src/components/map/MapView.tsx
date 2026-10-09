@@ -104,6 +104,7 @@ export const MapView = () => {
         buildingResults,
         streetResults,
         totalResults,
+        suggestions,
 
         // Loading states
         buildingsLoading,
@@ -115,6 +116,7 @@ export const MapView = () => {
         handleQueryChange,
         handleTypeChange,
         handleSubmit,
+        handleSuggestionSelect,
         handleClear,
         handleShowAllToggle,
         handleLocationToggle,
@@ -177,6 +179,8 @@ export const MapView = () => {
                 isLocationTracking={isLocationTracking}
                 locationError={locationError}
                 locationErrorKind={locationErrorKind}
+                suggestions={suggestions}
+                onSuggestionSelect={handleSuggestionSelect}
             />
 
             <DataStatusNotification

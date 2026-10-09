@@ -5,6 +5,7 @@ import { useFilteredData } from './useFilteredData';
 import { useFilteredStreets } from './useFilteredStreets';
 import { useGeolocation } from './useGeolocation';
 import { sanitizeSearchQuery } from '../utils/sanitization';
+import { getSuggestions } from '../utils/searchSuggest';
 import { logger } from '../utils/logger';
 import type { SearchType } from '../components/SearchPanel';
 
@@ -41,6 +42,11 @@ export const useSearchLogic = () => {
     vivienda: appliedType === "departamento" ? normalizedAppliedQuery : "",
     plan: appliedType === "plan" ? normalizedAppliedQuery : "",
   }), [normalizedAppliedQuery, appliedType]);
+
+  // As-you-type autocomplete over the loaded datasets
+  const suggestions = useMemo(() => {
+    return getSuggestions(searchQuery, searchType, buildingFeatures, streetFeatures);
+  }, [searchQuery, searchType, buildingFeatures, streetFeatures]);
 
   const streetFilters = useMemo(() => ({
     streetName: appliedType === "calle" ? normalizedAppliedQuery : "",
@@ -115,6 +121,33 @@ export const useSearchLogic = () => {
     // Note: Panel collapse is handled by the useEffect that watches for results
     // This way the panel stays open if there are no results (0 matches)
   }, [normalizedSearchQuery, searchType]);
+
+  // Apply a picked autocomplete suggestion in one batched state update,
+  // mirroring handleSubmit's apply path but keeping the selected value in the input
+  const handleSuggestionSelect = useCallback((value: string) => {
+    const sanitized = sanitizeSearchQuery(value);
+    logger.debug('useSearchLogic: handleSuggestionSelect called', { query: sanitized, type: searchType });
+
+    if (!sanitized) {
+      logger.debug('useSearchLogic: Empty suggestion, clearing filters');
+      setAppliedQuery("");
+      setAppliedType(null);
+      return;
+    }
+
+    logger.debug('useSearchLogic: Applying filters', { query: sanitized, type: searchType });
+
+    // Deactivate "Ver Todo" mode - search and show all are mutually exclusive
+    setShowAllLayers(false);
+
+    setSearchQuery(value);
+    setAppliedQuery(sanitized);
+    setAppliedType(searchType);
+    setAppliedRevision((prev) => prev + 1);
+
+    // Note: Panel collapse is handled by the useEffect that watches for results,
+    // same as the submit path
+  }, [searchType]);
 
   const handleClear = useCallback(() => {
     setSearchQuery("");
@@ -234,6 +267,7 @@ export const useSearchLogic = () => {
     totalResults,
     shouldShowBuildings,
     shouldShowStreets,
+    suggestions,
 
     // Loading states
     buildingsLoading,
@@ -245,6 +279,7 @@ export const useSearchLogic = () => {
     handleQueryChange,
     handleTypeChange,
     handleSubmit,
+    handleSuggestionSelect,
     handleClear,
     handleLayerToggle,
     handleShowAllToggle,

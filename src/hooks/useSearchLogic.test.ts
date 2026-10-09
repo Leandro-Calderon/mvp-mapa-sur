@@ -1,6 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSearchLogic } from './useSearchLogic';
+import type { BuildingFeature, StreetFeature } from '../types/geojson';
+
+const makeBuilding = (tipo: string, nombre: number | null, plan = ''): BuildingFeature => ({
+    type: 'Feature',
+    properties: { tipo, nombre, plan },
+    geometry: { type: 'Point', coordinates: [0, 0] },
+});
+
+const makeStreet = (nombre: string): StreetFeature => ({
+    type: 'Feature',
+    properties: { nombre, tipo: 'Calle' },
+    geometry: { type: 'LineString', coordinates: [[0, 0], [1, 1]] },
+});
+
+const mockBuildingFeatures: BuildingFeature[] = [
+    makeBuilding('Torre', 86, '077'),
+    makeBuilding('Torre', 8, '078'),
+    makeBuilding('Bloque', 22, '077'),
+    makeBuilding('Torre', null, '123'),
+    makeBuilding('Departamento', 543, '999'),
+];
+
+const mockStreetFeatures: StreetFeature[] = [
+    makeStreet('Publica P'),
+    makeStreet('Pasaje 9'),
+];
 
 // Mock logger
 vi.mock('../utils/logger', () => ({
@@ -15,7 +41,7 @@ vi.mock('../utils/logger', () => ({
 // Mock other hooks - simplificado para que los tests pasen
 vi.mock('./useBuildingsData', () => ({
     useBuildingsData: () => ({
-        data: [],
+        data: mockBuildingFeatures,
         loading: false,
         error: null,
     }),
@@ -23,7 +49,7 @@ vi.mock('./useBuildingsData', () => ({
 
 vi.mock('./useStreetsData', () => ({
     useStreetsData: () => ({
-        data: [],
+        data: mockStreetFeatures,
         loading: false,
         error: null,
     }),
@@ -253,5 +279,65 @@ describe('useSearchLogic', () => {
         });
 
         expect(result.current.panelCollapsed).toBe(true);
+    });
+
+    it('should derive suggestions from the typed query and the active type', () => {
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleQueryChange('8');
+        });
+
+        // Active type is 'edificio': only Torre/Bloque candidates match '8'
+        expect(result.current.suggestions.map((s) => s.value)).toEqual(['8', '86']);
+
+        act(() => {
+            result.current.handleQueryChange('Pub');
+        });
+
+        // Type 'edificio' ignores street names
+        expect(result.current.suggestions).toEqual([]);
+
+        act(() => {
+            result.current.handleTypeChange('calle');
+        });
+
+        // The typed query is kept across the type switch (T1) and drives calle suggestions
+        expect(result.current.suggestions.map((s) => s.value)).toEqual(['Publica P']);
+    });
+
+    it('should apply a suggestion in a single step without a separate submit', () => {
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleQueryChange('8');
+        });
+
+        act(() => {
+            result.current.handleSuggestionSelect('  Torre <5>  ');
+        });
+
+        // The input keeps the selected raw value; the applied query is sanitized
+        expect(result.current.searchQuery).toBe('  Torre <5>  ');
+        expect(result.current.appliedQuery).toBe('Torre 5');
+        expect(result.current.appliedType).toBe('edificio');
+        expect(result.current.appliedRevision).toBe(1);
+    });
+
+    it('should turn off show all layers when applying a suggestion', () => {
+        const { result } = renderHook(() => useSearchLogic());
+
+        act(() => {
+            result.current.handleShowAllToggle();
+        });
+
+        expect(result.current.showAllLayers).toBe(true);
+
+        act(() => {
+            result.current.handleSuggestionSelect('Torre 5');
+        });
+
+        expect(result.current.showAllLayers).toBe(false);
+        expect(result.current.appliedQuery).toBe('Torre 5');
     });
 });
