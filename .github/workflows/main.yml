@@ -56,6 +56,9 @@ jobs:
     name: End-to-end smoke tests (Playwright)
     needs: validate
     runs-on: ubuntu-latest
+    # The suite itself takes seconds; anything longer is a hang, not a slow
+    # test. Fail fast instead of stalling the Pages deploy for 6h.
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
