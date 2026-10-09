@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
 
+// Explicit viewport pin (native-review advisory R3-viewport-pin): do not rely
+// on the playwright.config.ts device descriptor for the desktop regression
+// below; pin the desktop layout dimensions for every test in this file.
+test.use({ viewport: { width: 1280, height: 720 } });
+
 /**
  * Smoke test for the critical PWA path against the production build served
  * by `vite preview` under the vite base path (see playwright.config.ts):
@@ -19,7 +24,7 @@ import { test, expect } from "@playwright/test";
  * (display:none) while styling replacement classes (.search-type-selector /
  * .layer-toggle) that were never rendered, so desktop users could not change
  * the search type or use "Ver Todo". Both controls must stay visible and
- * usable at the desktop viewport (Desktop Chrome: 1280x720).
+ * usable at the desktop viewport (pinned above: 1280x720).
  */
 test("desktop viewport: search type buttons and Ver Todo stay visible and usable", async ({
   page,
@@ -39,11 +44,31 @@ test("desktop viewport: search type buttons and Ver Todo stay visible and usable
   await expect(verTodo).toBeEnabled();
 
   // Changing the search type from the desktop viewport must work end to end:
-  // the input placeholder follows the newly selected type.
+  // the input placeholder follows the newly selected type. Exact string must
+  // match `placeholders.calle` in src/components/SearchPanel.tsx
+  // (native-review advisory R3-placeholder-contrast).
   await calle.click();
   const input = page.locator("input.search-input");
   await expect(input).toBeVisible();
-  await expect(input).toHaveAttribute("placeholder", /publica p/i);
+  await expect(input).toHaveAttribute(
+    "placeholder",
+    "Ej: Publica P, Pasaje 2...",
+  );
+
+  // "Ver Todo" must be usable end to end (advisory R3-vertodo-usability):
+  // clicking it activates the show-all state and auto-collapses the panel so
+  // the map becomes visible.
+  const panel = page.locator(".search-panel");
+  await verTodo.click();
+  await expect(panel).toHaveClass(/collapsed/);
+  await expect(verTodo).toHaveClass(/active/);
+
+  // Re-expanding the panel must not reset the show-all state: the button
+  // keeps its active class across collapse cycles. Bounded check — toggling
+  // the show-all state back off is intentionally out of scope here.
+  await page.locator(".search-header").click();
+  await expect(panel).not.toHaveClass(/collapsed/);
+  await expect(page.locator(".layer-btn.active")).toBeVisible();
 });
 
 test("happy path: app shell, map canvas, search flow and GPS button", async ({
@@ -89,4 +114,79 @@ test("happy path: app shell, map canvas, search flow and GPS button", async ({
   const gpsButton = page.getByRole("button", { name: /activar ubicación/i });
   await expect(gpsButton).toBeVisible();
   await expect(gpsButton).toBeEnabled();
+});
+
+test("autocomplete: typed query lists suggestions and Enter applies the pick", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  // Expand the panel and focus the input while it is still empty (the
+  // suggestion list stays closed until suggestions exist).
+  await page.locator(".search-header").click();
+  const input = page.locator("input.search-input");
+  await expect(input).toBeVisible();
+  await input.click();
+
+  // "56" matches a "Bloque" nombre in public/assets/fonavi.geojson (see the
+  // happy-path test), so as-you-type suggestions must be derivable from it.
+  // Typing opens the listbox on its own (no ArrowDown needed).
+  await input.fill("56");
+  await expect(
+    page.getByRole("option", { name: "56", exact: true }).first(),
+  ).toBeVisible();
+
+  // ArrowDown highlights the first option; Enter applies the highlighted
+  // suggestion as a search. Visible feedback follows the same tolerant
+  // pattern as the happy-path test: applied-search preview, or the no-results
+  // warning, or a data-status error notification if the GeoJSON fetch failed.
+  await input.press("ArrowDown");
+  await input.press("Enter");
+  const appliedPreview = page.locator(".search-input-preview", {
+    hasText: "Buscando edificio: 56",
+  });
+  const noResultsWarning = page.locator(".search-feedback.warning");
+  const dataError = page.locator(".data-status-notification.error");
+  await expect(
+    appliedPreview.or(noResultsWarning).or(dataError),
+  ).toBeVisible({ timeout: 15_000 });
+});
+
+test("type switch keeps the typed query in the input", async ({ page }) => {
+  await page.goto("/");
+
+  await page.locator(".search-header").click();
+  const input = page.locator("input.search-input");
+  await expect(input).toBeVisible();
+  await input.fill("56");
+
+  await page.getByRole("button", { name: /departamento/i }).click();
+
+  // T1 regression guard: switching the search type must not clear the typed
+  // query. Only the placeholder follows the newly selected type (exact
+  // string from `placeholders.departamento` in SearchPanel.tsx).
+  await expect(input).toHaveValue("56");
+  await expect(input).toHaveAttribute(
+    "placeholder",
+    "Ej: 543, 204, 15...",
+  );
+});
+
+test("first run: idle panel shows the empty-state note until the user types", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  // Fresh load, panel expanded, no typed or applied query: the first-run
+  // guidance note is visible (T3).
+  await page.locator(".search-header").click();
+  const note = page.getByRole("note");
+  await expect(note).toBeVisible();
+  await expect(note).toContainText("Buscá en el barrio");
+
+  // Typing a single character leaves the idle state and removes the note.
+  const input = page.locator("input.search-input");
+  await input.click();
+  await input.pressSequentially("5");
+  await expect(note).not.toBeVisible();
 });

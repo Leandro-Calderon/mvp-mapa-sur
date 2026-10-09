@@ -333,6 +333,23 @@ describe('SearchPanel', () => {
             expect(input).toHaveAttribute('aria-expanded', 'false');
         });
 
+        it('should open the listbox as the user types in a focused empty input', () => {
+            // Real as-you-type flow: focus lands on an empty input (no
+            // suggestions yet), the first keystroke produces suggestions in
+            // the parent, and the list must open without requiring ArrowDown.
+            const { rerender } = render(<SearchPanel {...defaultProps} />);
+
+            const input = screen.getByRole('combobox', { name: 'Buscar' });
+            fireEvent.focus(input);
+            expect(input).toHaveAttribute('aria-expanded', 'false');
+
+            fireEvent.change(input, { target: { value: '5' } });
+            rerender(<SearchPanel {...suggestionProps} searchQuery="5" />);
+
+            expect(screen.getByRole('listbox')).toBeInTheDocument();
+            expect(input).toHaveAttribute('aria-expanded', 'true');
+        });
+
         it('should highlight the first option on ArrowDown', () => {
             render(<SearchPanel {...suggestionProps} />);
 

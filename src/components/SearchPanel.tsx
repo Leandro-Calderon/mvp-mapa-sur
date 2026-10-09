@@ -87,8 +87,9 @@ export const SearchPanel = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onQueryChange(e.target.value);
-    // Keep the list open while typing, but drop the stale highlight
+    // Open the list as the user types; drop the stale highlight
     setHighlightedIndex(null);
+    setSuggestionsOpen(true);
   };
 
   const handleInputFocus = () => {
